@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+logging:
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%X{username}] [thread] %-5level %logger{36} - %msg %n%throwable"
+  level:
+    root: INFO
+    cz.cvut.kbss: INFO
+    org.springframework.web: INFO
