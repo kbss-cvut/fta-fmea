@@ -1,4 +1,4 @@
-package cz.cvut.analysis;
+package cz.cvut.kbss.analysis;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

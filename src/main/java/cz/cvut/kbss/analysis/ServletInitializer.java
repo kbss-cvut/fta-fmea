@@ -1,4 +1,4 @@
-package cz.cvut.analysis;
+package cz.cvut.kbss.analysis;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
