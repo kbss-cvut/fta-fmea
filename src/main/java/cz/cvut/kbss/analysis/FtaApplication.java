@@ -2,12 +2,13 @@ package cz.cvut.kbss.analysis;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class FtaApplication {
+public class FtaApplication extends SpringBootServletInitializer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FtaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FtaApplication.class, args);
+    }
 
 }

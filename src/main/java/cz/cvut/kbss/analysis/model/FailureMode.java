@@ -2,8 +2,10 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.Serializable;
 import java.net.URI;
