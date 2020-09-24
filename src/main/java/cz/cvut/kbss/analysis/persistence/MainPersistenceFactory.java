@@ -60,14 +60,14 @@ public class MainPersistenceFactory {
     @PostConstruct
     private void init() {
         final Map<String, String> properties = defaultParams();
-        properties.put(ONTOLOGY_PHYSICAL_URI_KEY, repositoryConf.getUri());
+        properties.put(ONTOLOGY_PHYSICAL_URI_KEY, repositoryConf.getUrl());
         properties.put(DATA_SOURCE_CLASS, persistenceConf.getDriver());
         properties.put(LANG, persistenceConf.getLanguage());
 
         // OPTIMIZATION: Always use statement retrieval with unbound property. Should spare
         // repository queries
         properties.put(SesameOntoDriverProperties.SESAME_LOAD_ALL_THRESHOLD, "1");
-        this.emf = Persistence.createEntityManagerFactory("fta-fmea-unit", properties);
+        this.emf = Persistence.createEntityManagerFactory("fta-fmea", properties);
     }
 
     @PreDestroy

@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration;
 public class RepositoryConf {
 
     /**
-     * URI of the repository location
+     * Repository URL
      */
-    private String uri;
+    private String url;
 
     /**
      * Language used to store strings in the repository (persistence unit language).
