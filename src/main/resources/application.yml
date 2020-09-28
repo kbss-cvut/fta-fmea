@@ -8,6 +8,11 @@ persistence:
   driver: cz.cvut.kbss.ontodriver.sesame.SesameDataSource
   language: cs
 
+security:
+  jwt:
+    secretKey: lwrUj5PmCE6X8ekbLd9wDTRlBkEJA0HB # TODO better key
+    expiryMs: 3600000
+
 logging:
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%X{username}] [thread] %-5level %logger{36} - %msg %n%throwable"

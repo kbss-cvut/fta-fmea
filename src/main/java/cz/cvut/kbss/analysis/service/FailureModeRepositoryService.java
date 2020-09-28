@@ -26,14 +26,12 @@ public class FailureModeRepositoryService {
 
     @Transactional
     public void persist(FailureMode failureMode) {
-        Objects.requireNonNull(failureMode);
         failureModeDao.persist(failureMode);
     }
 
     @Transactional
     public void delete(FailureMode failureMode) {
-        Objects.requireNonNull(failureMode);
-        failureModeDao.delete(failureMode);
+        failureModeDao.remove(failureMode);
     }
 
 }

@@ -1,32 +1,17 @@
 package cz.cvut.kbss.analysis.model;
 
+import cz.cvut.kbss.analysis.model.util.AbstractEntity;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-import java.net.URI;
-
-@Getter
-@Setter
-@ToString
-@NamedNativeQueries({
-        @NamedNativeQuery(
-                name = "FailureMode.findAll",
-                query = "SELECT ?x WHERE { ?x a <" + Vocabulary.FailureMode + "> . }"
-        )
-})
+@EqualsAndHashCode(callSuper = true)
+@Data
 @OWLClass(iri = Vocabulary.FailureMode)
-public class FailureMode implements Serializable {
-
-    @Id(generated = true)
-    private URI uri;
+public class FailureMode extends AbstractEntity {
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.p_name)
+    @OWLDataProperty(iri = Vocabulary.p_has_name)
     private String name;
 
 }

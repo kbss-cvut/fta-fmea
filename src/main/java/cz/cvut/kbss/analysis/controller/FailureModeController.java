@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Random;
 
-@RestController()
-@RequestMapping("/failureMode")
+@RestController
+@RequestMapping("/failureModes")
 public class FailureModeController {
 
     @Autowired
