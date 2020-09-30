@@ -33,8 +33,6 @@ public class UserRepositoryService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // TODO define user roles?
-        user.getRoles().add("ROLE_USER");
         userDao.persist(user);
 
         return user.getUri();

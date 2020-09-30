@@ -1,0 +1,8 @@
+GET {{host}}/users/me
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+###
+GET {{host}}/failureModes
+Content-Type: application/json
+Authorization: Bearer {{jwt}}

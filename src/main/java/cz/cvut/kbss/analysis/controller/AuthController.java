@@ -39,7 +39,6 @@ public class AuthController {
         this.userRepositoryService = userRepositoryService;
     }
 
-    // TODO move to UserController?
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody UserRegistrationRequest registrationRequest) {
         User newUser = new User();

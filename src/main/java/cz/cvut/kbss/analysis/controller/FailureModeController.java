@@ -17,7 +17,8 @@ public class FailureModeController {
     @Autowired
     private FailureModeRepositoryService failureModeRepositoryService;
 
-    @GetMapping("/generateAndGet")
+    // TODO dummy testing method
+    @GetMapping("/createDummy")
     public List<FailureMode> generateAndGet() {
         int randomNo = new Random().nextInt(100);
         FailureMode failureMode = new FailureMode();
@@ -27,4 +28,10 @@ public class FailureModeController {
 
         return failureModeRepositoryService.findAll();
     }
+
+    @GetMapping("/")
+    public List<FailureMode> findAll() {
+        return failureModeRepositoryService.findAll();
+    }
+
 }

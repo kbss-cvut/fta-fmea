@@ -9,9 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,10 +26,8 @@ public class User extends AbstractEntity implements UserDetails {
     @OWLDataProperty(iri = Vocabulary.p_has_password)
     private String password;
 
-    // TODO 'java.lang.IllegalArgumentException: Not a valid (absolute) IRI: ROLE_USER'
-    @Sequence // TODO what does @Sequence mean?
-    @OWLObjectProperty(iri = Vocabulary.p_has_roles, fetch = FetchType.EAGER)
-    private List<String> roles = new ArrayList<>();
+    @Transient
+    private List<String> roles = Collections.singletonList("ROLE_USER");
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
