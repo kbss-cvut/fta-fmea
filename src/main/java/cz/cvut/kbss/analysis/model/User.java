@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.cvut.kbss.analysis.model.util.AbstractEntity;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class User extends AbstractEntity implements UserDetails {
     @OWLDataProperty(iri = Vocabulary.p_has_username)
     private String username;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.p_has_password)
     private String password;
