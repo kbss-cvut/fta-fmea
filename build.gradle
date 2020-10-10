@@ -27,6 +27,8 @@ repositories {
     mavenCentral()
 }
 
+sourceSets.main.java.srcDirs += "src/main/generated"
+
 dependencies {
     def jopaVersion = '0.14.7'
     implementation "cz.cvut.kbss.jopa:jopa-impl:$jopaVersion"

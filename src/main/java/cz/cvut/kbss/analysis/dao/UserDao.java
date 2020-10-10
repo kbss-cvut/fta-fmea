@@ -3,7 +3,7 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.User;
-import cz.cvut.kbss.analysis.model.Vocabulary;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.exceptions.NoResultException;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class UserDao extends BaseDao<User> {
                             .createNativeQuery("SELECT ?x WHERE { ?x a ?type ; ?hasUsername ?username . }",
                                     type)
                             .setParameter("type", typeUri)
-                            .setParameter("hasUsername", URI.create(Vocabulary.p_has_username))
+                            .setParameter("hasUsername", URI.create(Vocabulary.s_p_hasUsername))
                             .setParameter("username", username, config.getLanguage())
                             .getSingleResult());
         } catch (NoResultException e) {
@@ -56,7 +56,7 @@ public class UserDao extends BaseDao<User> {
         return em
                 .createNativeQuery("ASK WHERE { ?x a ?type ; ?hasUsername ?username . }", Boolean.class)
                 .setParameter("type", typeUri)
-                .setParameter("hasUsername", URI.create(Vocabulary.p_has_username))
+                .setParameter("hasUsername", URI.create(Vocabulary.s_p_hasUsername))
                 .setParameter("username", username, config.getLanguage())
                 .getSingleResult();
     }

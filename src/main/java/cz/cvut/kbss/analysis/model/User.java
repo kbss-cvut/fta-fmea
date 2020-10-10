@@ -1,9 +1,8 @@
 package cz.cvut.kbss.analysis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import cz.cvut.kbss.analysis.model.util.AbstractEntity;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,16 +15,16 @@ import static java.util.stream.Collectors.toList;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@OWLClass(iri = Vocabulary.User)
+@OWLClass(iri = Vocabulary.s_c_User)
 public class User extends AbstractEntity implements UserDetails {
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.p_has_username)
+    @OWLDataProperty(iri = Vocabulary.s_p_hasUsername)
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.p_has_password)
+    @OWLDataProperty(iri = Vocabulary.s_p_hasPassword)
     private String password;
 
     @Transient
