@@ -28,9 +28,9 @@ public class FailureMode extends AbstractEntity {
     private Event causingEvent;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = CascadeType.ALL)
-    private Set<FailureEffect> failureEffects = new HashSet<>();
+    private Set<FailureEffect> failureEffects;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
-    private Set<Mitigation> mitigation = new HashSet<>();
+    private Set<Mitigation> mitigation;
 
 }

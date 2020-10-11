@@ -1,8 +1,8 @@
 package cz.cvut.kbss.analysis.controller;
 
-import cz.cvut.kbss.analysis.dto.AuthenticationRequest;
-import cz.cvut.kbss.analysis.dto.AuthenticationResponse;
-import cz.cvut.kbss.analysis.dto.UserRegistrationRequest;
+import cz.cvut.kbss.analysis.dto.authentication.AuthenticationRequest;
+import cz.cvut.kbss.analysis.dto.authentication.AuthenticationResponse;
+import cz.cvut.kbss.analysis.dto.registration.UserRegistrationRequest;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.JwtTokenProvider;
 import cz.cvut.kbss.analysis.service.UserRepositoryService;

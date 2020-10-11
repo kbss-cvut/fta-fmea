@@ -1,0 +1,3 @@
+GET {{host}}/failureModes/createDummy
+Content-Type: application/json
+Authorization: Bearer {{jwt}}

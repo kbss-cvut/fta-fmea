@@ -1,0 +1,3 @@
+GET {{host}}/users/current
+Content-Type: application/json
+Authorization: Bearer {{jwt}}

@@ -1,4 +1,4 @@
-package cz.cvut.kbss.analysis.dto;
+package cz.cvut.kbss.analysis.dto.authentication;
 
 import lombok.Data;
 

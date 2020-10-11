@@ -1,5 +1,8 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.service.UserRepositoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,16 +21,16 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/users")
 public class UserController {
 
-    @GetMapping("/me")
-    public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        Map<Object, Object> model = new HashMap<>();
-        model.put("username", userDetails.getUsername());
-        model.put("roles", userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(toList())
-        );
-        return ok(model);
+    private final UserRepositoryService userRepositoryService;
+
+    @Autowired
+    public UserController(UserRepositoryService userRepositoryService) {
+        this.userRepositoryService = userRepositoryService;
+    }
+
+    @GetMapping("/current")
+    public User currentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return userRepositoryService.getCurrent(userDetails);
     }
 
 }

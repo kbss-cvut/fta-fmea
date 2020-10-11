@@ -1,16 +1,24 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.UserDao;
+import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.UsernameNotAvailableException;
 import cz.cvut.kbss.analysis.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
 @Service
@@ -23,6 +31,14 @@ public class UserRepositoryService {
     public UserRepositoryService(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public User getCurrent(UserDetails userDetails) {
+        return userDao
+                .findByUsername(userDetails.getUsername())
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Failed to find user with username - " + userDetails.getUsername())
+                );
     }
 
     @Transactional
