@@ -25,7 +25,7 @@
                     <package>cz.cvut.kbss.analysis.util</package>
                     <!--Generate Vocabulary into Gradle project dirs-->
                     <output-directory>${project.basedir}/../src/main/generated</output-directory>
-                    <ontology-iri>http://onto.fel.cvut.cz/ontologies/fta-fmea</ontology-iri>
+                    <ontology-iri>http://onto.fel.cvut.cz/ontologies/fta-fmea-application</ontology-iri>
                     <mapping-file>${project.basedir}/src/main/resources/mapping</mapping-file>
                     <whole-ontology-as-ics>true</whole-ontology-as-ics>
                     <vocabulary-only>true</vocabulary-only>

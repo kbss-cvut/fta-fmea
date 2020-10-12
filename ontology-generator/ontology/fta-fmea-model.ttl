@@ -1,196 +1,166 @@
-@prefix termit:            <http://onto.fel.cvut.cz/ontologies/application/termit/> .
-@prefix rdf:               <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl:               <http://www.w3.org/2002/07/owl#> .
-@prefix xsd:               <http://www.w3.org/2001/XMLSchema#> .
-# TODO what is default prefix?
-@prefix fta-fmea-object:   <http://onto.fel.cvut.cz/ontologies/fta-fmea/object#> .
-@prefix fta-fmea-property: <http://onto.fel.cvut.cz/ontologies/fta-fmea/property#> .
-@prefix rdfs:              <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix termit:   <http://onto.fel.cvut.cz/ontologies/application/termit/> .
+@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:      <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix fta-fmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 
-# TODO define inverse relations as well ?
-
-fta-fmea-object:Component
+fta-fmea:Component
     rdf:type   owl:Class ;
     rdfs:label "Component" .
 
-fta-fmea-object:hasFunction
+fta-fmea:hasFunction
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has function" ;
-    rdfs:domain fta-fmea-object:Component ;
-    rdfs:range  fta-fmea-object:Function .
+    rdfs:domain fta-fmea:Component ;
+    rdfs:range  fta-fmea:Function .
 
-fta-fmea-object:Function
+fta-fmea:Function
     rdf:type   owl:Class ;
     rdfs:label "Function" .
 
-fta-fmea-property:hasFailureMode
+fta-fmea:hasFailureMode
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has failure mode" ;
-    rdfs:domain fta-fmea-object:Function ;
-    rdfs:range  fta-fmea-object:FailureMode .
+    rdfs:domain fta-fmea:Function ;
+    rdfs:range  fta-fmea:FailureMode .
 
-fta-fmea-object:FailureMode
+fta-fmea:FailureMode
     rdf:type   owl:Class ;
     rdfs:label "Failure mode" .
 
-fta-fmea-property:isManifestedBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "is manifested by" ;
-    rdfs:domain fta-fmea-object:FailureMode ;
-    rdfs:range  fta-fmea-object:FailureEffect .
-
-fta-fmea-property:isMitigatedBy
+fta-fmea:isMitigatedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "is mitigated by" ;
-    rdfs:domain fta-fmea-object:FailureMode ;
-    rdfs:range  fta-fmea-object:Mitigation .
+    rdfs:domain fta-fmea:FailureMode ;
+    rdfs:range  fta-fmea:Mitigation .
 
-fta-fmea-property:hasRPN
+fta-fmea:hasRPN
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has risk priority number" ;
-    rdfs:domain fta-fmea-object:FailureMode ;
-    rdfs:range  fta-fmea-object:RiskPriorityNumber .
+    rdfs:domain fta-fmea:FailureMode ;
+    rdfs:range  fta-fmea:RiskPriorityNumber .
 
-fta-fmea-property:isCausedBy
+fta-fmea:isCausedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "is caused by" ;
-    rdfs:domain fta-fmea-object:FailureMode ;
-    rdfs:range  fta-fmea-object:Event .
+    rdfs:domain fta-fmea:FailureMode ;
+    rdfs:range  fta-fmea:Event .
 
-fta-fmea-object:FailureEffect
-    rdf:type   owl:Class ;
-    rdfs:label "Failure effect" .
-
-fta-fmea-object:LocalEffect
-    rdf:type        owl:Class ;
-    rdfs:label      "Local effect" ;
-    rdfs:subClassOf fta-fmea-object:FailureEffect .
-
-fta-fmea-object:NextHigherEffect
-    rdf:type        owl:Class ;
-    rdfs:label      "Next Higher Effect" ;
-    rdfs:subClassOf fta-fmea-object:FailureEffect .
-
-fta-fmea-object:EndEffect
-    rdf:type        owl:Class ;
-    rdfs:label      "End Effect" ;
-    rdfs:subClassOf fta-fmea-object:FailureEffect .
-
-fta-fmea-object:Mitigation
+fta-fmea:Mitigation
     rdf:type   owl:Class ;
     rdfs:label "Mitigation" .
 
-fta-fmea-object:RiskPriorityNumber
+fta-fmea:RiskPriorityNumber
     rdf:type   owl:Class ;
     rdfs:label "Risk Priority Number" .
 
-fta-fmea-property:hasProbability
+fta-fmea:hasProbability
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has probability" ;
-    rdfs:domain fta-fmea-object:RiskPriorityNumber ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:RiskPriorityNumber, fta-fmea:FaultEvent ;
+    rdfs:range  xsd:float .
 
-fta-fmea-property:hasSeverity
+fta-fmea:hasSeverity
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has severity" ;
-    rdfs:domain fta-fmea-object:RiskPriorityNumber ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:RiskPriorityNumber ;
+    rdfs:range  xsd:decimal .
 
-fta-fmea-property:hasDetection
+fta-fmea:hasDetection
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has detection" ;
-    rdfs:domain fta-fmea-object:RiskPriorityNumber ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:RiskPriorityNumber ;
+    rdfs:range  xsd:decimal .
 
-# TODO change -------
-
-fta-fmea-object:Event
+fta-fmea:Event
     rdf:type   owl:Class ;
     rdfs:label "Event" .
 
-fta-fmea-property:causes
-    rdf:type      owl:ObjectProperty ;
-    rdfs:label    "causes" ;
-    rdfs:domain   fta-fmea-object:Event ;
-    rdfs:range    fta-fmea-object:FailureMode .
+fta-fmea:causes
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "causes" ;
+    rdfs:domain fta-fmea:Event ;
+    rdfs:range  fta-fmea:FailureMode .
 
-fta-fmea-object:Gate
-    rdf:type   owl:Class ;
-    rdfs:label "Gate" ;
-    rdfs:subClassOf fta-fmea-object:Event .
+fta-fmea:Gate
+    rdf:type        owl:Class ;
+    rdfs:label      "Gate" ;
+    rdfs:subClassOf fta-fmea:Event .
 
-fta-fmea-property:hasGateType
+fta-fmea:hasGateType
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has gate type" ;
-    rdfs:domain fta-fmea-object:Gate ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:Gate ;
+    rdfs:range  xsd:string .
 
-fta-fmea-object:FaultEvent
-    rdf:type   owl:Class ;
-    rdfs:label "Fault event" ;
-    rdfs:subClassOf fta-fmea-object:Event .
+fta-fmea:FaultEvent
+    rdf:type        owl:Class ;
+    rdfs:label      "Fault event" ;
+    rdfs:subClassOf fta-fmea:Event .
 
-# TODO define cardinalities etc.?
-fta-fmea-property:consistsOf
+fta-fmea:consistsOf
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "consists of" ;
-    rdfs:domain fta-fmea-object:FaultEvent ;
-    rdfs:range  fta-fmea-object:FaultEvent .
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  fta-fmea:FaultEvent .
 
-fta-fmea-property:produces
+fta-fmea:produces
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "produces" ;
-    rdfs:domain fta-fmea-object:FaultEvent ;
-    rdfs:range  fta-fmea-object:FaultEvent .
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  fta-fmea:FaultEvent .
 
-fta-fmea-property:hasFaultEventType
+fta-fmea:hasFaultEventType
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has fault event type" ;
-    rdfs:domain fta-fmea-object:FaultEvent ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  xsd:string .
 
-fta-fmea-object:TakenAction
+fta-fmea:influences
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "influences" ;
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  fta-fmea:Component .
+
+fta-fmea:TakenAction
     rdf:type   owl:Class ;
     rdfs:label "Taken action" .
 
-fta-fmea-property:prevents
+fta-fmea:prevents
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "prevents" ;
-    rdfs:domain fta-fmea-object:TakenAction ;
-    rdfs:range  fta-fmea-object:FaultEvent .
+    rdfs:domain fta-fmea:TakenAction ;
+    rdfs:range  fta-fmea:FaultEvent .
 
-# TODO separate users etc. to special namespace?
-
-fta-fmea-object:User
+fta-fmea:User
     rdf:type   owl:Class ;
     rdfs:label "User" .
 
-fta-fmea-property:hasUsername
+fta-fmea:hasUsername
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has username" ;
-    rdfs:domain fta-fmea-object:User ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:User ;
+    rdfs:range  xsd:string .
 
-fta-fmea-property:hasPassword
+fta-fmea:hasPassword
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has password" ;
-    rdfs:domain fta-fmea-object:User ;
-    rdfs:range  rdfs:Literal .
+    rdfs:domain fta-fmea:User ;
+    rdfs:range  xsd:string .
 
-# TODO clashes with fta-fmea-property:hasFailureMode of Function
-
-fta-fmea-property:authoredFailureMode
+fta-fmea:authoredFailureMode
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "authored failure mode" ;
-    rdfs:domain fta-fmea-object:User ;
-    rdfs:range  fta-fmea-object:FailureMode .
+    rdfs:domain fta-fmea:User ;
+    rdfs:range  fta-fmea:FailureMode .
 
-fta-fmea-property:hasName
+fta-fmea:hasName
     rdf:type   owl:DatatypeProperty ;
     rdfs:label "has name" ;
-    rdfs:range rdfs:Literal .
+    rdfs:range xsd:string .
 
-fta-fmea-property:hasDescription
+fta-fmea:hasDescription
     rdf:type   owl:DatatypeProperty ;
     rdfs:label "has description" ;
-    rdfs:range rdfs:Literal .
+    rdfs:range xsd:string .
