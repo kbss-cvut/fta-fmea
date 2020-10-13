@@ -12,5 +12,5 @@ Authorization: Bearer {{jwt}}
   "@type": [
     "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Component"
   ],
-  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Admin - Engine"
+  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Engine"
 }
