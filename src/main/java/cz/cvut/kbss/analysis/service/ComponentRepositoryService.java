@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,12 @@ public class ComponentRepositoryService {
         this.componentDao = componentDao;
     }
 
-    @Transactional
-    public List<Component> findAll() {
-        return componentDao.findAll();
+    @Transactional(readOnly = true)
+    public List<Component> findAllForUser(User user) {
+        return componentDao.findAllForUser(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public URI persist(Component component) {
         componentDao.persist(component);
         return component.getUri();

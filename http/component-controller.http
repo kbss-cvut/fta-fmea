@@ -1,0 +1,16 @@
+GET {{host}}/components
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+
+###
+POST {{host}}/components
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "@type": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Component"
+  ],
+  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Admin - Engine"
+}

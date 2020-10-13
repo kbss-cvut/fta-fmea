@@ -36,8 +36,6 @@ public class JwtTokenFilter extends GenericFilterBean {
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
                 securityUtils.setCurrentUser(auth);
-            } else {
-                throw new InvalidJwtAuthenticationException("JWT missing or invalid");
             }
         } catch (InvalidJwtAuthenticationException e) {
             log.error("Unauthorized request", e);
