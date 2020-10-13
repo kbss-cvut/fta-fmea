@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.model;
 
+import cz.cvut.kbss.analysis.persistence.util.HasAuthorDataManager;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
@@ -12,7 +13,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @OWLClass(iri = Vocabulary.s_c_FailureMode)
-public class FailureMode extends AbstractEntity {
+@EntityListeners(HasAuthorDataManager.class)
+public class FailureMode extends HasAuthorData {
 
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)

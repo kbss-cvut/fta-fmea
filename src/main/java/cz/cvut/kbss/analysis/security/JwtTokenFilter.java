@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.security;
 
 import cz.cvut.kbss.analysis.exception.InvalidJwtAuthenticationException;
 import cz.cvut.kbss.analysis.service.JwtTokenProvider;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,9 +21,11 @@ import java.io.IOException;
 public class JwtTokenFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final SecurityUtils securityUtils;
 
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, SecurityUtils securityUtils) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class JwtTokenFilter extends GenericFilterBean {
             String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                securityUtils.setCurrentUser(auth);
             }
         } catch (InvalidJwtAuthenticationException e) {
             log.error("Unauthorized request", e);

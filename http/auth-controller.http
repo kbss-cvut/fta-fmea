@@ -1,0 +1,16 @@
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "jakub",
+  "password": "heslicko"
+}
+
+###
+POST {{host}}/auth/signin
+Content-Type: application/json
+
+{
+  "username": "jakub",
+  "password": "heslicko"
+}

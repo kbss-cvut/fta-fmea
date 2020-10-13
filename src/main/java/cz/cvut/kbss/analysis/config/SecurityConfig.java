@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.config;
 
 import cz.cvut.kbss.analysis.security.JwtConfigurer;
 import cz.cvut.kbss.analysis.service.JwtTokenProvider;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final SecurityUtils securityUtils;
 
     @Autowired
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, SecurityUtils securityUtils) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.securityUtils = securityUtils;
     }
 
     @Bean
@@ -48,9 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/register").permitAll()
                 .antMatchers("/auth/signin").permitAll()
-                // TODO additional configuration?
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+                .apply(new JwtConfigurer(jwtTokenProvider, securityUtils));
     }
 }

@@ -149,11 +149,15 @@ fta-fmea:hasPassword
     rdfs:domain fta-fmea:User ;
     rdfs:range  xsd:string .
 
-fta-fmea:authoredFailureMode
+fta-fmea:authoredBy
     rdf:type    owl:ObjectProperty ;
-    rdfs:label  "authored failure mode" ;
-    rdfs:domain fta-fmea:User ;
-    rdfs:range  fta-fmea:FailureMode .
+    rdfs:label  "authored by" ;
+    rdfs:range  fta-fmea:User .
+
+fta-fmea:hasCreationDate
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has creation date" ;
+    rdfs:domain xsd:date .
 
 fta-fmea:hasName
     rdf:type   owl:DatatypeProperty ;

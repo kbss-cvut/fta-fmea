@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class FailureModeRepositoryService {
@@ -25,8 +25,9 @@ public class FailureModeRepositoryService {
     }
 
     @Transactional
-    public void persist(FailureMode failureMode) {
+    public URI persist(FailureMode failureMode) {
         failureModeDao.persist(failureMode);
+        return failureMode.getUri();
     }
 
     @Transactional
