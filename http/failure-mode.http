@@ -1,4 +1,4 @@
-GET {{host}}/failureModes/createDummy
+GET {{host}}/failureModes/
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
