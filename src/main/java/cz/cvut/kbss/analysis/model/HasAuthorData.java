@@ -3,9 +3,11 @@ package cz.cvut.kbss.analysis.model;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
+@EqualsAndHashCode(callSuper = true)
 @MappedSuperclass
 @Data
 public abstract class HasAuthorData extends AbstractEntity {
