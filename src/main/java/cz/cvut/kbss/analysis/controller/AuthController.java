@@ -6,6 +6,7 @@ import cz.cvut.kbss.analysis.dto.registration.UserRegistrationRequest;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.JwtTokenProvider;
 import cz.cvut.kbss.analysis.service.UserRepositoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,18 +20,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepositoryService userRepositoryService;
-
-    @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserRepositoryService userRepositoryService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepositoryService = userRepositoryService;
-    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})

@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,14 +14,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ComponentRepositoryService {
 
     private final ComponentDao componentDao;
-
-    @Autowired
-    public ComponentRepositoryService(ComponentDao componentDao) {
-        this.componentDao = componentDao;
-    }
 
     @Transactional(readOnly = true)
     public List<Component> findAllForUser(User user) {

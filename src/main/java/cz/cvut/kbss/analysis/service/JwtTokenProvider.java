@@ -8,8 +8,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class JwtTokenProvider {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -33,12 +34,6 @@ public class JwtTokenProvider {
     private final UserDetailsService userDetailsService;
 
     private Key key;
-
-    @Autowired
-    public JwtTokenProvider(JwtConf jwtConf, @Qualifier("mainUserDetailsService") UserDetailsService userDetailsService) {
-        this.jwtConf = jwtConf;
-        this.userDetailsService = userDetailsService;
-    }
 
     @PostConstruct
     protected void init() {

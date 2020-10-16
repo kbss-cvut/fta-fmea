@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.UserDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.UsernameNotAvailableException;
 import cz.cvut.kbss.analysis.model.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,16 +23,11 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserRepositoryService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserRepositoryService(UserDao userDao, PasswordEncoder passwordEncoder) {
-        this.userDao = userDao;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public User getCurrent(UserDetails userDetails) {
         return userDao
