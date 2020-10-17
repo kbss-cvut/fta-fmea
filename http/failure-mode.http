@@ -9,8 +9,12 @@ Content-Type: application/ld+json
 Authorization: Bearer {{jwt}}
 
 {
-    "@type": [
-      "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FailureMode"
-    ],
-    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Failure Mode Number - 69"
+  "name": "Failure Mode Number - 69",
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FailureMode"
+  ],
+  "@context": {
+    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
+    "types": "@type"
   }
+}

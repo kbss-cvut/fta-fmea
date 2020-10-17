@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,8 +30,9 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public URI register(@RequestBody User user) {
-        return userRepositoryService.register(user);
+    public ResponseEntity<Void> register(@RequestBody User user) {
+        URI uri = userRepositoryService.register(user);
+        return ResponseEntity.created(uri).build();
     }
 
     @PostMapping("/signin")
