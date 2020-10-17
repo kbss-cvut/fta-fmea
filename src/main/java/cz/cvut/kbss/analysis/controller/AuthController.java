@@ -2,10 +2,10 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.dto.authentication.AuthenticationRequest;
 import cz.cvut.kbss.analysis.dto.authentication.AuthenticationResponse;
-import cz.cvut.kbss.analysis.dto.registration.UserRegistrationRequest;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.JwtTokenProvider;
 import cz.cvut.kbss.analysis.service.UserRepositoryService;
+import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,13 +28,9 @@ public class AuthController {
     private final UserRepositoryService userRepositoryService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public URI register(@RequestBody UserRegistrationRequest registrationRequest) {
-        User newUser = new User();
-        newUser.setUsername(registrationRequest.getUsername());
-        newUser.setPassword(registrationRequest.getPassword());
-
-        return userRepositoryService.register(newUser);
+    @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public URI register(@RequestBody User user) {
+        return userRepositoryService.register(user);
     }
 
     @PostMapping("/signin")

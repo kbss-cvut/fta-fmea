@@ -1,9 +1,18 @@
 POST {{host}}/auth/register
-Content-Type: application/json
+Content-Type: application/ld+json
 
 {
   "username": "jakub",
-  "password": "heslicko"
+  "password": "heslicko",
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/User"
+  ],
+  "@context": {
+    "iri": "@id",
+    "username": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasUsername",
+    "password": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasPassword",
+    "types": "@type"
+  }
 }
 
 ###
