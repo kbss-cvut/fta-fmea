@@ -19,14 +19,14 @@ public abstract class Event implements HasIdentifier, HasTypes, Serializable {
     @Id(generated = true)
     private URI uri;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_produces)
-    protected Event producedEvent;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_consistsOf, cascade = CascadeType.ALL)
-    protected Set<Event> inputEvents = new HashSet<>();
-
+    // TODO are types necessary?
     @Types
     protected Set<String> types;
+
+    @Override
+    public String toString() {
+        return "Event <" + getUri() + "/>";
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.Objects;
 
-@EqualsAndHashCode(callSuper = true)
 @MappedSuperclass
 @Data
 public abstract class HasAuthorData extends AbstractEntity {
@@ -19,5 +19,23 @@ public abstract class HasAuthorData extends AbstractEntity {
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasCreationDate)
     private Date creationDate;
+
+    @Override
+    public String toString() {
+        return "HasAuthorData <" + getUri() + "/>";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HasAuthorData that = (HasAuthorData) o;
+        return Objects.equals(getUri(), that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
 
 }

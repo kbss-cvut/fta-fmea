@@ -7,8 +7,9 @@ import cz.cvut.kbss.jopa.model.annotations.ParticipationConstraints;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Objects;
+
 @OWLClass(iri = Vocabulary.s_c_RiskPriorityNumber)
-@EqualsAndHashCode(callSuper = true)
 @Data
 public class RiskPriorityNumber extends AbstractEntity {
 
@@ -21,5 +22,23 @@ public class RiskPriorityNumber extends AbstractEntity {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasDetection)
     private Integer detection;
+
+    @Override
+    public String toString() {
+        return "RiskPriorityNumber <" + getUri() + "/>";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RiskPriorityNumber that = (RiskPriorityNumber) o;
+        return Objects.equals(getUri(), that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
 
 }

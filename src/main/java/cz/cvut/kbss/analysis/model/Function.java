@@ -1,23 +1,48 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import cz.cvut.kbss.jopa.model.annotations.CascadeType;
-import cz.cvut.kbss.jopa.model.annotations.OWLClass;
-import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
+import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.mapdb.Fun;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 @OWLClass(iri = Vocabulary.s_c_Function)
+@Data
 public class Function extends AbstractEntity {
 
+    @ParticipationConstraints(nonEmpty = true)
+    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
+    private String name;
+
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL)
-    private Set<FailureMode> failureModes = new HashSet<>();
+    private Set<FailureMode> failureModes;
+
+    public void addFailureMode(FailureMode failureMode) {
+        if (getFailureModes() == null) {
+            setFailureModes(new HashSet<>());
+        }
+        getFailureModes().add(failureMode);
+    }
+
+    @Override
+    public String toString() {
+        return "Function <" + getUri() + "/>";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Function that = (Function) o;
+        return Objects.equals(getUri(), that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
 
 }
+

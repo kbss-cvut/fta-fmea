@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 @OWLClass(iri = Vocabulary.s_c_Component)
 @EntityListeners(HasAuthorDataManager.class)
+@Data
 public class Component extends HasAuthorData {
 
     @ParticipationConstraints(nonEmpty = true)
@@ -22,4 +22,29 @@ public class Component extends HasAuthorData {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL)
     private Set<Function> functions = new HashSet<>();
 
+    public void addFunction(Function function) {
+        if (getFunctions() == null) {
+            setFunctions(new HashSet<>());
+        }
+        getFunctions().add(function);
+    }
+
+    @Override
+    public String toString() {
+        return "Component <" + getUri() + "/>";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Component that = (Component) o;
+        return getUri().equals(that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
 }

@@ -2,7 +2,6 @@ GET {{host}}/components
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
 
-
 ###
 POST {{host}}/components
 Content-Type: application/ld+json
@@ -12,5 +11,29 @@ Authorization: Bearer {{jwt}}
   "@type": [
     "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Component"
   ],
-  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Engine"
+  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Wing"
+}
+
+
+###
+GET {{host}}/components/{{componentFragment}}/functions
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+
+###
+POST {{host}}/components/{{componentFragment}}/functions
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "name": "Keep Plane In the Air",
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Function"
+  ],
+  "@context": {
+    "iri": "@id",
+    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
+    "types": "@type"
+  }
 }

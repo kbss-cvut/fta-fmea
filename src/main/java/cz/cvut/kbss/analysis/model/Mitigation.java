@@ -7,8 +7,9 @@ import cz.cvut.kbss.jopa.model.annotations.ParticipationConstraints;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Objects;
+
 @OWLClass(iri = Vocabulary.s_c_Mitigation)
-@EqualsAndHashCode(callSuper = true)
 @Data
 public class Mitigation extends AbstractEntity {
 
@@ -18,5 +19,23 @@ public class Mitigation extends AbstractEntity {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
     private String description;
+
+    @Override
+    public String toString() {
+        return "Mitigation <" + getUri() + "/>";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Mitigation that = (Mitigation) o;
+        return Objects.equals(getUri(), that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
 
 }

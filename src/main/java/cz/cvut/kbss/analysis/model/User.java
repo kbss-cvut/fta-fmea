@@ -13,9 +13,8 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 @OWLClass(iri = Vocabulary.s_c_User)
+@Data
 public class User extends AbstractEntity implements UserDetails {
 
     @ParticipationConstraints(nonEmpty = true)
@@ -54,4 +53,23 @@ public class User extends AbstractEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "User <" + getUri() + "/>";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User that = (User) o;
+        return Objects.equals(getUri(), that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
+
 }

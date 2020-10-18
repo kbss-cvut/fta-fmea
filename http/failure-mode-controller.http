@@ -1,0 +1,45 @@
+GET {{host}}/failureModes/{{failureModeFragment}}
+Authorization: Bearer {{jwt}}
+
+
+###
+GET {{host}}/failureModes/{{failureModeFragment}}/mitigation
+Authorization: Bearer {{jwt}}
+
+
+###
+POST {{host}}/failureModes/{{failureModeFragment}}/mitigation
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "name": "Better Materials",
+  "description": "Usage of material XY",
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Mitigation"
+  ],
+  "@context": {
+    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
+    "description": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDescription",
+    "types": "@type"
+  }
+}
+
+
+###
+POST {{host}}/failureModes/{{failureModeFragment}}/causingEvent
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "eventType": "INITIAL",
+  "probability": 0.5,
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultEvent"
+  ],
+  "@context": {
+    "eventType": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFaultEventType",
+    "probability": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasProbability",
+    "types": "@type"
+  }
+}

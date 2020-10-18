@@ -1,0 +1,57 @@
+GET {{host}}/events/{{gateFragment}}/inputEvents
+Authorization: Bearer {{jwt}}
+
+###
+POST {{host}}/events/{{eventFragment}}/inputEvents
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "name": "Random Event",
+  "eventType": "INITIAL",
+  "probability": 0.6,
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultEvent"
+  ],
+  "@context": {
+    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
+    "eventType": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFaultEventType",
+    "probability": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasProbability",
+    "types": "@type"
+  }
+}
+
+
+###
+POST {{host}}/events/{{eventFragment}}/takenAction
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "name": "Taken Action preventing...",
+  "description": "The event will be prevented by doing XY",
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/TakenAction"
+  ],
+  "@context": {
+    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
+    "description": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDescription",
+    "types": "@type"
+  }
+}
+
+###
+POST {{host}}/events/{{eventFragment}}/gate
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "gateType": "AND",
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Gate"
+  ],
+  "@context": {
+    "gateType": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasGateType",
+    "types": "@type"
+  }
+}

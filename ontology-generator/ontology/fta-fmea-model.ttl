@@ -123,6 +123,12 @@ fta-fmea:influences
     rdfs:domain fta-fmea:FaultEvent ;
     rdfs:range  fta-fmea:Component .
 
+fta-fmea:isPreventedBy
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "is prevented by" ;
+    rdfs:range  fta-fmea:FaultEvent ;
+    rdfs:domain fta-fmea:TakenAction .
+
 fta-fmea:TakenAction
     rdf:type   owl:Class ;
     rdfs:label "Taken action" .

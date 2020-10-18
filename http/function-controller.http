@@ -1,0 +1,32 @@
+###
+GET {{host}}/functions/{{functionFragment}}/failureModes
+Authorization: Bearer {{jwt}}
+
+
+###
+POST {{host}}/functions/{{functionFragment}}/failureModes
+Content-Type: application/ld+json
+Authorization: Bearer {{jwt}}
+
+{
+  "name": "Wing Explodes",
+  "description": "wing completely explodes into pieces",
+  "riskPriorityNumber": {
+    "probability": 0.5,
+    "severity": 4,
+    "detection": 1,
+    "types": ["http://onto.fel.cvut.cz/ontologies/fta-fmea-application/RiskPriorityNumber"]
+  },
+  "types": [
+    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FailureMode"
+  ],
+  "@context": {
+    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
+    "description": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDescription",
+    "riskPriorityNumber": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasRPN",
+    "probability": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasProbability",
+    "severity": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasSeverity",
+    "detection": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDetection",
+    "types": "@type"
+  }
+}

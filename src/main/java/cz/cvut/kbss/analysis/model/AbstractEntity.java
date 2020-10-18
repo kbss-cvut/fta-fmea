@@ -28,4 +28,10 @@ public abstract class AbstractEntity implements HasIdentifier, Serializable {
     public int hashCode() {
         return Objects.hash(uri);
     }
+
+    @Override
+    public String toString() {
+        return "AbstractEntity <" + getUri() + "/>";
+    }
+
 }
