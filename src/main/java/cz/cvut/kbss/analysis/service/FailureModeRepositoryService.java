@@ -56,7 +56,7 @@ public class FailureModeRepositoryService {
         // insert a gate in between
         Gate intermediateGate = new Gate();
         intermediateGate.setFailureMode(failureMode);
-        failureMode.setCausingGate(intermediateGate);
+        failureMode.setManifestingGate(intermediateGate);
 
         intermediateGate.addInputEvent(causingEvent);
 

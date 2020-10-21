@@ -28,10 +28,6 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
 
-    // TODO influencedComponent API operation, testing?
-    @OWLDataProperty(iri = Vocabulary.s_p_influences)
-    private Component influencedComponent;
-
     @OWLObjectProperty(iri = Vocabulary.s_p_isPreventedBy, cascade = CascadeType.ALL)
     private TakenAction takenAction;
 

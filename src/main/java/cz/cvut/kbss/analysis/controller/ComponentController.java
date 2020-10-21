@@ -35,8 +35,9 @@ public class ComponentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public URI createComponent(@RequestBody Component component) {
-        return repositoryService.persist(component);
+    public ResponseEntity<Void> createComponent(@RequestBody Component component) {
+        URI componentUri = repositoryService.persist(component);
+        return ResponseEntity.created(componentUri).build();
     }
 
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

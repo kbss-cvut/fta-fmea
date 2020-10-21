@@ -21,7 +21,7 @@ public class Gate extends Event {
     private GateType gateType = GateType.OR; // neutral gate type
 
     // only top gate causes failureMode
-    @OWLObjectProperty(iri = Vocabulary.s_p_causes)
+    @OWLObjectProperty(iri = Vocabulary.s_p_manifests)
     protected FailureMode failureMode;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_produces)

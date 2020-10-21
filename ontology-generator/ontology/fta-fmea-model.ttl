@@ -41,9 +41,9 @@ fta-fmea:hasRPN
     rdfs:domain fta-fmea:FailureMode ;
     rdfs:range  fta-fmea:RiskPriorityNumber .
 
-fta-fmea:isCausedBy
+fta-fmea:isManifestedBy
     rdf:type    owl:ObjectProperty ;
-    rdfs:label  "is caused by" ;
+    rdfs:label  "is manifested by" ;
     rdfs:domain fta-fmea:FailureMode ;
     rdfs:range  fta-fmea:Event .
 
@@ -77,9 +77,9 @@ fta-fmea:Event
     rdf:type   owl:Class ;
     rdfs:label "Event" .
 
-fta-fmea:causes
+fta-fmea:manifests
     rdf:type    owl:ObjectProperty ;
-    rdfs:label  "causes" ;
+    rdfs:label  "manifests" ;
     rdfs:domain fta-fmea:Event ;
     rdfs:range  fta-fmea:FailureMode .
 
@@ -117,12 +117,6 @@ fta-fmea:hasFaultEventType
     rdfs:domain fta-fmea:FaultEvent ;
     rdfs:range  xsd:string .
 
-fta-fmea:influences
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "influences" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:Component .
-
 fta-fmea:isPreventedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "is prevented by" ;
@@ -156,9 +150,9 @@ fta-fmea:hasPassword
     rdfs:range  xsd:string .
 
 fta-fmea:authoredBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "authored by" ;
-    rdfs:range  fta-fmea:User .
+    rdf:type   owl:ObjectProperty ;
+    rdfs:label "authored by" ;
+    rdfs:range fta-fmea:User .
 
 fta-fmea:hasCreationDate
     rdf:type    owl:ObjectProperty ;
