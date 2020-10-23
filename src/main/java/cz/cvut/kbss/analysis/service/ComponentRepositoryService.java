@@ -28,9 +28,9 @@ public class ComponentRepositoryService {
     }
 
     @Transactional(readOnly = true)
-    public URI persist(Component component) {
+    public Component persist(Component component) {
         componentDao.persist(component);
-        return component.getUri();
+        return component;
     }
 
     @Transactional

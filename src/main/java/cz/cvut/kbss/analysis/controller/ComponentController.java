@@ -33,11 +33,12 @@ public class ComponentController {
         return repositoryService.findAllForUser(user);
     }
 
+    // TODO start returning persisted entity?
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> createComponent(@RequestBody Component component) {
-        URI componentUri = repositoryService.persist(component);
-        return ResponseEntity.created(componentUri).build();
+    public Component createComponent(@RequestBody Component component) {
+        repositoryService.persist(component);
+        return component;
     }
 
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
