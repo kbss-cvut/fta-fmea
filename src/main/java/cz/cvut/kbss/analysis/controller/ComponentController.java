@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +32,10 @@ public class ComponentController {
         return repositoryService.findAllForUser(user);
     }
 
-    // TODO start returning persisted entity?
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Component createComponent(@RequestBody Component component) {
-        repositoryService.persist(component);
-        return component;
+        return repositoryService.persist(component);
     }
 
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
@@ -49,11 +46,10 @@ public class ComponentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{componentFragment}/functions", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> addFunction(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody Function function) {
+    public Function addFunction(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody Function function) {
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
 
-        URI functionUri = repositoryService.addFunction(componentUri, function);
-        return ResponseEntity.created(functionUri).build();
+        return repositoryService.addFunction(componentUri, function);
     }
 
 }

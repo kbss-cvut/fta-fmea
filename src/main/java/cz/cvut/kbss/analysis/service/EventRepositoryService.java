@@ -2,10 +2,11 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.GateDao;
+import cz.cvut.kbss.analysis.dao.TreeNodeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.exception.InvalidEntityTypeException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.util.TreeNodeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,49 +24,48 @@ import java.util.Set;
 public class EventRepositoryService {
 
     private final FaultEventDao faultEventDao;
-    private final GateDao gateDao;
+    private final TreeNodeDao treeNodeDao;
 
-    // TODO refactor usage of both URIs ?
     @Transactional
-    public URI addInputEvent(URI gateUri, URI eventUri, FaultEvent inputEvent) {
-        Gate gate = gateDao
-                .find(gateUri)
-                .orElseGet(() -> {
-                    log.info("Could not find gate {}. Searching for event instead.", gateUri);
-                    FaultEvent faultEvent = faultEventDao
-                            .find(eventUri)
-                            .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+    public TreeNode addInputEvent(URI nodeUri, FaultEvent inputEvent) {
+        TreeNode node = getNode(nodeUri);
 
-                    Gate intermediateGate = faultEvent.getInputGate();
-                    if (intermediateGate == null) {
-                        log.info("Creating intermediate gate under {}", faultEvent);
-                        intermediateGate = new Gate();
-                        faultEvent.setInputGate(intermediateGate);
-                        intermediateGate.setProducedEvent(faultEvent);
-                        faultEventDao.update(faultEvent);
-                    }
+        TreeNode currentGate;
+        if (node.getNodeType() == TreeNodeType.EVENT) {
+            if (node.getChildren() != null) {
+                log.info("Reusing existing gate. Event can only have one child gate.");
+                currentGate = node.getChildren().iterator().next();
+            } else {
+                log.info("Inserting intermediate gate in below event...");
+                TreeNode intermediateNode = new TreeNode(new Gate());
+                node.addChild(intermediateNode);
+                treeNodeDao.update(node);
+                currentGate = intermediateNode;
+            }
+        } else {
+            currentGate = node;
+        }
 
-                    return intermediateGate;
-                });
+        TreeNode inputEventNode = new TreeNode(inputEvent);
+        currentGate.addChild(inputEventNode);
+        treeNodeDao.update(currentGate);
 
-        gate.addInputEvent(inputEvent);
-        inputEvent.setEnteredGate(gate);
-        gateDao.update(gate);
-
-        return inputEvent.getUri();
+        return inputEventNode;
     }
 
     @Transactional(readOnly = true)
-    public Set<FaultEvent> getInputEvents(URI eventUri) {
-        Gate gate = gateDao
-                .find(eventUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+    public Set<Event> getInputEvents(URI nodeUri) {
+        TreeNode node = getNode(nodeUri);
 
-        return gate.getInputEvents();
+        if (node.getChildren() == null) {
+            return new HashSet<>();
+        } else {
+            return node.getChildren().stream().map(TreeNode::getEvent).collect(Collectors.toSet());
+        }
     }
 
     @Transactional
-    public URI setTakenAction(URI eventUri, TakenAction takenAction) {
+    public TakenAction setTakenAction(URI eventUri, TakenAction takenAction) {
         FaultEvent faultEvent = faultEventDao
                 .find(eventUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
@@ -72,24 +74,33 @@ public class EventRepositoryService {
         takenAction.setFaultEvent(faultEvent);
 
         faultEventDao.update(faultEvent);
-        return takenAction.getUri();
+
+        return takenAction;
     }
 
     @Transactional
-    public URI insertGate(URI eventUri, Gate gate) {
-        FaultEvent faultEvent = faultEventDao
-                .find(eventUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+    public TreeNode insertGate(URI nodeUri, Gate gate) {
+        TreeNode node = getNode(nodeUri);
 
-        if (faultEvent.getInputGate() != null) {
+        if (node.getNodeType() != TreeNodeType.EVENT) {
+            throw new LogicViolationException("Cannot insert gate under gate!");
+        }
+
+        if (node.getChildren() != null) {
             throw new LogicViolationException("Event already has a gate");
         }
 
-        faultEvent.setInputGate(gate);
-        gate.setProducedEvent(faultEvent);
-        faultEventDao.update(faultEvent);
+        TreeNode gateNode = new TreeNode(gate);
+        node.addChild(gateNode);
+        treeNodeDao.update(node);
 
-        return gate.getUri();
+        return gateNode;
+    }
+
+    private TreeNode getNode(URI nodeUri) {
+        return treeNodeDao
+                .find(nodeUri)
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find tree node"));
     }
 
 }

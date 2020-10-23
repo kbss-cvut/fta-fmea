@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,38 +22,34 @@ public class EventController {
     private final IdentifierService identifierService;
     private final EventRepositoryService repositoryService;
 
-    @GetMapping(value = "/{eventFragment}/inputEvents", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
-    public Set<FaultEvent> getInputEvents(@PathVariable(name = "eventFragment") String eventFragment) {
-        URI gateUri = identifierService.composeIdentifier(Vocabulary.s_c_Gate, eventFragment);
+    @GetMapping(value = "/{treeNodeFragment}/inputEvents", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<Event> getInputEvents(@PathVariable(name = "treeNodeFragment") String treeNodeFragment) {
+        URI gateUri = identifierService.composeIdentifier(Vocabulary.s_c_TreeNode, treeNodeFragment);
         return repositoryService.getInputEvents(gateUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{eventFragment}/inputEvents", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> addInputEvent(@PathVariable(name = "eventFragment") String eventFragment, @RequestBody FaultEvent inputEvent) {
-        URI gateUri = identifierService.composeIdentifier(Vocabulary.s_c_Gate, eventFragment);
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, eventFragment);
+    @PostMapping(value = "/{treeNodeFragment}/inputEvents", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public TreeNode addInputEvent(@PathVariable(name = "treeNodeFragment") String treeNodeFragment, @RequestBody FaultEvent inputEvent) {
+        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_TreeNode, treeNodeFragment);
 
-        URI inputEventUri = repositoryService.addInputEvent(gateUri, faultEventUri, inputEvent);
-        return ResponseEntity.created(inputEventUri).build();
+        return repositoryService.addInputEvent(nodeUri, inputEvent);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{eventFragment}/gate", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> insertGate(@PathVariable(name = "eventFragment") String eventFragment, @RequestBody Gate gate) {
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, eventFragment);
+    @PostMapping(value = "/{treeNodeFragment}/gate", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public TreeNode insertGate(@PathVariable(name = "treeNodeFragment") String treeNodeFragment, @RequestBody Gate gate) {
+        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_TreeNode, treeNodeFragment);
 
-        URI gateUri = repositoryService.insertGate(faultEventUri, gate);
-        return ResponseEntity.created(gateUri).build();
+        return repositoryService.insertGate(nodeUri, gate);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{eventFragment}/takenAction", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> setTakenAction(@PathVariable(name = "eventFragment") String eventFragment, @RequestBody TakenAction takenAction) {
+    public TakenAction setTakenAction(@PathVariable(name = "eventFragment") String eventFragment, @RequestBody TakenAction takenAction) {
         URI eventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, eventFragment);
 
-        URI takenActionUri = repositoryService.setTakenAction(eventUri, takenAction);
-        return ResponseEntity.created(takenActionUri).build();
+        return repositoryService.setTakenAction(eventUri, takenAction);
     }
 
 }

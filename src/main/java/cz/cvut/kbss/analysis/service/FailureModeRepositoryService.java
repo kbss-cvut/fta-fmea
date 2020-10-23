@@ -2,10 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.model.FailureMode;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.Gate;
-import cz.cvut.kbss.analysis.model.Mitigation;
+import cz.cvut.kbss.analysis.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,46 +19,48 @@ public class FailureModeRepositoryService {
 
     @Transactional(readOnly = true)
     public FailureMode find(URI failureModeUri) {
-        return failureModeDao
-                .find(failureModeUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+        return getNode(failureModeUri);
     }
 
     @Transactional(readOnly = true)
     public Set<Mitigation> getMitigation(URI failureModeUri) {
-        FailureMode failureMode = failureModeDao
-                .find(failureModeUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+        FailureMode failureMode = getNode(failureModeUri);
 
         return failureMode.getMitigation();
     }
 
     @Transactional
-    public URI addMitigation(URI failureModeUri, Mitigation mitigation) {
-        FailureMode failureMode = failureModeDao
-                .find(failureModeUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+    public Mitigation addMitigation(URI failureModeUri, Mitigation mitigation) {
+        FailureMode failureMode = getNode(failureModeUri);
 
         failureMode.addMitigation(mitigation);
         failureModeDao.update(failureMode);
-        return mitigation.getUri();
+
+        return mitigation;
     }
 
     @Transactional
-    public URI setCausingEvent(URI failureModeUri, FaultEvent causingEvent) {
-        FailureMode failureMode = failureModeDao
-                .find(failureModeUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
+    public TreeNode setManifestingEvent(URI failureModeUri, FaultEvent manifestingEvent) {
+        FailureMode failureMode = getNode(failureModeUri);
 
         // insert a gate in between
         Gate intermediateGate = new Gate();
-        intermediateGate.setFailureMode(failureMode);
-        failureMode.setManifestingGate(intermediateGate);
+        TreeNode intermediateNode = new TreeNode(intermediateGate);
 
-        intermediateGate.addInputEvent(causingEvent);
+        TreeNode manifestingNode = new TreeNode(manifestingEvent);
+        intermediateNode.addChild(manifestingNode);
+
+        failureMode.setManifestingNode(intermediateNode);
 
         failureModeDao.update(failureMode);
-        return causingEvent.getUri();
+
+        return manifestingNode;
+    }
+
+    private FailureMode getNode(URI failureModeUri) {
+        return failureModeDao
+                .find(failureModeUri)
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
     }
 
 }

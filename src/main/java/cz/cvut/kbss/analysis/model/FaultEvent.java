@@ -18,12 +18,6 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_produces)
-    protected Gate enteredGate;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_consistsOf, cascade = CascadeType.ALL)
-    protected Gate inputGate;
-
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;

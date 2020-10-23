@@ -20,23 +20,6 @@ public class Gate extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType = GateType.OR; // neutral gate type
 
-    // only top gate causes failureMode
-    @OWLObjectProperty(iri = Vocabulary.s_p_manifests)
-    protected FailureMode failureMode;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_produces)
-    protected FaultEvent producedEvent;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_consistsOf, cascade = CascadeType.ALL)
-    protected Set<FaultEvent> inputEvents;
-
-    public void addInputEvent(FaultEvent inputEvent) {
-        if (getInputEvents() == null) {
-            setInputEvents(new HashSet<>());
-        }
-        getInputEvents().add(inputEvent);
-    }
-
     @Override
     public String toString() {
         return "Gate <" + getUri() + "/>";

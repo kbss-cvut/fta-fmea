@@ -37,20 +37,18 @@ public class FailureModeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{failureModeFragment}/mitigation", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> addMitigation(@PathVariable(name = "failureModeFragment") String failureModeFragment, @RequestBody Mitigation mitigation) {
+    public Mitigation addMitigation(@PathVariable(name = "failureModeFragment") String failureModeFragment, @RequestBody Mitigation mitigation) {
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
 
-        URI functionUri = repositoryService.addMitigation(failureModeUri, mitigation);
-        return ResponseEntity.created(functionUri).build();
+        return repositoryService.addMitigation(failureModeUri, mitigation);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{failureModeFragment}/causingEvent", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> setCausingEvent(@PathVariable(name = "failureModeFragment") String failureModeFragment, @RequestBody FaultEvent causingEvent) {
+    @PostMapping(value = "/{failureModeFragment}/manifestingEvent", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public TreeNode setManifestingEvent(@PathVariable(name = "failureModeFragment") String failureModeFragment, @RequestBody FaultEvent manifestingEvent) {
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
 
-        URI causingEventUri = repositoryService.setCausingEvent(failureModeUri, causingEvent);
-        return ResponseEntity.created(causingEventUri).build();
+        return repositoryService.setManifestingEvent(failureModeUri, manifestingEvent);
     }
 
 }

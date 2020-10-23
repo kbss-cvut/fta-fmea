@@ -32,11 +32,10 @@ public class FunctionController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{functionFragment}/failureModes", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public ResponseEntity<Void> addFailureMode(@PathVariable(name = "functionFragment") String functionFragment, @RequestBody FailureMode failureMode) {
+    public FailureMode addFailureMode(@PathVariable(name = "functionFragment") String functionFragment, @RequestBody FailureMode failureMode) {
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
 
-        URI failureModeUri = repositoryService.addFailureMode(functionUri, failureMode);
-        return ResponseEntity.created(failureModeUri).build();
+        return repositoryService.addFailureMode(functionUri, failureMode);
     }
 
 }

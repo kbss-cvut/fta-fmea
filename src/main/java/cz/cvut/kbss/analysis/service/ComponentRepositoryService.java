@@ -34,7 +34,7 @@ public class ComponentRepositoryService {
     }
 
     @Transactional
-    public URI addFunction(URI componentUri, Function function) {
+    public Function addFunction(URI componentUri, Function function) {
         Component component = componentDao
                 .find(componentUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
@@ -42,7 +42,7 @@ public class ComponentRepositoryService {
         component.addFunction(function);
         componentDao.update(component);
 
-        return function.getUri();
+        return function;
     }
 
     @Transactional(readOnly = true)

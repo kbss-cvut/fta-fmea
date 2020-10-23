@@ -21,7 +21,7 @@ public class FunctionRepositoryService {
     private final FunctionDao functionDao;
 
     @Transactional
-    public URI addFailureMode(URI functionUri, FailureMode failureMode) {
+    public FailureMode addFailureMode(URI functionUri, FailureMode failureMode) {
         Function function = functionDao
                 .find(functionUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
@@ -29,7 +29,7 @@ public class FunctionRepositoryService {
         function.addFailureMode(failureMode);
         functionDao.update(function);
 
-        return failureMode.getUri();
+        return failureMode;
     }
 
     @Transactional(readOnly = true)

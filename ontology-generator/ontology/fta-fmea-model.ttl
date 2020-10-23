@@ -45,7 +45,7 @@ fta-fmea:isManifestedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "is manifested by" ;
     rdfs:domain fta-fmea:FailureMode ;
-    rdfs:range  fta-fmea:Event .
+    rdfs:range  fta-fmea:TreeNode .
 
 fta-fmea:Mitigation
     rdf:type   owl:Class ;
@@ -76,12 +76,6 @@ fta-fmea:hasDetection
 fta-fmea:Event
     rdf:type   owl:Class ;
     rdfs:label "Event" .
-
-fta-fmea:manifests
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "manifests" ;
-    rdfs:domain fta-fmea:Event ;
-    rdfs:range  fta-fmea:FailureMode .
 
 fta-fmea:Gate
     rdf:type        owl:Class ;
@@ -132,6 +126,34 @@ fta-fmea:prevents
     rdfs:label  "prevents" ;
     rdfs:domain fta-fmea:TakenAction ;
     rdfs:range  fta-fmea:FaultEvent .
+
+fta-fmea:TreeNode
+    rdf:type   owl:Class ;
+    rdfs:label "Tree Node" .
+
+fta-fmea:hasParent
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has parent" ;
+    rdfs:domain fta-fmea:TreeNode ;
+    rdfs:range  fta-fmea:TreeNode .
+
+fta-fmea:hasChildren
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has children" ;
+    rdfs:domain fta-fmea:TreeNode ;
+    rdfs:range  fta-fmea:TreeNode .
+
+fta-fmea:holds
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "holds" ;
+    rdfs:domain fta-fmea:TreeNode ;
+    rdfs:range  fta-fmea:Event .
+
+fta-fmea:hasTreeNodeType
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "has tree node type" ;
+    rdfs:domain fta-fmea:TreeNode ;
+    rdfs:range  xsd:string .
 
 fta-fmea:User
     rdf:type   owl:Class ;
