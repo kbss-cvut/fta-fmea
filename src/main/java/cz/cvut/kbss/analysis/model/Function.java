@@ -17,12 +17,9 @@ public class Function extends AbstractEntity {
     private String name;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL)
-    private Set<FailureMode> failureModes;
+    private Set<FailureMode> failureModes = new HashSet<>();
 
     public void addFailureMode(FailureMode failureMode) {
-        if (getFailureModes() == null) {
-            setFailureModes(new HashSet<>());
-        }
         getFailureModes().add(failureMode);
     }
 

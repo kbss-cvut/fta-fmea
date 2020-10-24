@@ -9,8 +9,8 @@ Content-Type: application/ld+json
 Authorization: Bearer {{jwt}}
 
 {
-  "name": "Wing Explodes",
-  "description": "wing completely explodes into pieces",
+  "name": "Pump not working",
+  "description": "Pump cannot push the fuel to the engine",
   "riskPriorityNumber": {
     "probability": 0.5,
     "severity": 4,

@@ -23,9 +23,6 @@ public class Component extends HasAuthorData {
     private Set<Function> functions = new HashSet<>();
 
     public void addFunction(Function function) {
-        if (getFunctions() == null) {
-            setFunctions(new HashSet<>());
-        }
         getFunctions().add(function);
     }
 

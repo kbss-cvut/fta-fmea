@@ -30,12 +30,9 @@ public class FailureMode extends HasAuthorData {
     private TreeNode manifestingNode;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
-    private Set<Mitigation> mitigation;
+    private Set<Mitigation> mitigation = new HashSet<>();
 
     public void addMitigation(Mitigation mitigation) {
-        if (getMitigation() == null) {
-            setMitigation(new HashSet<>());
-        }
         getMitigation().add(mitigation);
     }
 

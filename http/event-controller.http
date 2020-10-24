@@ -1,14 +1,14 @@
-GET {{host}}/events/{{gateFragment}}/inputEvents
+GET {{host}}/events/{{treeNodeFragment}}/inputEvents
 Authorization: Bearer {{jwt}}
 
 ###
-POST {{host}}/events/{{eventFragment}}/inputEvents
+POST {{host}}/events/{{treeNodeFragment}}/inputEvents
 Content-Type: application/ld+json
 Authorization: Bearer {{jwt}}
 
 {
   "name": "Random Event",
-  "eventType": "INITIAL",
+  "eventType": "BASIC",
   "probability": 0.6,
   "types": [
     "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultEvent"
@@ -41,7 +41,7 @@ Authorization: Bearer {{jwt}}
 }
 
 ###
-POST {{host}}/events/{{eventFragment}}/gate
+POST {{host}}/events/{{treeNodeFragment}}/gate
 Content-Type: application/ld+json
 Authorization: Bearer {{jwt}}
 

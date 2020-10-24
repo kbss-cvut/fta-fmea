@@ -11,7 +11,7 @@ Authorization: Bearer {{jwt}}
   "@type": [
     "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Component"
   ],
-  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Wing"
+  "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName": "Engine"
 }
 
 
@@ -27,7 +27,7 @@ Content-Type: application/ld+json
 Authorization: Bearer {{jwt}}
 
 {
-  "name": "Keep Plane In the Air",
+  "name": "Source of power",
   "types": [
     "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Function"
   ],

@@ -28,9 +28,8 @@ public class TreeNode extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasParent)
     private TreeNode parent;
 
-    // TODO initialize the property from the beginning?
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL)
-    private Set<TreeNode> children;
+    private Set<TreeNode> children = new HashSet<>();
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasTreeNodeType)
     private TreeNodeType nodeType;
@@ -39,9 +38,6 @@ public class TreeNode extends AbstractEntity {
     private Event event;
 
     public void addChild(TreeNode child) {
-        if (getChildren() == null) {
-            setChildren(new HashSet<>());
-        }
         getChildren().add(child);
         child.setParent(this);
     }

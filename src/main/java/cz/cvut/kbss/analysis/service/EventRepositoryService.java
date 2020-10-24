@@ -32,7 +32,7 @@ public class EventRepositoryService {
 
         TreeNode currentGate;
         if (node.getNodeType() == TreeNodeType.EVENT) {
-            if (node.getChildren() != null) {
+            if (!node.getChildren().isEmpty()) {
                 log.info("Reusing existing gate. Event can only have one child gate.");
                 currentGate = node.getChildren().iterator().next();
             } else {
@@ -57,11 +57,7 @@ public class EventRepositoryService {
     public Set<Event> getInputEvents(URI nodeUri) {
         TreeNode node = getNode(nodeUri);
 
-        if (node.getChildren() == null) {
-            return new HashSet<>();
-        } else {
-            return node.getChildren().stream().map(TreeNode::getEvent).collect(Collectors.toSet());
-        }
+        return node.getChildren().stream().map(TreeNode::getEvent).collect(Collectors.toSet());
     }
 
     @Transactional
@@ -86,7 +82,7 @@ public class EventRepositoryService {
             throw new LogicViolationException("Cannot insert gate under gate!");
         }
 
-        if (node.getChildren() != null) {
+        if (!node.getChildren().isEmpty()) {
             throw new LogicViolationException("Event already has a gate");
         }
 
