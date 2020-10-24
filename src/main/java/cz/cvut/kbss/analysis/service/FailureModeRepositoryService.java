@@ -43,14 +43,8 @@ public class FailureModeRepositoryService {
     public TreeNode setManifestingEvent(URI failureModeUri, FaultEvent manifestingEvent) {
         FailureMode failureMode = getNode(failureModeUri);
 
-        // insert a gate in between
-        Gate intermediateGate = new Gate();
-        TreeNode intermediateNode = new TreeNode(intermediateGate);
-
         TreeNode manifestingNode = new TreeNode(manifestingEvent);
-        intermediateNode.addChild(manifestingNode);
-
-        failureMode.setManifestingNode(intermediateNode);
+        failureMode.setManifestingNode(manifestingNode);
 
         failureModeDao.update(failureMode);
 

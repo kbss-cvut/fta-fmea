@@ -15,13 +15,7 @@ import java.util.Set;
 @Data
 public class FailureMode extends HasAuthorData {
 
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
-
-    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
-    private String description;
-
+    // TODO move fully to FaultEvent?
     @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL)
     private RiskPriorityNumber riskPriorityNumber;
 

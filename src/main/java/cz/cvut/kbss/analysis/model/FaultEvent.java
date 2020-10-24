@@ -18,6 +18,9 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
+    private String description;
+
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
