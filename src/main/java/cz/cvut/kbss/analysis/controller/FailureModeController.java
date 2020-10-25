@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -22,6 +24,12 @@ public class FailureModeController {
 
     private final IdentifierService identifierService;
     private final FailureModeRepositoryService repositoryService;
+
+    @GetMapping
+    public List<FailureMode> findAll(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return repositoryService.findAllForUser(user);
+    }
 
     @GetMapping(value = "/{failureModeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public FailureMode findFailureMode(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
@@ -41,14 +49,6 @@ public class FailureModeController {
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
 
         return repositoryService.addMitigation(failureModeUri, mitigation);
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{failureModeFragment}/manifestingEvent", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public TreeNode setManifestingEvent(@PathVariable(name = "failureModeFragment") String failureModeFragment, @RequestBody FaultEvent manifestingEvent) {
-        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
-
-        return repositoryService.setManifestingEvent(failureModeUri, manifestingEvent);
     }
 
 }

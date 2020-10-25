@@ -20,7 +20,8 @@ public class FailureMode extends HasAuthorData {
     private RiskPriorityNumber riskPriorityNumber;
 
     // in case of FTA, top event is FailureMode itself. For FMEA, gate structure will be flattened.
-    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = CascadeType.ALL)
+    @ParticipationConstraints(nonEmpty = true)
+    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private TreeNode manifestingNode;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)

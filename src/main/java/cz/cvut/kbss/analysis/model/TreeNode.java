@@ -31,10 +31,12 @@ public class TreeNode extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL)
     private Set<TreeNode> children = new HashSet<>();
 
+    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasTreeNodeType)
     private TreeNodeType nodeType;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_holds, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ParticipationConstraints(nonEmpty = true)
+    @OWLObjectProperty(iri = Vocabulary.s_p_holds, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Event event;
 
     public void addChild(TreeNode child) {

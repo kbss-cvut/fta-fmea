@@ -2,10 +2,7 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import cz.cvut.kbss.jopa.model.annotations.CascadeType;
-import cz.cvut.kbss.jopa.model.annotations.OWLClass;
-import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
-import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
+import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,6 +14,7 @@ import java.util.Set;
 @Data
 public class Gate extends Event {
 
+    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType = GateType.OR; // neutral gate type
 

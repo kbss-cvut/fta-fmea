@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -17,12 +18,14 @@ public class FailureModeRepositoryService {
 
     private final FailureModeDao failureModeDao;
 
-    @Transactional(readOnly = true)
+    public List<FailureMode> findAllForUser(User user) {
+        return failureModeDao.findAllForUser(user);
+    }
+
     public FailureMode find(URI failureModeUri) {
         return getNode(failureModeUri);
     }
 
-    @Transactional(readOnly = true)
     public Set<Mitigation> getMitigation(URI failureModeUri) {
         FailureMode failureMode = getNode(failureModeUri);
 
@@ -39,22 +42,9 @@ public class FailureModeRepositoryService {
         return mitigation;
     }
 
-    @Transactional
-    public TreeNode setManifestingEvent(URI failureModeUri, FaultEvent manifestingEvent) {
-        FailureMode failureMode = getNode(failureModeUri);
-
-        TreeNode manifestingNode = new TreeNode(manifestingEvent);
-        failureMode.setManifestingNode(manifestingNode);
-
-        failureModeDao.update(failureMode);
-
-        return manifestingNode;
-    }
-
     private FailureMode getNode(URI failureModeUri) {
         return failureModeDao
                 .find(failureModeUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
     }
-
 }

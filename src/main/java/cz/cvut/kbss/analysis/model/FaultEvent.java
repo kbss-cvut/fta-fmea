@@ -12,9 +12,11 @@ import java.util.Objects;
 @Data
 public class FaultEvent extends Event {
 
+    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
     private EventType eventType;
 
+    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 

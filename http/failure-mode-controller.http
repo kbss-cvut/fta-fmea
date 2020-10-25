@@ -24,26 +24,3 @@ Authorization: Bearer {{jwt}}
     "types": "@type"
   }
 }
-
-
-###
-POST {{host}}/failureModes/{{failureModeFragment}}/manifestingEvent
-Content-Type: application/ld+json
-Authorization: Bearer {{jwt}}
-
-{
-  "name": "Pump not working",
-  "description": "Pump cannot push the fuel to the engine",
-  "eventType": "BASIC",
-  "probability": 0.5,
-  "types": [
-    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultEvent"
-  ],
-  "@context": {
-    "name": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName",
-    "description": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDescription",
-    "eventType": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFaultEventType",
-    "probability": "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasProbability",
-    "types": "@type"
-  }
-}
