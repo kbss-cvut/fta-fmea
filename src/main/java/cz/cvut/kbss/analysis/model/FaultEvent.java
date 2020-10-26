@@ -24,8 +24,8 @@ public class FaultEvent extends Event {
     private String description;
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
-    private Double probability;
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL)
+    private RiskPriorityNumber riskPriorityNumber;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isPreventedBy, cascade = CascadeType.ALL)
     private TakenAction takenAction;

@@ -15,10 +15,6 @@ import java.util.Set;
 @Data
 public class FailureMode extends HasAuthorData {
 
-    // TODO move fully to FaultEvent?
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL)
-    private RiskPriorityNumber riskPriorityNumber;
-
     // in case of FTA, top event is FailureMode itself. For FMEA, gate structure will be flattened.
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
