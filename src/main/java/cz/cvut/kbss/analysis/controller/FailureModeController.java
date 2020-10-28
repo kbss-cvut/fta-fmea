@@ -31,6 +31,12 @@ public class FailureModeController {
         return repositoryService.findAllForUser(user);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureMode create(@RequestBody FailureMode failureMode) {
+        return repositoryService.create(failureMode);
+    }
+
     @GetMapping(value = "/{failureModeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public FailureMode findFailureMode(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);

@@ -1,16 +1,14 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.dto.URIReference;
 import cz.cvut.kbss.analysis.model.FailureMode;
-import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.FunctionRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -30,12 +28,11 @@ public class FunctionController {
         return repositoryService.getFailureModes(functionUri);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{functionFragment}/failureModes", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public FailureMode addFailureMode(@PathVariable(name = "functionFragment") String functionFragment, @RequestBody FailureMode failureMode) {
+    public FailureMode addFailureMode(@PathVariable(name = "functionFragment") String functionFragment, @RequestBody URIReference failureModeReference) {
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
 
-        return repositoryService.addFailureMode(functionUri, failureMode);
+        return repositoryService.addFailureMode(functionUri, failureModeReference);
     }
 
 }

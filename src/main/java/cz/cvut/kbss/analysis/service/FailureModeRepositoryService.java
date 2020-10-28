@@ -26,6 +26,12 @@ public class FailureModeRepositoryService {
         return getNode(failureModeUri);
     }
 
+    @Transactional
+    public FailureMode create(FailureMode failureMode) {
+        failureModeDao.persist(failureMode);
+        return failureMode;
+    }
+
     public Set<Mitigation> getMitigation(URI failureModeUri) {
         FailureMode failureMode = getNode(failureModeUri);
 

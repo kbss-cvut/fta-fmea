@@ -1,6 +1,8 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.dao.FunctionDao;
+import cz.cvut.kbss.analysis.dto.URIReference;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
@@ -19,12 +21,17 @@ import java.util.Set;
 public class FunctionRepositoryService {
 
     private final FunctionDao functionDao;
+    private final FailureModeDao failureModeDao;
 
     @Transactional
-    public FailureMode addFailureMode(URI functionUri, FailureMode failureMode) {
+    public FailureMode addFailureMode(URI functionUri, URIReference failureModeReference) {
         Function function = functionDao
                 .find(functionUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
+
+        FailureMode failureMode = failureModeDao
+                .find(failureModeReference.getUri())
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
 
         function.addFailureMode(failureMode);
         functionDao.update(function);
