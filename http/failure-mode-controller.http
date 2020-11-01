@@ -1,4 +1,4 @@
-GET {{host}}/failureModes/{{failureModeFragment}}
+GET {{host}}/failureModes
 Authorization: Bearer {{jwt}}
 
 
@@ -13,7 +13,7 @@ Authorization: Bearer {{jwt}}
     "event": {
       "name": "Pump not working",
       "description": "Pump cannot push the fuel to the engine",
-      "eventType": "BASIC",
+      "eventType": "TOP_EVENT",
       "riskPriorityNumber": {
         "probability": 0.5,
         "severity": 4,

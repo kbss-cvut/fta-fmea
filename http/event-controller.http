@@ -9,7 +9,10 @@ Authorization: Bearer {{jwt}}
 {
   "name": "Random Event",
   "eventType": "BASIC",
-  "probability": 0.6,
+  "riskPriorityNumber": {
+    "probability": 0.6,
+    "types": ["http://onto.fel.cvut.cz/ontologies/fta-fmea-application/RiskPriorityNumber"]
+  },
   "types": [
     "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultEvent"
   ],

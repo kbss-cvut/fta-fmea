@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.model;
 import cz.cvut.kbss.analysis.model.util.TreeNodeType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
+import cz.cvut.kbss.jsonld.annotation.JsonLdProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,10 +26,11 @@ public class TreeNode extends AbstractEntity {
         this.event = event;
     }
 
+    @JsonLdProperty(access = JsonLdProperty.Access.WRITE_ONLY)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasParent)
     private TreeNode parent;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<TreeNode> children = new HashSet<>();
 
     @ParticipationConstraints(nonEmpty = true)
