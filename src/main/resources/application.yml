@@ -11,7 +11,7 @@ persistence:
 security:
   jwt:
     secretKey: lwrUj5PmCE6X8ekbLd9wDTRlBkEJA0HB # TODO better key
-    expiryMs: 3600000
+    expiryMs: 28800000 # 8 hours
 
 logging:
   pattern:

@@ -24,10 +24,10 @@ public class FaultEvent extends Event {
     private String description;
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RiskPriorityNumber riskPriorityNumber;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isPreventedBy, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_isPreventedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private TakenAction takenAction;
 
     @Override

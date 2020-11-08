@@ -18,10 +18,12 @@ public class FailureModeRepositoryService {
 
     private final FailureModeDao failureModeDao;
 
+    @Transactional(readOnly = true)
     public List<FailureMode> findAllForUser(User user) {
         return failureModeDao.findAllForUser(user);
     }
 
+    @Transactional(readOnly = true)
     public FailureMode find(URI failureModeUri) {
         return getNode(failureModeUri);
     }
@@ -32,6 +34,7 @@ public class FailureModeRepositoryService {
         return failureMode;
     }
 
+    @Transactional(readOnly = true)
     public Set<Mitigation> getMitigation(URI failureModeUri) {
         FailureMode failureMode = getNode(failureModeUri);
 
