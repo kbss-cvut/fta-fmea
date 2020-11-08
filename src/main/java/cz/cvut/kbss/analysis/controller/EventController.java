@@ -22,6 +22,12 @@ public class EventController {
     private final IdentifierService identifierService;
     private final EventRepositoryService repositoryService;
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public void update(@RequestBody TreeNode node) {
+        repositoryService.updateNode(node);
+    }
+
     @GetMapping(value = "/{treeNodeFragment}/inputEvents", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<Event> getInputEvents(@PathVariable(name = "treeNodeFragment") String treeNodeFragment) {
         URI gateUri = identifierService.composeIdentifier(Vocabulary.s_c_TreeNode, treeNodeFragment);

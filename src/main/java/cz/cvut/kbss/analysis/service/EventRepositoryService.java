@@ -27,6 +27,11 @@ public class EventRepositoryService {
     private final TreeNodeDao treeNodeDao;
 
     @Transactional
+    public void updateNode(TreeNode node) {
+        treeNodeDao.update(node);
+    }
+
+    @Transactional
     public TreeNode addInputEvent(URI nodeUri, FaultEvent inputEvent) {
         TreeNode node = getNode(nodeUri);
 

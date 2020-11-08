@@ -34,6 +34,11 @@ public class FailureModeRepositoryService {
         return failureMode;
     }
 
+    @Transactional
+    public void update(FailureMode failureMode) {
+        failureModeDao.update(failureMode);
+    }
+
     @Transactional(readOnly = true)
     public Set<Mitigation> getMitigation(URI failureModeUri) {
         FailureMode failureMode = getNode(failureModeUri);
