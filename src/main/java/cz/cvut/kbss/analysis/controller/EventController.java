@@ -50,12 +50,4 @@ public class EventController {
         return repositoryService.insertGate(nodeUri, gate);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{eventFragment}/takenAction", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public TakenAction setTakenAction(@PathVariable(name = "eventFragment") String eventFragment, @RequestBody TakenAction takenAction) {
-        URI eventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, eventFragment);
-
-        return repositoryService.setTakenAction(eventUri, takenAction);
-    }
-
 }

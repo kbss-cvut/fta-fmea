@@ -27,9 +27,6 @@ public class FaultEvent extends Event {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RiskPriorityNumber riskPriorityNumber;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isPreventedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private TakenAction takenAction;
-
     @Override
     public String toString() {
         return "FaultEvent <" + getUri() + "/>";

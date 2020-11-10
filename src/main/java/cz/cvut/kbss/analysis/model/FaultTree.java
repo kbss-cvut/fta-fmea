@@ -4,31 +4,25 @@ import cz.cvut.kbss.analysis.persistence.util.HasAuthorDataManager;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_FailureMode)
+@OWLClass(iri = Vocabulary.s_c_FaultTree)
 @EntityListeners(HasAuthorDataManager.class)
 @Data
-public class FailureMode extends HasAuthorData {
+public class FaultTree extends HasAuthorData {
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private FaultEvent manifestingEvent;
+    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
+    private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
-    private Set<Mitigation> mitigation = new HashSet<>();
-
-    public void addMitigation(Mitigation mitigation) {
-        getMitigation().add(mitigation);
-    }
+    @ParticipationConstraints(nonEmpty = true)
+    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private TreeNode manifestingNode;
 
     @Override
     public String toString() {
-        return "FailureMode <" + getUri() + "/>";
+        return "FaultTree <" + getUri() + "/>";
     }
 
     @Override

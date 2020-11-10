@@ -66,20 +66,6 @@ public class EventRepositoryService {
     }
 
     @Transactional
-    public TakenAction setTakenAction(URI eventUri, TakenAction takenAction) {
-        FaultEvent faultEvent = faultEventDao
-                .find(eventUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
-
-        faultEvent.setTakenAction(takenAction);
-        takenAction.setFaultEvent(faultEvent);
-
-        faultEventDao.update(faultEvent);
-
-        return takenAction;
-    }
-
-    @Transactional
     public TreeNode insertGate(URI nodeUri, Gate gate) {
         TreeNode node = getNode(nodeUri);
 
