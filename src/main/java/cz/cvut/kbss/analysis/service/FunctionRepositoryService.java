@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URI;
 import java.util.Set;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class FunctionRepositoryService {
 
     private final FunctionDao functionDao;
@@ -25,6 +25,8 @@ public class FunctionRepositoryService {
 
     @Transactional
     public FailureMode addFailureMode(URI functionUri, URIReference failureModeReference) {
+        log.info("> addFailureMode - {}, {}", functionUri, failureModeReference);
+
         Function function = functionDao
                 .find(functionUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
@@ -36,6 +38,7 @@ public class FunctionRepositoryService {
         function.addFailureMode(failureMode);
         functionDao.update(function);
 
+        log.info("< addFailureMode");
         return failureMode;
     }
 
@@ -48,3 +51,5 @@ public class FunctionRepositoryService {
         return function.getFailureModes();
     }
 }
+
+

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventRepositoryService {
 
-    private final FaultEventDao faultEventDao;
     private final TreeNodeDao treeNodeDao;
 
     @Transactional

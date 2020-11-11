@@ -6,6 +6,7 @@ import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class FaultTreeRepositoryService {
 
     private final FaultTreeDao faultTreeDao;
@@ -32,13 +34,21 @@ public class FaultTreeRepositoryService {
 
     @Transactional
     public FaultTree create(FaultTree faultTree){
+        log.info("> create - {}", faultTree);
+
         faultTreeDao.persist(faultTree);
+
+        log.info("< create - {}", faultTree);
         return faultTree;
     }
 
     @Transactional
     public void update(FaultTree faultTree) {
+        log.info("> update - {}", faultTree);
+
         faultTreeDao.update(faultTree);
+
+        log.info("< update - {}", faultTree);
     }
 
     private FaultTree getFaultTree(URI faultTreeUri) {

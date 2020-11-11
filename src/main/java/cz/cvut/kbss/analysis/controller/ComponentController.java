@@ -8,6 +8,7 @@ import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/components")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class ComponentController {
 
     private final ComponentRepositoryService repositoryService;
@@ -35,11 +37,13 @@ public class ComponentController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Component createComponent(@RequestBody Component component) {
+        log.info("> createComponent - {}", component);
         return repositoryService.persist(component);
     }
 
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<Function> getFunctions(@PathVariable(name = "componentFragment") String componentFragment) {
+        log.info("> getFunctions - {}", componentFragment);
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
         return repositoryService.getFunctions(componentUri);
     }
@@ -47,6 +51,7 @@ public class ComponentController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{componentFragment}/functions", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Function addFunction(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody Function function) {
+        log.info("> addFunction - {}, {}", componentFragment, function);
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
 
         return repositoryService.addFunction(componentUri, function);

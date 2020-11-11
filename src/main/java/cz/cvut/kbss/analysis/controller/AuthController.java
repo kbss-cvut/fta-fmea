@@ -7,6 +7,7 @@ import cz.cvut.kbss.analysis.service.JwtTokenProvider;
 import cz.cvut.kbss.analysis.service.UserRepositoryService;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -31,12 +33,17 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> register(@RequestBody User user) {
+        log.info("> register - {}", user.getUsername());
         URI uri = userRepositoryService.register(user);
+
+        log.info("< register - {}", uri);
         return ResponseEntity.created(uri).build();
     }
 
     @PostMapping("/signin")
     public AuthenticationResponse signIn(@RequestBody AuthenticationRequest data) {
+        log.info("> signIn - {}", data.getUsername());
+
         String username = data.getUsername();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
         List<String> userRoles = userRepositoryService
@@ -45,6 +52,7 @@ public class AuthController {
                 .getRoles();
         String token = jwtTokenProvider.createToken(username, userRoles);
 
+        log.info("< signIn - {}", username);
         return new AuthenticationResponse(username, token);
     }
 

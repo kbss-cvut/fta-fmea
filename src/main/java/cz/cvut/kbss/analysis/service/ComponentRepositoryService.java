@@ -29,12 +29,15 @@ public class ComponentRepositoryService {
 
     @Transactional(readOnly = true)
     public Component persist(Component component) {
+        log.info("> persist - {}", component);
         componentDao.persist(component);
         return component;
     }
 
     @Transactional
     public Function addFunction(URI componentUri, Function function) {
+        log.info("> addFunction - {}, {}", componentUri, function);
+
         Component component = componentDao
                 .find(componentUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
@@ -42,6 +45,7 @@ public class ComponentRepositoryService {
         component.addFunction(function);
         componentDao.update(component);
 
+        log.info("< addFunction - {}", function);
         return function;
     }
 
