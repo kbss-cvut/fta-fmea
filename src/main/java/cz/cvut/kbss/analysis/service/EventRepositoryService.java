@@ -1,11 +1,13 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
-import cz.cvut.kbss.analysis.dao.GateDao;
 import cz.cvut.kbss.analysis.dao.TreeNodeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
-import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.Event;
+import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.Gate;
+import cz.cvut.kbss.analysis.model.TreeNode;
 import cz.cvut.kbss.analysis.model.util.TreeNodeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,12 @@ import java.util.stream.Collectors;
 public class EventRepositoryService {
 
     private final TreeNodeDao treeNodeDao;
+    private final FaultEventDao faultEventDao;
+
+    @Transactional(readOnly = true)
+    public List<FaultEvent> findFaultEvents() {
+        return faultEventDao.findAll();
+    }
 
     @Transactional
     public void updateNode(TreeNode node) {

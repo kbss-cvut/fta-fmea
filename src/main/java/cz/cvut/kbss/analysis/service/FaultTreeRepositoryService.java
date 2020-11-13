@@ -1,8 +1,10 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.model.FailureMode;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
+import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.User;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.net.URI;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 public class FaultTreeRepositoryService {
 
     private final FaultTreeDao faultTreeDao;
+    private final FaultEventDao faultEventDao;
 
     @Transactional(readOnly = true)
     public List<FaultTree> findAllForUser(User user) {
@@ -36,6 +38,14 @@ public class FaultTreeRepositoryService {
     public FaultTree create(FaultTree faultTree){
         log.info("> create - {}", faultTree);
 
+        URI faultEventUri = faultTree.getManifestingNode().getEvent().getUri();
+        if(faultEventUri != null) {
+            log.info("Using prefilled fault event - {}", faultEventUri);
+            FaultEvent faultEvent = faultEventDao
+                    .find(faultEventUri)
+                    .orElseThrow(() -> new LogicViolationException("Fault Event is prefilled but does not exists in database!"));
+            faultTree.getManifestingNode().setEvent(faultEvent);
+        }
         faultTreeDao.persist(faultTree);
 
         log.info("< create - {}", faultTree);
