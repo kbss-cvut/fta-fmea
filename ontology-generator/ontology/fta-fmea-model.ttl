@@ -71,25 +71,15 @@ fta-fmea:hasDetection
     rdfs:domain fta-fmea:RiskPriorityNumber ;
     rdfs:range  xsd:decimal .
 
-fta-fmea:Event
-    rdf:type   owl:Class ;
-    rdfs:label "Event" .
-
-fta-fmea:Gate
+fta-fmea:FaultEvent
     rdf:type        owl:Class ;
-    rdfs:label      "Gate" ;
-    rdfs:subClassOf fta-fmea:Event .
+    rdfs:label      "Fault event" .
 
 fta-fmea:hasGateType
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has gate type" ;
-    rdfs:domain fta-fmea:Gate ;
+    rdfs:domain fta-fmea:FaultEvent ;
     rdfs:range  xsd:string .
-
-fta-fmea:FaultEvent
-    rdf:type        owl:Class ;
-    rdfs:label      "Fault event" ;
-    rdfs:subClassOf fta-fmea:Event .
 
 fta-fmea:consistsOf
     rdf:type    owl:ObjectProperty ;
@@ -133,13 +123,7 @@ fta-fmea:holds
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "holds" ;
     rdfs:domain fta-fmea:TreeNode ;
-    rdfs:range  fta-fmea:Event .
-
-fta-fmea:hasTreeNodeType
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has tree node type" ;
-    rdfs:domain fta-fmea:TreeNode ;
-    rdfs:range  xsd:string .
+    rdfs:range  fta-fmea:FaultEvent .
 
 fta-fmea:User
     rdf:type   owl:Class ;

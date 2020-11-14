@@ -1,6 +1,5 @@
 package cz.cvut.kbss.analysis.model;
 
-import cz.cvut.kbss.analysis.model.util.TreeNodeType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import cz.cvut.kbss.jsonld.annotation.JsonLdProperty;
@@ -16,13 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class TreeNode extends AbstractEntity {
 
-    public TreeNode(Gate event) {
-        this.nodeType = TreeNodeType.GATE;
-        this.event = event;
-    }
-
     public TreeNode(FaultEvent event) {
-        this.nodeType = TreeNodeType.EVENT;
         this.event = event;
     }
 
@@ -34,12 +27,8 @@ public class TreeNode extends AbstractEntity {
     private Set<TreeNode> children = new HashSet<>();
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasTreeNodeType)
-    private TreeNodeType nodeType;
-
-    @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_holds, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Event event;
+    private FaultEvent event;
 
     public void addChild(TreeNode child) {
         getChildren().add(child);

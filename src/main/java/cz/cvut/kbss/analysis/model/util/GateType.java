@@ -5,6 +5,5 @@ public enum GateType {
     OR,
     XOR,
     PRIORITY_AND,
-    INHIBIT,
-    K_N;
+    INHIBIT;
 }

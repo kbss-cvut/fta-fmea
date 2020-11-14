@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 @OWLClass(iri = Vocabulary.s_c_FaultEvent)
 @Data
-public class FaultEvent extends Event {
+public class FaultEvent extends AbstractEntity {
 
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
@@ -26,6 +27,9 @@ public class FaultEvent extends Event {
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RiskPriorityNumber riskPriorityNumber;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
+    private GateType gateType;
 
     @Override
     public String toString() {
