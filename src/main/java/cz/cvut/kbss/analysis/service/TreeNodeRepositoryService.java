@@ -6,6 +6,7 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.TreeNode;
 import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.net.URI;
 public class TreeNodeRepositoryService {
 
     private final TreeNodeDao treeNodeDao;
+    private final FaultEventValidator faultEventValidator;
 
     @Transactional
     public void delete(URI nodeUri) {
@@ -28,11 +30,7 @@ public class TreeNodeRepositoryService {
 
     @Transactional
     public void updateNode(TreeNode node) {
-        FaultEvent faultEvent = node.getEvent();
-
-        if (faultEvent.getEventType() == EventType.INTERMEDIATE && faultEvent.getGateType() == null) {
-            throw new LogicViolationException("Intermediate event must have a gate type");
-        }
+        faultEventValidator.validate(node.getEvent());
 
         treeNodeDao.update(node);
     }
@@ -41,9 +39,7 @@ public class TreeNodeRepositoryService {
     public TreeNode addInputEvent(URI nodeUri, FaultEvent inputEvent) {
         TreeNode currentNode = getNode(nodeUri);
 
-        if (currentNode.getEvent().getEventType() != EventType.INTERMEDIATE) {
-            throw new LogicViolationException("Only intermediate events can have children");
-        }
+        faultEventValidator.validate(inputEvent);
 
         TreeNode inputEventNode = new TreeNode(inputEvent);
         currentNode.addChild(inputEventNode);

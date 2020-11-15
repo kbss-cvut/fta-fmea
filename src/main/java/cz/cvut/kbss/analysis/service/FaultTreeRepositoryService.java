@@ -7,6 +7,7 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class FaultTreeRepositoryService {
 
     private final FaultTreeDao faultTreeDao;
     private final FaultEventDao faultEventDao;
+    private final FaultEventValidator faultEventValidator;
 
     @Transactional(readOnly = true)
     public List<FaultTree> findAllForUser(User user) {
@@ -35,11 +37,13 @@ public class FaultTreeRepositoryService {
     }
 
     @Transactional
-    public FaultTree create(FaultTree faultTree){
+    public FaultTree create(FaultTree faultTree) {
         log.info("> create - {}", faultTree);
 
+        faultEventValidator.validate(faultTree.getManifestingNode().getEvent());
+
         URI faultEventUri = faultTree.getManifestingNode().getEvent().getUri();
-        if(faultEventUri != null) {
+        if (faultEventUri != null) {
             log.info("Using prefilled fault event - {}", faultEventUri);
             FaultEvent faultEvent = faultEventDao
                     .find(faultEventUri)
