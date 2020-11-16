@@ -65,6 +65,11 @@ public class FaultTreeRepositoryService {
         log.info("< update - {}", faultTree);
     }
 
+    @Transactional
+    public void delete(URI treeUri) {
+        faultTreeDao.remove(treeUri);
+    }
+
     private FaultTree getFaultTree(URI faultTreeUri) {
         return faultTreeDao
                 .find(faultTreeUri)

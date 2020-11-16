@@ -55,4 +55,13 @@ public class FaultTreeController {
         log.info("< update - {}", faultTree);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(value = "/{faultTreeFragment}")
+    public void delete(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
+        log.info("> delete - {}", faultTreeFragment);
+
+        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        repositoryService.delete(nodeUri);
+    }
+
 }

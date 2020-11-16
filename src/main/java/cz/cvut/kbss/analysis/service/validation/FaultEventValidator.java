@@ -19,7 +19,7 @@ public class FaultEventValidator {
             throw new ValidationException(message);
         }
 
-        if(faultEvent.getEventType() != EventType.INTERMEDIATE && faultEvent.getEventType() != null) {
+        if(faultEvent.getEventType() != EventType.INTERMEDIATE && faultEvent.getGateType() != null) {
             String message = "Only INTERMEDIATE event can define gate type!";
             log.warn("< validate - {}", message);
             throw new ValidationException(message);
