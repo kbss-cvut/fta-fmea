@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.dto.UserUpdateDTO;
 import cz.cvut.kbss.analysis.dto.authentication.AuthenticationRequest;
 import cz.cvut.kbss.analysis.dto.authentication.AuthenticationResponse;
 import cz.cvut.kbss.analysis.model.User;
@@ -46,14 +47,22 @@ public class AuthController {
 
         String username = data.getUsername();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
-        List<String> userRoles = userRepositoryService
+
+        User user = userRepositoryService
                 .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found"))
-                .getRoles();
-        String token = jwtTokenProvider.createToken(username, userRoles);
+                .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found"));
+
+        String token = jwtTokenProvider.createToken(username, user.getRoles());
 
         log.info("< signIn - {}", username);
-        return new AuthenticationResponse(username, token);
+        return new AuthenticationResponse(user.getUri(), username, token);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(value = "/current", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public void updateCurrent(@RequestBody UserUpdateDTO userUpdate) {
+        userRepositoryService.updateCurrent(userUpdate);
+        log.info("< updateCurrent - user {} updated", userUpdate.getUri());
     }
 
 }

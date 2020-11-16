@@ -23,3 +23,15 @@ Content-Type: application/json
   "username": "jakub",
   "password": "heslicko"
 }
+
+
+###
+PUT {{host}}/auth/current
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "username": "jakub",
+  "password": "heslicko",
+  "newPassword": "heslo"
+}
