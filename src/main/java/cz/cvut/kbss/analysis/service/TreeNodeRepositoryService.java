@@ -67,10 +67,10 @@ public class TreeNodeRepositoryService {
                     .map(this::propagateProbability).collect(Collectors.toList());
 
             double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities);
-            event.getRiskPriorityNumber().setProbability(eventProbability);
+            event.setProbability(eventProbability);
         }
 
-        Double resultProbability = event.getRiskPriorityNumber().getProbability();
+        Double resultProbability = event.getProbability();
 
         log.info("< propagateProbability - {}", resultProbability);
         return resultProbability;

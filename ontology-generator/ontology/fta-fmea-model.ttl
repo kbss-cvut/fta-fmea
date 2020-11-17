@@ -38,7 +38,7 @@ fta-fmea:isMitigatedBy
 fta-fmea:hasRPN
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has risk priority number" ;
-    rdfs:domain fta-fmea:FailureMode ;
+    rdfs:domain fta-fmea:FaultEvent ;
     rdfs:range  fta-fmea:RiskPriorityNumber .
 
 fta-fmea:isManifestedBy
@@ -53,11 +53,11 @@ fta-fmea:RiskPriorityNumber
     rdf:type   owl:Class ;
     rdfs:label "Risk Priority Number" .
 
-fta-fmea:hasProbability
+fta-fmea:hasOccurrence
     rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has probability" ;
-    rdfs:domain fta-fmea:RiskPriorityNumber, fta-fmea:FaultEvent ;
-    rdfs:range  xsd:float .
+    rdfs:label  "has occurrence" ;
+    rdfs:domain fta-fmea:RiskPriorityNumber ;
+    rdfs:range  xsd:decimal .
 
 fta-fmea:hasSeverity
     rdf:type    owl:DatatypeProperty ;
@@ -74,6 +74,12 @@ fta-fmea:hasDetection
 fta-fmea:FaultEvent
     rdf:type        owl:Class ;
     rdfs:label      "Fault event" .
+
+fta-fmea:hasProbability
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "has probability" ;
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  xsd:float .
 
 fta-fmea:hasGateType
     rdf:type    owl:DatatypeProperty ;

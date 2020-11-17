@@ -5,8 +5,10 @@ import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @OWLClass(iri = Vocabulary.s_c_FaultEvent)
@@ -30,6 +32,15 @@ public class FaultEvent extends AbstractEntity {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
+
+    @ParticipationConstraints(nonEmpty = true)
+    @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
+    private Double probability;
+
+    public void setProbability(double probability) {
+        BigDecimal bd = new BigDecimal(probability).setScale(2, RoundingMode.HALF_UP);
+        this.probability = bd.doubleValue();
+    }
 
     @Override
     public String toString() {

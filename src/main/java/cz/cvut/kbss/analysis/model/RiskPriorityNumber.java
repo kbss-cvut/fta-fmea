@@ -14,20 +14,14 @@ import java.util.Objects;
 @Data
 public class RiskPriorityNumber extends AbstractEntity {
 
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
-    private Double probability;
-
     @OWLDataProperty(iri = Vocabulary.s_p_hasSeverity)
     private Integer severity;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_hasOccurrence)
+    private Integer occurrence;
+
     @OWLDataProperty(iri = Vocabulary.s_p_hasDetection)
     private Integer detection;
-
-    public void setProbability(double probability) {
-        BigDecimal bd = new BigDecimal(probability).setScale(2, RoundingMode.HALF_UP);
-        this.probability = bd.doubleValue();
-    }
 
     @Override
     public String toString() {
