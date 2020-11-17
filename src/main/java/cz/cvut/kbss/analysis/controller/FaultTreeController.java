@@ -1,6 +1,5 @@
 package cz.cvut.kbss.analysis.controller;
 
-import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
@@ -47,12 +46,14 @@ public class FaultTreeController {
         return repositoryService.create(faultTree);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public void update(@RequestBody FaultTree faultTree) {
+    public FaultTree update(@RequestBody FaultTree faultTree) {
         log.info("> update - {}", faultTree);
-        repositoryService.update(faultTree);
-        log.info("< update - {}", faultTree);
+
+        FaultTree updatedTree = repositoryService.update(faultTree);
+
+        log.info("< update - {}", updatedTree);
+        return updatedTree;
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

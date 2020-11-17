@@ -25,6 +25,7 @@ public class FaultTreeRepositoryService {
     private final FaultTreeDao faultTreeDao;
     private final FaultEventDao faultEventDao;
     private final FaultEventValidator faultEventValidator;
+    private final TreeNodeRepositoryService treeNodeRepositoryService;
 
     @Transactional(readOnly = true)
     public List<FaultTree> findAllForUser(User user) {
@@ -57,12 +58,15 @@ public class FaultTreeRepositoryService {
     }
 
     @Transactional
-    public void update(FaultTree faultTree) {
+    public FaultTree update(FaultTree faultTree) {
         log.info("> update - {}", faultTree);
+
+        propagateProbabilities(faultTree);
 
         faultTreeDao.update(faultTree);
 
         log.info("< update - {}", faultTree);
+        return faultTree;
     }
 
     @Transactional
@@ -74,6 +78,14 @@ public class FaultTreeRepositoryService {
         return faultTreeDao
                 .find(faultTreeUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find fault tree"));
+    }
+
+    private void propagateProbabilities(FaultTree faultTree) {
+        log.info("> propagateProbabilities - {}", faultTree);
+
+        Double recomputedProbability = treeNodeRepositoryService.propagateProbability(faultTree.getManifestingNode());
+
+        log.info("< propagateProbabilities - {}", recomputedProbability);
     }
 
 }
