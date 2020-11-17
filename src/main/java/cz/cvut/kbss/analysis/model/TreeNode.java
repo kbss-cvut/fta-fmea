@@ -2,10 +2,10 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import cz.cvut.kbss.jsonld.annotation.JsonLdProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -19,9 +19,8 @@ public class TreeNode extends AbstractEntity {
         this.event = event;
     }
 
-    @JsonLdProperty(access = JsonLdProperty.Access.WRITE_ONLY)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasParent)
-    private TreeNode parent;
+    private URI parent;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<TreeNode> children = new HashSet<>();
@@ -32,7 +31,7 @@ public class TreeNode extends AbstractEntity {
 
     public void addChild(TreeNode child) {
         getChildren().add(child);
-        child.setParent(this);
+        child.setParent(getUri());
     }
 
     @Override
