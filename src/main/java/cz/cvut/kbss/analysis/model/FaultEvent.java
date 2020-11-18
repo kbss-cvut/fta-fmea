@@ -33,7 +33,6 @@ public class FaultEvent extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
 
-    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
 
