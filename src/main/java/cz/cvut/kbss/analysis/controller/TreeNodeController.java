@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/treeNodes")
@@ -47,6 +48,14 @@ public class TreeNodeController {
         URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_TreeNode, treeNodeFragment);
 
         return repositoryService.addInputEvent(nodeUri, inputEvent);
+    }
+
+    @GetMapping(value = "/{treeNodeFragment}/eventPathToRoot", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<FaultEvent> eventPathToRoot(@PathVariable(name = "treeNodeFragment") String treeNodeFragment) {
+        log.info("> eventPathToRoot - {}", treeNodeFragment);
+        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_TreeNode, treeNodeFragment);
+
+        return repositoryService.eventPathToRoot(nodeUri);
     }
 
 }

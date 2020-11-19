@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.TreeNodeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.TreeNode;
 import cz.cvut.kbss.analysis.model.util.EventType;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,5 +76,34 @@ public class TreeNodeRepositoryService {
 
         log.info("< propagateProbability - {}", resultProbability);
         return resultProbability;
+    }
+
+    @Transactional(readOnly = true)
+    public List<FaultEvent> eventPathToRoot(URI nodeUri) {
+        log.info("> eventPathToRoot - {}", nodeUri);
+        TreeNode leafNode = getNode(nodeUri);
+
+        if (leafNode.getEvent().getEventType() == EventType.INTERMEDIATE) {
+            log.warn("< eventPathToRoot - method is prohibited for non-leaf nodes!");
+            throw new LogicViolationException("eventPathToRoot method is prohibited for non-leaf nodes");
+        }
+
+        List<FaultEvent> faultEvents = new ArrayList<>();
+        TreeNode current = leafNode;
+
+        while (current != null) {
+            faultEvents.add(current.getEvent());
+
+            if(current.getParent() != null) {
+                current = treeNodeDao
+                        .find(current.getParent())
+                        .orElse(null);
+            } else {
+                break;
+            }
+        }
+
+        log.info("< eventPathToRoot");
+        return faultEvents;
     }
 }

@@ -15,25 +15,37 @@ fta-fmea:hasFunction
     rdfs:domain fta-fmea:Component ;
     rdfs:range  fta-fmea:Function .
 
+fta-fmea:hasFailureMode
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has failure mode" ;
+    rdfs:domain fta-fmea:Component ;
+    rdfs:range  fta-fmea:FailureMode .
+
 fta-fmea:Function
     rdf:type   owl:Class ;
     rdfs:label "Function" .
 
-fta-fmea:hasFailureMode
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has failure mode" ;
-    rdfs:domain fta-fmea:Function ;
-    rdfs:range  fta-fmea:FailureMode .
-
 fta-fmea:FailureMode
     rdf:type   owl:Class ;
     rdfs:label "Failure mode" .
+
+fta-fmea:influences
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "influences" ;
+    rdfs:domain fta-fmea:FailureMode ;
+    rdfs:range  fta-fmea:Function .
 
 fta-fmea:isMitigatedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "is mitigated by" ;
     rdfs:domain fta-fmea:FailureMode ;
     rdfs:range  fta-fmea:Mitigation .
+
+fta-fmea:hasEffect
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has effects" ;
+    rdfs:domain fta-fmea:FailureMode ;
+    rdfs:range  fta-fmea:FaultEvent .
 
 fta-fmea:hasRPN
     rdf:type    owl:ObjectProperty ;

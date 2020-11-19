@@ -11,9 +11,8 @@ import java.util.Objects;
 import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_Component)
-@EntityListeners(HasAuthorDataManager.class)
 @Data
-public class Component extends HasAuthorData {
+public class Component extends AbstractEntity {
 
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
@@ -22,8 +21,15 @@ public class Component extends HasAuthorData {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL)
     private Set<Function> functions = new HashSet<>();
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL)
+    private Set<FailureMode> failureModes = new HashSet<>();
+
     public void addFunction(Function function) {
         getFunctions().add(function);
+    }
+
+    public void addFailureMode(FailureMode failureMode) {
+        getFailureModes().add(failureMode);
     }
 
     @Override

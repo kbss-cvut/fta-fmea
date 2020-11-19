@@ -4,8 +4,8 @@ import cz.cvut.kbss.analysis.persistence.util.HasAuthorDataManager;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,9 +15,14 @@ import java.util.Set;
 @Data
 public class FailureMode extends HasAuthorData {
 
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private FaultEvent manifestingEvent;
+    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
+    private String name;
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect)
+    private Set<FaultEvent> effects = new HashSet<>();
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_influences, cascade = {CascadeType.MERGE})
+    private Function function;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
     private Set<Mitigation> mitigation = new HashSet<>();

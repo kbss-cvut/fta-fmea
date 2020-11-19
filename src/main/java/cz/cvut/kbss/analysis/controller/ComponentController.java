@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
@@ -28,16 +29,15 @@ public class ComponentController {
     private final ComponentRepositoryService repositoryService;
     private final IdentifierService identifierService;
 
-    @GetMapping
-    public List<Component> findAll(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return repositoryService.findAllForUser(user);
+    @GetMapping(produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public List<Component> findAll() {
+        return repositoryService.findAll();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public Component createComponent(@RequestBody Component component) {
-        log.info("> createComponent - {}", component);
+    public Component create(@RequestBody Component component) {
+        log.info("> create - {}", component);
         return repositoryService.persist(component);
     }
 
@@ -55,6 +55,15 @@ public class ComponentController {
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
 
         return repositoryService.addFunction(componentUri, function);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{componentFragment}/failureModes", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureMode addFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody FailureMode failureMode) {
+        log.info("> addFailureMode - {}, {}", componentFragment, failureMode);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+
+        return repositoryService.addFailureMode(componentUri, failureMode);
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ComponentDao extends BaseAuthoredDao<Component> {
+public class ComponentDao extends BaseDao<Component> {
 
     @Autowired
     public ComponentDao(EntityManager em, PersistenceConf config) {

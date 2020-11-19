@@ -16,13 +16,6 @@ public class Function extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<FailureMode> failureModes = new HashSet<>();
-
-    public void addFailureMode(FailureMode failureMode) {
-        getFailureModes().add(failureMode);
-    }
-
     @Override
     public String toString() {
         return "Function <" + getUri() + "/>";
