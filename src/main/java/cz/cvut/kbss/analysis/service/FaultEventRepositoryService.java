@@ -73,35 +73,6 @@ public class FaultEventRepositoryService {
         return resultProbability;
     }
 
-    @Transactional(readOnly = true)
-    public List<FaultEvent> eventPathToRoot(URI eventUri) {
-        log.info("> eventPathToRoot - {}", eventUri);
-        FaultEvent leafEvent = getEvent(eventUri);
-
-        if (leafEvent.getEventType() == EventType.INTERMEDIATE) {
-            log.warn("< eventPathToRoot - method is prohibited for non-leaf nodes!");
-            throw new LogicViolationException("eventPathToRoot method is prohibited for non-leaf nodes");
-        }
-
-        List<FaultEvent> faultEvents = new ArrayList<>();
-        FaultEvent current = leafEvent;
-
-        while (current != null) {
-            faultEvents.add(current);
-
-            if(current.getParent() != null) {
-                current = faultEventDao
-                        .find(current.getParent())
-                        .orElse(null);
-            } else {
-                break;
-            }
-        }
-
-        log.info("< eventPathToRoot");
-        return faultEvents;
-    }
-
     private FaultEvent getEvent(URI eventUri) {
         return faultEventDao
                 .find(eventUri)

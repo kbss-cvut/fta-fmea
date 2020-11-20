@@ -53,13 +53,5 @@ public class FaultEventController {
 
         return repositoryService.addInputEvent(faultEventUri, inputEvent);
     }
-
-    @GetMapping(value = "/{faultEventFragment}/eventPathToRoot", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public List<FaultEvent> eventPathToRoot(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
-        log.info("> eventPathToRoot - {}", faultEventFragment);
-        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
-
-        return repositoryService.eventPathToRoot(nodeUri);
-    }
     
 }

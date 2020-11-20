@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
@@ -63,6 +64,18 @@ public class FaultTreeController {
 
         URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
         repositoryService.delete(nodeUri);
+    }
+
+    @GetMapping(value = "/{faultTreeFragment}/rootToLeafEventPath/{leafEventFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<FaultEvent> rootToLeafEventPath(
+            @PathVariable(name = "faultTreeFragment") String faultTreeFragment,
+            @PathVariable(name = "leafEventFragment") String leafEventFragment
+    ) {
+        log.info("> rootToLeafEventPath - {}, {}", faultTreeFragment, leafEventFragment);
+        URI treeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI leafEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, leafEventFragment);
+
+        return repositoryService.rootToLeafEventPath(treeUri, leafEventUri);
     }
 
 }

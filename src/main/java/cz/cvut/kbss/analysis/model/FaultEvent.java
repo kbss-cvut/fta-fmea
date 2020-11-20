@@ -39,11 +39,6 @@ public class FaultEvent extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasParent)
-    private URI parent;
-
-    // TODO cascade type all?
-    // TODO fetch type?
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
 
@@ -54,7 +49,6 @@ public class FaultEvent extends AbstractEntity {
 
     public void addChild(FaultEvent child) {
         getChildren().add(child);
-        child.setParent(getUri());
     }
 
 

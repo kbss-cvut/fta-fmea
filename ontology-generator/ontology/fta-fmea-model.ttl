@@ -121,12 +121,6 @@ fta-fmea:FaultTree
     rdf:type   owl:Class ;
     rdfs:label "Fault Tree" .
 
-fta-fmea:hasParent
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has parent" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:FaultEvent .
-
 fta-fmea:hasChildren
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has children" ;
