@@ -9,7 +9,10 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URI;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_FaultEvent)
 @Data
@@ -36,10 +39,24 @@ public class FaultEvent extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasParent)
+    private URI parent;
+
+    // TODO cascade type all?
+    // TODO fetch type?
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<FaultEvent> children = new HashSet<>();
+
     public void setProbability(double probability) {
         BigDecimal bd = new BigDecimal(probability).setScale(2, RoundingMode.HALF_UP);
         this.probability = bd.doubleValue();
     }
+
+    public void addChild(FaultEvent child) {
+        getChildren().add(child);
+        child.setParent(getUri());
+    }
+
 
     @Override
     public String toString() {

@@ -25,7 +25,7 @@ public class FaultTreeRepositoryService {
     private final FaultTreeDao faultTreeDao;
     private final FaultEventDao faultEventDao;
     private final FaultEventValidator faultEventValidator;
-    private final TreeNodeRepositoryService treeNodeRepositoryService;
+    private final FaultEventRepositoryService faultEventRepositoryService;
 
     @Transactional(readOnly = true)
     public List<FaultTree> findAllForUser(User user) {
@@ -41,15 +41,15 @@ public class FaultTreeRepositoryService {
     public FaultTree create(FaultTree faultTree) {
         log.info("> create - {}", faultTree);
 
-        faultEventValidator.validate(faultTree.getManifestingNode().getEvent());
+        faultEventValidator.validate(faultTree.getManifestingEvent());
 
-        URI faultEventUri = faultTree.getManifestingNode().getEvent().getUri();
+        URI faultEventUri = faultTree.getManifestingEvent().getUri();
         if (faultEventUri != null) {
-            log.info("Using prefilled fault event - {}", faultEventUri);
+            log.info("Reusing fault event - {}", faultEventUri);
             FaultEvent faultEvent = faultEventDao
                     .find(faultEventUri)
-                    .orElseThrow(() -> new LogicViolationException("Fault Event is prefilled but does not exists in database!"));
-            faultTree.getManifestingNode().setEvent(faultEvent);
+                    .orElseThrow(() -> new LogicViolationException("Fault Event is reused but does not exists in database!"));
+            faultTree.setManifestingEvent(faultEvent);
         }
         faultTreeDao.persist(faultTree);
 
@@ -83,7 +83,7 @@ public class FaultTreeRepositoryService {
     private void propagateProbabilities(FaultTree faultTree) {
         log.info("> propagateProbabilities - {}", faultTree);
 
-        Double recomputedProbability = treeNodeRepositoryService.propagateProbability(faultTree.getManifestingNode());
+        Double recomputedProbability = faultEventRepositoryService.propagateProbability(faultTree.getManifestingEvent());
 
         log.info("< propagateProbabilities - {}", recomputedProbability);
     }

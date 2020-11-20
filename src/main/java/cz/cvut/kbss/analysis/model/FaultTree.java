@@ -17,8 +17,8 @@ public class FaultTree extends HasAuthorData {
     private String name;
 
     @ParticipationConstraints(nonEmpty = true)
-    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private TreeNode manifestingNode;
+    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    private FaultEvent manifestingEvent;
 
     @Override
     public String toString() {

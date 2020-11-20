@@ -1,14 +1,22 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
+import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
+import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -16,10 +24,88 @@ import java.util.List;
 public class FaultEventRepositoryService {
 
     private final FaultEventDao faultEventDao;
+    private final FaultEventValidator faultEventValidator;
 
     @Transactional(readOnly = true)
     public List<FaultEvent> findFaultEvents() {
         return faultEventDao.findAll();
+    }
+
+    @Transactional
+    public void delete(URI eventUri) {
+        faultEventDao.remove(eventUri);
+    }
+
+    @Transactional
+    public void updateEvent(FaultEvent event) {
+        faultEventValidator.validate(event);
+
+        faultEventDao.update(event);
+    }
+
+    @Transactional
+    public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
+        FaultEvent currentEvent = getEvent(eventUri);
+
+        faultEventValidator.validate(inputEvent);
+
+        currentEvent.addChild(inputEvent);
+        faultEventDao.update(currentEvent);
+
+        return inputEvent;
+    }
+
+    @Transactional(readOnly = true)
+    public Double propagateProbability(FaultEvent event) {
+        log.info("> propagateProbability - {}", event);
+
+        if (event.getEventType() == EventType.INTERMEDIATE && !event.getChildren().isEmpty()) {
+            List<Double> childProbabilities = event.getChildren().stream()
+                    .map(this::propagateProbability).collect(Collectors.toList());
+
+            double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities);
+            event.setProbability(eventProbability);
+        }
+
+        Double resultProbability = event.getProbability();
+
+        log.info("< propagateProbability - {}", resultProbability);
+        return resultProbability;
+    }
+
+    @Transactional(readOnly = true)
+    public List<FaultEvent> eventPathToRoot(URI eventUri) {
+        log.info("> eventPathToRoot - {}", eventUri);
+        FaultEvent leafEvent = getEvent(eventUri);
+
+        if (leafEvent.getEventType() == EventType.INTERMEDIATE) {
+            log.warn("< eventPathToRoot - method is prohibited for non-leaf nodes!");
+            throw new LogicViolationException("eventPathToRoot method is prohibited for non-leaf nodes");
+        }
+
+        List<FaultEvent> faultEvents = new ArrayList<>();
+        FaultEvent current = leafEvent;
+
+        while (current != null) {
+            faultEvents.add(current);
+
+            if(current.getParent() != null) {
+                current = faultEventDao
+                        .find(current.getParent())
+                        .orElse(null);
+            } else {
+                break;
+            }
+        }
+
+        log.info("< eventPathToRoot");
+        return faultEvents;
+    }
+
+    private FaultEvent getEvent(URI eventUri) {
+        return faultEventDao
+                .find(eventUri)
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find fault event"));
     }
 
 }
