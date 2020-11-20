@@ -18,10 +18,10 @@ public class Component extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Function> functions = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FailureMode> failureModes = new HashSet<>();
 
     public void addFunction(Function function) {
