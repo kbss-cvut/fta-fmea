@@ -52,7 +52,7 @@ public class FaultTreeRepositoryService {
     public FaultTree create(FaultTree faultTree) {
         log.info("> create - {}", faultTree);
 
-        faultEventValidator.validate(faultTree.getManifestingEvent());
+        faultEventValidator.validateTypes(faultTree.getManifestingEvent());
 
         URI faultEventUri = faultTree.getManifestingEvent().getUri();
         if (faultEventUri != null) {

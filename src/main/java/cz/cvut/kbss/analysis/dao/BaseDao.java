@@ -125,4 +125,16 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
             throw new PersistenceException(e);
         }
     }
+
+    @Override
+    public boolean existsWithPredicate(String predicate, String value) {
+        Objects.requireNonNull(value);
+        return em
+                .createNativeQuery("ASK WHERE { ?x a ?type ; ?predicate ?value . }", Boolean.class)
+                .setParameter("type", typeUri)
+                .setParameter("predicate", URI.create(predicate))
+                .setParameter("value", value, config.getLanguage())
+                .getSingleResult();
+    }
+
 }

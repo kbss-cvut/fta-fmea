@@ -88,4 +88,14 @@ public interface GenericDao<T extends HasIdentifier> {
      * @return {@literal true} if entity exists, {@literal false} otherwise
      */
     boolean exists(URI id);
+
+    /**
+     * Checks whether an entity with the specified predicate and its value exists (and has the type managed by this
+     * DAO).
+     *
+     * @param predicate Predicate of the subject
+     * @param value Value to match
+     * @return {@literal true} if entity exists, {@literal false} otherwise
+     */
+    boolean existsWithPredicate(String predicate, String value);
 }

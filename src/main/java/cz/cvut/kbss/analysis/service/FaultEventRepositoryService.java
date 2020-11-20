@@ -2,7 +2,6 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +36,7 @@ public class FaultEventRepositoryService {
 
     @Transactional
     public void updateEvent(FaultEvent event) {
-        faultEventValidator.validate(event);
+        faultEventValidator.validateTypes(event);
 
         faultEventDao.update(event);
     }
@@ -47,7 +45,8 @@ public class FaultEventRepositoryService {
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
         FaultEvent currentEvent = getEvent(eventUri);
 
-        faultEventValidator.validate(inputEvent);
+        faultEventValidator.validateDuplicates(inputEvent);
+        faultEventValidator.validateTypes(inputEvent);
 
         currentEvent.addChild(inputEvent);
         faultEventDao.update(currentEvent);

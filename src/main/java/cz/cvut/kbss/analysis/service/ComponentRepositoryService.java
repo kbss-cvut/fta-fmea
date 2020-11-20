@@ -5,7 +5,7 @@ import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
-import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import java.util.Set;
 public class ComponentRepositoryService {
 
     private final ComponentDao componentDao;
+    private final ComponentValidator componentValidator;
 
     @Transactional(readOnly = true)
     public List<Component> findAll() {
@@ -31,6 +32,8 @@ public class ComponentRepositoryService {
     @Transactional(readOnly = true)
     public Component persist(Component component) {
         log.info("> persist - {}", component);
+
+        componentValidator.validateDuplicates(component);
         componentDao.persist(component);
         return component;
     }
