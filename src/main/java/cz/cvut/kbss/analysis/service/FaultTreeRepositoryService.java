@@ -34,9 +34,18 @@ public class FaultTreeRepositoryService {
         return faultTreeDao.findAllForUser(user);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public FaultTree find(URI faultTreeUri) {
-        return getFaultTree(faultTreeUri);
+        log.info("> find - {}", faultTreeUri);
+
+        FaultTree faultTree = getFaultTree(faultTreeUri);
+
+        log.debug("Propagating probabilities through the tree");
+        propagateProbabilities(faultTree);
+
+        faultTreeDao.update(faultTree);
+
+        return faultTree;
     }
 
     @Transactional
