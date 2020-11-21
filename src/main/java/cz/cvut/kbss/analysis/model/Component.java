@@ -1,10 +1,8 @@
 package cz.cvut.kbss.analysis.model;
 
-import cz.cvut.kbss.analysis.persistence.util.HasAuthorDataManager;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -23,6 +21,9 @@ public class Component extends AbstractEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FailureMode> failureModes = new HashSet<>();
+
+    @OWLObjectProperty(iri=Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    private Component parentComponent;
 
     public void addFunction(Function function) {
         getFunctions().add(function);

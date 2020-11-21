@@ -62,8 +62,8 @@ public class FaultTreeController {
     public void delete(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> delete - {}", faultTreeFragment);
 
-        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
-        repositoryService.delete(nodeUri);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        repositoryService.delete(faultTreeUri);
     }
 
     @GetMapping(value = "/{faultTreeFragment}/rootToLeafEventPath/{leafEventFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})

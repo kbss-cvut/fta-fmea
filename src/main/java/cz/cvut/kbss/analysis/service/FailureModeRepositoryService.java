@@ -27,7 +27,7 @@ public class FailureModeRepositoryService {
 
     @Transactional(readOnly = true)
     public FailureMode find(URI failureModeUri) {
-        return getNode(failureModeUri);
+        return getFailureMode(failureModeUri);
     }
 
     @Transactional
@@ -51,7 +51,7 @@ public class FailureModeRepositoryService {
 
     @Transactional(readOnly = true)
     public Set<Mitigation> getMitigation(URI failureModeUri) {
-        FailureMode failureMode = getNode(failureModeUri);
+        FailureMode failureMode = getFailureMode(failureModeUri);
 
         return failureMode.getMitigation();
     }
@@ -60,7 +60,7 @@ public class FailureModeRepositoryService {
     public Mitigation addMitigation(URI failureModeUri, Mitigation mitigation) {
         log.info("> addMitigation - {}, {}", failureModeUri, mitigation);
 
-        FailureMode failureMode = getNode(failureModeUri);
+        FailureMode failureMode = getFailureMode(failureModeUri);
 
         failureMode.addMitigation(mitigation);
         failureModeDao.update(failureMode);
@@ -69,7 +69,7 @@ public class FailureModeRepositoryService {
         return mitigation;
     }
 
-    private FailureMode getNode(URI failureModeUri) {
+    private FailureMode getFailureMode(URI failureModeUri) {
         return failureModeDao
                 .find(failureModeUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));

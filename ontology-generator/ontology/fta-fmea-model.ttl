@@ -5,6 +5,16 @@
 @prefix fta-fmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 
+fta-fmea:System
+    rdf:type   owl:Class ;
+    rdfs:label "System" .
+
+fta-fmea:hasComponent
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has component" ;
+    rdfs:domain fta-fmea:System ;
+    rdfs:range  fta-fmea:Component .
+
 fta-fmea:Component
     rdf:type   owl:Class ;
     rdfs:label "Component" .
@@ -20,6 +30,12 @@ fta-fmea:hasFailureMode
     rdfs:label  "has failure mode" ;
     rdfs:domain fta-fmea:Component ;
     rdfs:range  fta-fmea:FailureMode .
+
+fta-fmea:isPartOf
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "is part of" ;
+    rdfs:domain fta-fmea:Component ;
+    rdfs:range  fta-fmea:Component .
 
 fta-fmea:Function
     rdf:type   owl:Class ;
