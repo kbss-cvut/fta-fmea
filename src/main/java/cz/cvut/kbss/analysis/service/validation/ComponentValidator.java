@@ -25,7 +25,7 @@ public class ComponentValidator {
             throw new ValidationException(message);
         }
 
-        log.info("< validateDuplicates - fault event unique");
+        log.info("< validateDuplicates - component unique");
     }
 
 }
