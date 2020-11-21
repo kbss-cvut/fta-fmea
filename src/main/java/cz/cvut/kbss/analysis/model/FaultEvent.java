@@ -42,11 +42,6 @@ public class FaultEvent extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
 
-    public void setProbability(double probability) {
-        BigDecimal bd = new BigDecimal(probability).setScale(2, RoundingMode.HALF_UP);
-        this.probability = bd.doubleValue();
-    }
-
     public void addChild(FaultEvent child) {
         getChildren().add(child);
     }
