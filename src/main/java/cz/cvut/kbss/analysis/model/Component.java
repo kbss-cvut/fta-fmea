@@ -22,7 +22,7 @@ public class Component extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FailureMode> failureModes = new HashSet<>();
 
-    @OWLObjectProperty(iri=Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     private Component parentComponent;
 
     public void addFunction(Function function) {

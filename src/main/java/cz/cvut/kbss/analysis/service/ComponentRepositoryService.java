@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.ComponentDao;
+import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
@@ -71,6 +72,20 @@ public class ComponentRepositoryService {
 
         log.info("< addFailureMode - {}", failureMode);
         return failureMode;
+    }
+
+    @Transactional
+    public void deleteFunction(URI componentUri, URI functionUri) {
+        log.info("> deleteFunction - {}, {}", componentUri, functionUri);
+
+        Component component = getComponent(componentUri);
+        component
+                .getFunctions()
+                .removeIf(function -> function.getUri().equals(functionUri));
+
+        componentDao.update(component);
+
+        log.info("> deleteFunction - deleted");
     }
 
     private Component getComponent(URI componentUri) {
