@@ -18,10 +18,10 @@ public class FailureMode extends HasAuthorData {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect, cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<FaultEvent> effects = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_influences, cascade = {CascadeType.MERGE})
+    @OWLObjectProperty(iri = Vocabulary.s_p_influences, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     private Function function;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
