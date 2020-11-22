@@ -40,12 +40,30 @@ public class FailureModeController {
         return repositoryService.find(failureModeUri);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public void update(@RequestBody FailureMode failureMode) {
+    @GetMapping(value = "/{failureModeFragment}/component", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Component getComponent(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
+        log.info("> getComponent - {}", failureModeFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        return repositoryService.getComponent(failureModeUri);
+    }
+
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureMode update(@RequestBody FailureMode failureMode) {
         log.info("> update - {}", failureMode);
-        repositoryService.update(failureMode);
+
+        FailureMode updatedFailureMode = repositoryService.update(failureMode);
+
         log.info("< update - {}", failureMode);
+        return updatedFailureMode;
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(value = "/{failureModeFragment}")
+    public void delete(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
+        log.info("> delete - {}", failureModeFragment);
+
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        repositoryService.delete(failureModeUri);
     }
 
     @GetMapping(value = "/{failureModeFragment}/mitigation", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
@@ -19,6 +20,7 @@ import java.util.Set;
 public class FailureModeRepositoryService {
 
     private final FailureModeDao failureModeDao;
+    private final ComponentDao componentDao;
 
     @Transactional(readOnly = true)
     public List<FailureMode> findAllForUser(User user) {
@@ -41,12 +43,13 @@ public class FailureModeRepositoryService {
     }
 
     @Transactional
-    public void update(FailureMode failureMode) {
+    public FailureMode update(FailureMode failureMode) {
         log.info("> update - {}", failureMode);
 
         failureModeDao.update(failureMode);
 
         log.info("> update - {}", failureMode);
+        return failureMode;
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +70,19 @@ public class FailureModeRepositoryService {
 
         log.info("< addMitigation - {}", mitigation);
         return mitigation;
+    }
+
+    @Transactional(readOnly = true)
+    public Component getComponent(URI failureModeUri) {
+        log.info("> getComponent - {}", failureModeUri);
+
+        FailureMode failureMode = getFailureMode(failureModeUri);
+        return componentDao.findByFailureMode(failureMode);
+    }
+
+    @Transactional
+    public void delete(URI failureModeUri) {
+        failureModeDao.remove(failureModeUri);
     }
 
     private FailureMode getFailureMode(URI failureModeUri) {

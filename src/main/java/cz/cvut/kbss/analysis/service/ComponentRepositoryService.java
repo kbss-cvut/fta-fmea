@@ -114,14 +114,19 @@ public class ComponentRepositoryService {
         log.info("< unlinkComponents");
     }
 
+    @Transactional
+    public void delete(URI componentUri) {
+        componentDao.remove(componentUri);
+    }
+
+    @Transactional(readOnly = true)
+    public void findByFailureMode(URI failureModeUri) {
+
+    }
+
     private Component getComponent(URI componentUri) {
         return componentDao
                 .find(componentUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
-    }
-
-    @Transactional
-    public void delete(URI componentUri) {
-        componentDao.remove(componentUri);
     }
 }
