@@ -88,10 +88,40 @@ public class ComponentRepositoryService {
         log.info("> deleteFunction - deleted");
     }
 
+    @Transactional
+    public Component linkComponents(URI componentUri, URI linkComponentUri) {
+        log.info("> linkComponents - {}, {}", componentUri, linkComponentUri);
+
+        Component component = getComponent(componentUri);
+        Component linkComponent = getComponent(linkComponentUri);
+
+        component.setParentComponent(linkComponent);
+        componentDao.update(component);
+
+        log.info("< linkComponents");
+        return component;
+    }
+
+    @Transactional
+    public void unlinkComponents(URI componentUri) {
+        log.info("> unlinkComponents - {}", componentUri);
+
+        Component component = getComponent(componentUri);
+
+        component.setParentComponent(null);
+        componentDao.update(component);
+
+        log.info("< unlinkComponents");
+    }
+
     private Component getComponent(URI componentUri) {
         return componentDao
                 .find(componentUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
     }
 
+    @Transactional
+    public void delete(URI componentUri) {
+        componentDao.remove(componentUri);
+    }
 }

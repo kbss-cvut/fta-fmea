@@ -41,6 +41,15 @@ public class ComponentController {
         return repositoryService.persist(component);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(value = "/{componentFragment}")
+    public void delete(@PathVariable(name = "componentFragment") String componentFragment) {
+        log.info("> delete - {}", componentFragment);
+
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        repositoryService.delete(componentUri);
+    }
+
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<Function> getFunctions(@PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> getFunctions - {}", componentFragment);
@@ -75,6 +84,26 @@ public class ComponentController {
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
 
         return repositoryService.addFailureMode(componentUri, failureMode);
+    }
+
+    @PostMapping(value = "/{componentFragment}/linkComponent/{linkFragment}")
+    public Component linkComponents(
+            @PathVariable(name = "componentFragment") String componentFragment,
+            @PathVariable(name = "linkFragment") String linkFragment) {
+        log.info("> addFunction - {}, {}", componentFragment, linkFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI linkComponentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, linkFragment);
+
+        return repositoryService.linkComponents(componentUri, linkComponentUri);
+    }
+
+    @DeleteMapping(value = "/{componentFragment}/linkComponent")
+    public void unlinkComponents(@PathVariable(name = "componentFragment") String componentFragment) {
+        log.info("> unlinkComponents - {}", componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+
+        repositoryService.unlinkComponents(componentUri);
+        log.info("< unlinkComponents");
     }
 
 }
