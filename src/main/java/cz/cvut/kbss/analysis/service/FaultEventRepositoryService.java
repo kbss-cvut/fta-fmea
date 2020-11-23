@@ -45,8 +45,12 @@ public class FaultEventRepositoryService {
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
         FaultEvent currentEvent = getEvent(eventUri);
 
-        faultEventValidator.validateDuplicates(inputEvent);
-        faultEventValidator.validateTypes(inputEvent);
+        if(inputEvent.getUri() == null) {
+            faultEventValidator.validateDuplicates(inputEvent);
+            faultEventValidator.validateTypes(inputEvent);
+        } else {
+            log.info("Using existing event - {}", inputEvent);
+        }
 
         currentEvent.addChild(inputEvent);
         faultEventDao.update(currentEvent);
