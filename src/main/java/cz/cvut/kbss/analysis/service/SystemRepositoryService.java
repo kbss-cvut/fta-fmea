@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.System;
 import lombok.RequiredArgsConstructor;
@@ -83,10 +84,25 @@ public class SystemRepositoryService {
         log.info("< removeComponent");
     }
 
+    @Transactional
+    public void updateComponent(URI systemUri, URI componentUri, Component updateComponent) {
+        log.info("> updateComponent - {}, {}, {}", systemUri, componentUri, updateComponent);
+
+        System system = getSystem(systemUri);
+
+        if(!componentUri.equals(updateComponent.getUri())) {
+            throw new LogicViolationException("Updating invalid component!");
+        }
+
+        system.getComponents().removeIf(c -> c.getUri().equals(componentUri));
+        system.addComponent(updateComponent);
+
+        systemDao.update(system);
+    }
+
     private System getSystem(URI systemUri) {
         return systemDao
                 .find(systemUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find system"));
     }
-
 }
