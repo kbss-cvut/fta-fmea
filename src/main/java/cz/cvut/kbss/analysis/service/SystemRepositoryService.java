@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.System;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.List;
 public class SystemRepositoryService {
 
     private final SystemDao systemDao;
+    private final ComponentRepositoryService componentRepositoryService;
 
     @Transactional(readOnly = true)
     public List<System> findAll() {
@@ -42,18 +44,43 @@ public class SystemRepositoryService {
     }
 
     @Transactional
-    public System update(System system) {
-        log.info("> update - {}", system);
+    public System update(System systemUpdate) {
+        log.info("> update - {}", systemUpdate);
 
+        System system = getSystem(systemUpdate.getUri());
+        system.setName(systemUpdate.getName());
         systemDao.update(system);
 
-        log.info("< update - {}", system);
-        return system;
+        log.info("< update - {}", systemUpdate);
+        return systemUpdate;
     }
 
     @Transactional
     public void delete(URI systemUri) {
         systemDao.remove(systemUri);
+    }
+
+    @Transactional
+    public void addComponent(URI systemUri, URI componentUri) {
+        log.info("> addComponent - {}, {}", systemUri, componentUri);
+
+        System system = getSystem(systemUri);
+        Component component = componentRepositoryService.getComponent(componentUri);
+
+        system.addComponent(component);
+
+        log.info("< addComponent");
+    }
+
+    @Transactional
+    public void removeComponent(URI systemUri, URI componentUri) {
+        log.info("> removeComponent - {}, {}", systemUri, componentUri);
+
+        System system = getSystem(systemUri);
+
+        system.getComponents().removeIf(c -> c.getUri().equals(componentUri));
+
+        log.info("< removeComponent");
     }
 
     private System getSystem(URI systemUri) {

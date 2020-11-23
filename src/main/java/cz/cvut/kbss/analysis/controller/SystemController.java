@@ -32,8 +32,8 @@ public class SystemController {
     @GetMapping(value = "/{systemFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public System find(@PathVariable(name = "systemFragment") String systemFragment) {
         log.info("> find - {}", systemFragment);
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
-        return repositoryService.find(faultTreeUri);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        return repositoryService.find(systemUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -60,6 +60,26 @@ public class SystemController {
 
         URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
         repositoryService.delete(systemUri);
+    }
+
+    @PutMapping(value = "/{systemFragment}/components/{componentFragment}")
+    public void addComponent(@PathVariable(name = "systemFragment") String systemFragment,
+                             @PathVariable(name = "componentFragment") String componentFragment) {
+        log.info("> addComponent - {}, {}", systemFragment, componentFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+
+        repositoryService.addComponent(systemUri, componentUri);
+    }
+
+    @DeleteMapping(value = "/{systemFragment}/components/{componentFragment}")
+    public void deleteComponent(@PathVariable(name = "systemFragment") String systemFragment,
+                                @PathVariable(name = "componentFragment") String componentFragment) {
+        log.info("> deleteComponent - {}, {}", systemFragment, componentFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+
+        repositoryService.removeComponent(systemUri, componentUri);
     }
 
 }

@@ -40,6 +40,14 @@ public class ComponentRepositoryService {
     }
 
     @Transactional
+    public Component update(Component component) {
+        log.info("> update - {}", component);
+        componentDao.update(component);
+        log.info("< update - {}", component);
+        return component;
+    }
+
+    @Transactional
     public Function addFunction(URI componentUri, Function function) {
         log.info("> addFunction - {}, {}", componentUri, function);
 
@@ -119,12 +127,7 @@ public class ComponentRepositoryService {
         componentDao.remove(componentUri);
     }
 
-    @Transactional(readOnly = true)
-    public void findByFailureMode(URI failureModeUri) {
-
-    }
-
-    private Component getComponent(URI componentUri) {
+    public Component getComponent(URI componentUri) {
         return componentDao
                 .find(componentUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));

@@ -41,6 +41,12 @@ public class ComponentController {
         return repositoryService.persist(component);
     }
 
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public Component update(@RequestBody Component component) {
+        log.info("> update - {}", component);
+        return repositoryService.update(component);
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{componentFragment}")
     public void delete(@PathVariable(name = "componentFragment") String componentFragment) {
