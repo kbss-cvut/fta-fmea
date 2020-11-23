@@ -19,8 +19,7 @@ public class GateStrategyFactory {
         gatePropagationStrategyMap.put(GateType.OR, orStrategy);
         gatePropagationStrategyMap.put(GateType.XOR, new XorProbabilityPropagationStrategy(andStrategy, orStrategy));
         gatePropagationStrategyMap.put(GateType.INHIBIT, new InhibitProbabilityPropagationStrategy(andStrategy));
-
-        // TODO PRIORITY_AND
+        gatePropagationStrategyMap.put(GateType.PRIORITY_AND, new PriorityAndProbabilityPropagationStrategy());
     }
 
     public static ProbabilityPropagationStrategy get(GateType gateType) {
