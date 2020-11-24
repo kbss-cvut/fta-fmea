@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -24,6 +25,9 @@ public class Component extends AbstractEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Component parentComponent;
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_belongsTo, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    private URI system;
 
     public void addFunction(Function function) {
         getFunctions().add(function);

@@ -4,7 +4,6 @@ import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
-import cz.cvut.kbss.analysis.model.util.EntityToOwlClassMapper;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;

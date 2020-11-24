@@ -1,7 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.ComponentDao;
-import cz.cvut.kbss.analysis.dao.FunctionDao;
+import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
@@ -40,10 +40,14 @@ public class ComponentRepositoryService {
     }
 
     @Transactional
-    public Component update(Component component) {
-        log.info("> update - {}", component);
+    public Component update(ComponentUpdateDTO update) {
+        log.info("> update - {}", update);
+
+        Component component = getComponent(update.getUri());
+        update.copyToEntity(component);
         componentDao.update(component);
-        log.info("< update - {}", component);
+
+        log.info("< update - {}", update);
         return component;
     }
 

@@ -63,18 +63,6 @@ public class SystemController {
         repositoryService.delete(systemUri);
     }
 
-    @PutMapping(value = "/{systemFragment}/components/{componentFragment}", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public void updateComponent(
-            @PathVariable(name = "systemFragment") String systemFragment,
-            @PathVariable(name = "componentFragment") String componentFragment,
-            @RequestBody Component updateComponent) {
-        log.info("> updateComponent - {}, {}", systemFragment, updateComponent);
-        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-
-        repositoryService.updateComponent(systemUri, componentUri, updateComponent);
-    }
-
     @PostMapping(value = "/{systemFragment}/components/{componentFragment}")
     public void addComponent(@PathVariable(name = "systemFragment") String systemFragment,
                              @PathVariable(name = "componentFragment") String componentFragment) {

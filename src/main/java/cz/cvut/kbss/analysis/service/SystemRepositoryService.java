@@ -84,22 +84,6 @@ public class SystemRepositoryService {
         log.info("< removeComponent");
     }
 
-    @Transactional
-    public void updateComponent(URI systemUri, URI componentUri, Component updateComponent) {
-        log.info("> updateComponent - {}, {}, {}", systemUri, componentUri, updateComponent);
-
-        System system = getSystem(systemUri);
-
-        if(!componentUri.equals(updateComponent.getUri())) {
-            throw new LogicViolationException("Updating invalid component!");
-        }
-
-        system.getComponents().removeIf(c -> c.getUri().equals(componentUri));
-        system.addComponent(updateComponent);
-
-        systemDao.update(system);
-    }
-
     private System getSystem(URI systemUri) {
         return systemDao
                 .find(systemUri)

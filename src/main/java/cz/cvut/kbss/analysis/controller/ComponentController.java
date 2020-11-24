@@ -1,9 +1,9 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
-import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -42,9 +42,9 @@ public class ComponentController {
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public Component update(@RequestBody Component component) {
-        log.info("> update - {}", component);
-        return repositoryService.update(component);
+    public Component update(@RequestBody ComponentUpdateDTO componentUpdate) {
+        log.info("> update - {}", componentUpdate);
+        return repositoryService.update(componentUpdate);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
