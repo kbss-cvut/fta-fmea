@@ -33,7 +33,7 @@ public class System extends AbstractEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Component that = (Component) o;
+        System that = (System) o;
         return getUri().equals(that.getUri());
     }
 

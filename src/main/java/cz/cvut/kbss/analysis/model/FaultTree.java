@@ -29,7 +29,7 @@ public class FaultTree extends HasAuthorData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FailureMode that = (FailureMode) o;
+        FaultTree that = (FaultTree) o;
         return Objects.equals(getUri(), that.getUri());
     }
 
