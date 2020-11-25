@@ -1,8 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -66,16 +64,15 @@ public class FaultTreeController {
         repositoryService.delete(faultTreeUri);
     }
 
-    @GetMapping(value = "/{faultTreeFragment}/rootToLeafEventPath/{leafEventFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public List<FaultEvent> rootToLeafEventPath(
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{faultTreeFragment}/failureModesTable", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureModesTable createFailureModesTable(
             @PathVariable(name = "faultTreeFragment") String faultTreeFragment,
-            @PathVariable(name = "leafEventFragment") String leafEventFragment
-    ) {
-        log.info("> rootToLeafEventPath - {}, {}", faultTreeFragment, leafEventFragment);
-        URI treeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
-        URI leafEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, leafEventFragment);
+            @RequestBody FailureModesTable failureModesTable) {
+        log.info("> createFailureModesTable - {}, {}", faultTreeFragment, failureModesTable);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
 
-        return repositoryService.rootToLeafEventPath(treeUri, leafEventUri);
+        return repositoryService.createFailureModesTable(faultTreeUri, failureModesTable);
     }
 
 }

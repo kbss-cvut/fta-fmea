@@ -70,8 +70,8 @@ fta-fmea:hasRPN
     rdfs:range  fta-fmea:RiskPriorityNumber .
 
 fta-fmea:isManifestedBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "is manifested by" .
+    rdf:type   owl:ObjectProperty ;
+    rdfs:label "is manifested by" .
 
 fta-fmea:Mitigation
     rdf:type   owl:Class ;
@@ -100,8 +100,8 @@ fta-fmea:hasDetection
     rdfs:range  xsd:decimal .
 
 fta-fmea:FaultEvent
-    rdf:type        owl:Class ;
-    rdfs:label      "Fault event" .
+    rdf:type   owl:Class ;
+    rdfs:label "Fault event" .
 
 fta-fmea:hasProbability
     rdf:type    owl:DatatypeProperty ;
@@ -141,6 +141,38 @@ fta-fmea:hasChildren
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has children" ;
     rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  fta-fmea:FaultEvent .
+
+fta-fmea:hasFailureModesTable
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has failure modes table" ;
+    rdfs:domain fta-fmea:FaultTree ;
+    rdfs:range  fta-fmea:FailureModesTable .
+
+fta-fmea:FailureModesTable
+    rdf:type   owl:Class ;
+    rdfs:label "Faulure Modes Table" .
+
+fta-fmea:isDerivedFrom
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "is derived from" ;
+    rdfs:domain fta-fmea:FailureModesTable ;
+    rdfs:range  fta-fmea:FaultTree .
+
+fta-fmea:hasRow
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has row" ;
+    rdfs:domain fta-fmea:FailureModesTable ;
+    rdfs:range  fta-fmea:FailureModesRow .
+
+fta-fmea:FailureModesRow
+    rdf:type   owl:Class ;
+    rdfs:label "Faulure Modes Row" .
+
+fta-fmea:hasLocalEffect
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has local effect" ;
+    rdfs:domain fta-fmea:FailureModesRow ;
     rdfs:range  fta-fmea:FaultEvent .
 
 fta-fmea:User

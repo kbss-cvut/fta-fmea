@@ -5,7 +5,9 @@ import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_FaultTree)
 @EntityListeners(HasAuthorDataManager.class)
@@ -19,6 +21,14 @@ public class FaultTree extends HasAuthorData {
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private FaultEvent manifestingEvent;
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureModesTable, cascade = CascadeType.ALL)
+    private Set<FailureModesTable> failureModesTables = new HashSet<>();
+
+    public void addFailureModeTable(FailureModesTable table) {
+        getFailureModesTables().add(table);
+        table.setFaultTree(this);
+    }
 
     @Override
     public String toString() {

@@ -4,9 +4,7 @@ import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -93,51 +92,39 @@ public class FaultTreeRepositoryService {
         log.info("< propagateProbabilities - {}", recomputedProbability);
     }
 
-    @Transactional(readOnly = true)
-    public List<FaultEvent> rootToLeafEventPath(URI treeUri, URI leafEventUri) {
-        log.info("> rootToLeafEventPath - {}, {}", treeUri, leafEventUri);
+    @Transactional
+    public FailureModesTable createFailureModesTable(URI faultTreeUri, FailureModesTable failureModesTable) {
+        log.info("> createFailureModesTable - {}, {}", faultTreeUri, failureModesTable);
 
-        FaultTree tree = getFaultTree(treeUri);
+        FaultTree faultTree = getFaultTree(faultTreeUri);
+        faultTree.addFailureModeTable(failureModesTable);
 
-        Set<FaultEvent> visited = new HashSet<>();
-        LinkedList<Pair<FaultEvent, List<FaultEvent>>> queue = new LinkedList<>();
+        Set<FaultEvent> leafEvents = getLeafEvents(faultTree.getManifestingEvent());
+        Set<FailureModesRow> failureModesRows = leafEvents.stream().map(leaf -> {
+            FailureModesRow row = new FailureModesRow();
+            row.setLocalEffect(leaf);
+            return row;
+        }).collect(Collectors.toSet());
 
-        FaultEvent startEvent = tree.getManifestingEvent();
-        List<FaultEvent> startList = new ArrayList<>();
-        startList.add(startEvent);
+        failureModesTable.setRows(failureModesRows);
 
-        queue.push(Pair.of(startEvent, startList));
+        faultTreeDao.update(faultTree);
 
-        while (!queue.isEmpty()) {
-            Pair<FaultEvent, List<FaultEvent>> pair = queue.pop();
-            FaultEvent currentEvent = pair.getFirst();
-            List<FaultEvent> path = pair.getSecond();
-            visited.add(currentEvent);
+        log.info("< createFailureModesTable - {}", failureModesTable);
+        return failureModesTable;
+    }
 
-            for (FaultEvent child : currentEvent.getChildren()) {
-                if (child.getUri().equals(leafEventUri)) {
-                    if (child.getEventType() == EventType.INTERMEDIATE) {
-                        String message = "Intermediate event must not be the end of the path!";
-                        log.warn(message);
-                        throw new LogicViolationException(message);
-                    }
+    private Set<FaultEvent> getLeafEvents(FaultEvent event) {
+        Set<FaultEvent> leafNodes = new HashSet<>();
 
-                    path.add(child);
-                    Collections.reverse(path);
-                    return path;
-                } else {
-                    if (!visited.contains(child)) {
-                        visited.add(child);
-                        List<FaultEvent> newPath = new ArrayList<>(path);
-                        newPath.add(child);
-                        queue.push(Pair.of(child, newPath));
-                    }
-                }
+        if (event.getChildren().isEmpty()) {
+            leafNodes.add(event);
+        } else {
+            for (FaultEvent child : event.getChildren()) {
+                leafNodes.addAll(getLeafEvents(child));
             }
         }
-
-        log.warn("< rootToLeafEventPath - failed to find path from root to leaf");
-        return new ArrayList<>();
+        return leafNodes;
     }
 
     private FaultTree getFaultTree(URI faultTreeUri) {
