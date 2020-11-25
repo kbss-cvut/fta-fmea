@@ -11,24 +11,32 @@ import java.util.Objects;
 import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_FailureMode)
-@EntityListeners(HasAuthorDataManager.class)
 @Data
-public class FailureMode extends HasAuthorData {
+public class FailureMode extends AbstractEntity {
 
+    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect, cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     private Set<FaultEvent> effects = new HashSet<>();
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    private Component component;
+
     @OWLObjectProperty(iri = Vocabulary.s_p_influences, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
-    private Function function;
+    private Set<Function> functions;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
     private Set<Mitigation> mitigation = new HashSet<>();
 
     public void addMitigation(Mitigation mitigation) {
         getMitigation().add(mitigation);
+    }
+
+    public void addEffect(FaultEvent faultEvent) {
+        faultEvent.setFailureMode(this);
+        getEffects().add(faultEvent);
     }
 
     @Override

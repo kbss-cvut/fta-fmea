@@ -72,21 +72,6 @@ public class ComponentRepositoryService {
     }
 
     @Transactional
-    public FailureMode addFailureMode(URI componentUri, FailureMode failureMode) {
-        log.info("> addFailureMode - {}, {}", componentUri, failureMode);
-
-        // TODO failure mode name uniqueness
-
-        Component component = getComponent(componentUri);
-
-        component.addFailureMode(failureMode);
-        componentDao.update(component);
-
-        log.info("< addFailureMode - {}", failureMode);
-        return failureMode;
-    }
-
-    @Transactional
     public void deleteFunction(URI componentUri, URI functionUri) {
         log.info("> deleteFunction - {}, {}", componentUri, functionUri);
 

@@ -72,7 +72,6 @@ public class ComponentController {
         return repositoryService.addFunction(componentUri, function);
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{componentFragment}/functions/{functionFragment}")
     public void deleteFunction(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "functionFragment") String functionFragment) {
         log.info("> deleteFunction - {}, {}", componentFragment, functionFragment);
@@ -81,15 +80,6 @@ public class ComponentController {
 
         repositoryService.deleteFunction(componentUri, functionUri);
         log.info("< deleteFunction");
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{componentFragment}/failureModes", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public FailureMode addFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody FailureMode failureMode) {
-        log.info("> addFailureMode - {}, {}", componentFragment, failureMode);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-
-        return repositoryService.addFailureMode(componentUri, failureMode);
     }
 
     @PostMapping(value = "/{componentFragment}/linkComponent/{linkFragment}")

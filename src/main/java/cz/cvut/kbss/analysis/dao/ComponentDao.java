@@ -21,7 +21,7 @@ public class ComponentDao extends BaseDao<Component> {
 
     public Component findByFailureMode(FailureMode failureMode) {
         try {
-            em.refresh(failureMode);
+            // TODO delete? em.refresh(failureMode);
 
             return em.createNativeQuery("SELECT ?x WHERE { ?x a ?type ; ?hasFm ?fmUri . }", type)
                     .setParameter("type", typeUri)

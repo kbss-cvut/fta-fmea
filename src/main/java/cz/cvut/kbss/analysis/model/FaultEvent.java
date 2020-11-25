@@ -42,6 +42,9 @@ public class FaultEvent extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    private FailureMode failureMode;
+
     public void addChild(FaultEvent child) {
         getChildren().add(child);
     }

@@ -28,9 +28,8 @@ public class FailureModeController {
     private final FailureModeRepositoryService repositoryService;
 
     @GetMapping
-    public List<FailureMode> findAll(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return repositoryService.findAllForUser(user);
+    public List<FailureMode> findAll() {
+        return repositoryService.findAll();
     }
 
     @GetMapping(value = "/{failureModeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

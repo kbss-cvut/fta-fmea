@@ -23,8 +23,8 @@ public class FailureModeRepositoryService {
     private final ComponentDao componentDao;
 
     @Transactional(readOnly = true)
-    public List<FailureMode> findAllForUser(User user) {
-        return failureModeDao.findAllForUser(user);
+    public List<FailureMode> findAll() {
+        return failureModeDao.findAll();
     }
 
     @Transactional(readOnly = true)

@@ -1,7 +1,10 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
@@ -24,6 +27,8 @@ public class FaultEventRepositoryService {
     private final FaultEventDao faultEventDao;
     private final FaultEventValidator faultEventValidator;
 
+    private final ComponentRepositoryService componentRepositoryService;
+
     @Transactional(readOnly = true)
     public List<FaultEvent> findFaultEvents() {
         return faultEventDao.findAll();
@@ -45,7 +50,7 @@ public class FaultEventRepositoryService {
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
         FaultEvent currentEvent = getEvent(eventUri);
 
-        if(inputEvent.getUri() == null) {
+        if (inputEvent.getUri() == null) {
             faultEventValidator.validateDuplicates(inputEvent);
             faultEventValidator.validateTypes(inputEvent);
         } else {
@@ -76,10 +81,48 @@ public class FaultEventRepositoryService {
         return resultProbability;
     }
 
+    public FailureMode getFailureMode(URI faultEventUri) {
+        log.info("> getFailureMode - {}", faultEventUri);
+
+        FailureMode failureMode = getEvent(faultEventUri).getFailureMode();
+        log.info("< getFailureMode - {}", failureMode);
+        return failureMode;
+    }
+
+    @Transactional
+    public FailureMode addFailureMode(URI faultEventUri, FailureMode failureMode) {
+        log.info("> addFailureMode - {}, {}", faultEventUri, failureMode);
+
+        FaultEvent event = getEvent(faultEventUri);
+        failureMode.addEffect(event);
+
+        Component component = componentRepositoryService.getComponent(failureMode.getComponent().getUri());
+        component.addFailureMode(failureMode);
+
+        faultEventDao.update(event);
+
+        log.info("< addFailureMode - {}", failureMode);
+        return failureMode;
+    }
+
+    @Transactional
+    public void deleteFailureMode(URI faultEventUri) {
+        log.info("> deleteFailureMode - {}", faultEventUri);
+
+        FaultEvent event = getEvent(faultEventUri);
+        event.getFailureMode()
+                .getEffects()
+                .removeIf(e -> e.getUri().equals(faultEventUri));
+        event.setFailureMode(null);
+
+        faultEventDao.update(event);
+
+        log.info("< deleteFailureMode");
+    }
+
     private FaultEvent getEvent(URI eventUri) {
         return faultEventDao
                 .find(eventUri)
                 .orElseThrow(() -> new EntityNotFoundException("Failed to find fault event"));
     }
-
 }

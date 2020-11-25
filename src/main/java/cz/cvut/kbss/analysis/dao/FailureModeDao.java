@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FailureModeDao extends BaseAuthoredDao<FailureMode> {
+public class FailureModeDao extends BaseDao<FailureMode> {
 
     @Autowired
     public FailureModeDao(EntityManager em, PersistenceConf config) {

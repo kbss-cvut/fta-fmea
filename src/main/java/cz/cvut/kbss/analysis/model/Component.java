@@ -19,7 +19,7 @@ public class Component extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Function> functions = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode)
     private Set<FailureMode> failureModes = new HashSet<>();
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
@@ -30,6 +30,7 @@ public class Component extends AbstractEntity {
     }
 
     public void addFailureMode(FailureMode failureMode) {
+        failureMode.setComponent(this);
         getFailureModes().add(failureMode);
     }
 

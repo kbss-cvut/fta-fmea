@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.service.FaultEventRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -52,6 +53,32 @@ public class FaultEventController {
         URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
 
         return repositoryService.addInputEvent(faultEventUri, inputEvent);
+    }
+
+    @GetMapping(value = "/{faultEventFragment}/failureMode", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureMode getFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
+        log.info("> getFailureMode - {}", faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+
+        return repositoryService.getFailureMode(faultEventUri);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{faultEventFragment}/failureMode", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureMode addFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment, @RequestBody FailureMode failureMode) {
+        log.info("> addFailureMode - {}, {}", faultEventFragment, failureMode);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+
+        return repositoryService.addFailureMode(faultEventUri, failureMode);
+    }
+
+    @DeleteMapping(value = "/{faultEventFragment}/failureMode")
+    public void deleteFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
+        log.info("> deleteFailureMode - {}", faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+
+        repositoryService.deleteFailureMode(faultEventUri);
+        log.info("< deleteFailureMode");
     }
     
 }
