@@ -62,7 +62,7 @@ public class FaultEventRepositoryService {
     public Double propagateProbability(FaultEvent event) {
         log.info("> propagateProbability - {}", event);
 
-        if (event.getEventType() == EventType.INTERMEDIATE && !event.getChildren().isEmpty()) {
+        if (event.getEventType() == EventType.INTERMEDIATE) {
             List<Double> childProbabilities = event.getChildren().stream()
                     .map(this::propagateProbability).collect(Collectors.toList());
 

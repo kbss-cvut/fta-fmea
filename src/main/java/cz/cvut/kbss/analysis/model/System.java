@@ -21,7 +21,6 @@ public class System extends AbstractEntity {
 
     public void addComponent(Component component) {
         getComponents().add(component);
-        component.setSystem(getUri());
     }
 
     @Override

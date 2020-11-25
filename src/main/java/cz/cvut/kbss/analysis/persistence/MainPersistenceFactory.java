@@ -63,6 +63,7 @@ public class MainPersistenceFactory {
         properties.put(ONTOLOGY_PHYSICAL_URI_KEY, repositoryConf.getUrl());
         properties.put(DATA_SOURCE_CLASS, persistenceConf.getDriver());
         properties.put(LANG, persistenceConf.getLanguage());
+        properties.put(CACHE_ENABLED, "false");
 
         // OPTIMIZATION: Always use statement retrieval with unbound property. Should spare
         // repository queries

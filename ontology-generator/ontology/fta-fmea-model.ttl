@@ -19,12 +19,6 @@ fta-fmea:Component
     rdf:type   owl:Class ;
     rdfs:label "Component" .
 
-fta-fmea:belongsTo
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "belongs to" ;
-    rdfs:domain fta-fmea:Component ;
-    rdfs:range  fta-fmea:System .
-
 fta-fmea:hasFunction
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has function" ;
