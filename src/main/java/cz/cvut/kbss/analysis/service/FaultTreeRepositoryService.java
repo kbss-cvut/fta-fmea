@@ -1,10 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
-import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.util.Pair;
@@ -25,7 +22,6 @@ import java.util.stream.Collectors;
 public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree> {
 
     private final FaultTreeDao faultTreeDao;
-    private final FaultEventDao faultEventDao;
     private final FaultEventValidator faultEventValidator;
     private final FaultEventRepositoryService faultEventRepositoryService;
 
@@ -55,9 +51,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         URI faultEventUri = instance.getManifestingEvent().getUri();
         if (faultEventUri != null) {
             log.info("Reusing fault event - {}", faultEventUri);
-            FaultEvent faultEvent = faultEventDao
-                    .find(faultEventUri)
-                    .orElseThrow(() -> new LogicViolationException("Fault Event is reused but does not exists in database!"));
+            FaultEvent faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
             instance.setManifestingEvent(faultEvent);
         }
     }
@@ -73,6 +67,22 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         Double recomputedProbability = faultEventRepositoryService.propagateProbability(faultTree.getManifestingEvent());
 
         log.info("< propagateProbabilities - {}", recomputedProbability);
+    }
+
+    @Transactional(readOnly = true)
+    public List<List<FaultEvent>> getTreePaths(URI faultTreeUri) {
+        log.info("> exploreTreePaths - {}", faultTreeUri);
+
+        FaultTree faultTree = findRequired(faultTreeUri);
+
+        Set<FaultEvent> leafEvents = getLeafEvents(faultTree.getManifestingEvent());
+
+        List<List<FaultEvent>> treePaths = leafEvents.parallelStream()
+                .map(leaf -> rootToLeafPath(faultTree, leaf.getUri()))
+                .collect(Collectors.toList());
+
+        log.info("< exploreTreePaths - {}", treePaths);
+        return treePaths;
     }
 
     @Transactional
@@ -91,7 +101,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         failureModesTable.setRows(failureModesRows);
 
-        faultTreeDao.update(faultTree);
+        update(faultTree);
 
         log.info("< createFailureModesTable - {}", failureModesTable);
         return failureModesTable;
@@ -108,6 +118,49 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             }
         }
         return leafNodes;
+    }
+
+    private List<FaultEvent> rootToLeafPath(FaultTree tree, URI leafEventUri) {
+        log.info("> rootToLeafEventPath - {}, {}", tree, leafEventUri);
+
+        Set<FaultEvent> visited = new HashSet<>();
+        LinkedList<Pair<FaultEvent, List<FaultEvent>>> queue = new LinkedList<>();
+
+        FaultEvent startEvent = tree.getManifestingEvent();
+        List<FaultEvent> startList = new ArrayList<>();
+        startList.add(startEvent);
+
+        queue.push(Pair.of(startEvent, startList));
+
+        while (!queue.isEmpty()) {
+            Pair<FaultEvent, List<FaultEvent>> pair = queue.pop();
+            FaultEvent currentEvent = pair.getFirst();
+            List<FaultEvent> path = pair.getSecond();
+            visited.add(currentEvent);
+
+            for (FaultEvent child : currentEvent.getChildren()) {
+                if (child.getUri().equals(leafEventUri)) {
+                    if (child.getEventType() == EventType.INTERMEDIATE) {
+                        log.warn("Intermediate event must not be the end of the path!");
+                        return new ArrayList<>();
+                    }
+
+                    path.add(child);
+                    Collections.reverse(path);
+                    return path;
+                } else {
+                    if (!visited.contains(child)) {
+                        visited.add(child);
+                        List<FaultEvent> newPath = new ArrayList<>(path);
+                        newPath.add(child);
+                        queue.push(Pair.of(child, newPath));
+                    }
+                }
+            }
+        }
+
+        log.warn("< rootToLeafEventPath - failed to find path from root to leaf");
+        return new ArrayList<>();
     }
 
 }
