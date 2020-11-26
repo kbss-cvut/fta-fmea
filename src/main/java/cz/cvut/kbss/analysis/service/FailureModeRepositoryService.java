@@ -72,14 +72,6 @@ public class FailureModeRepositoryService {
         return mitigation;
     }
 
-    @Transactional(readOnly = true)
-    public Component getComponent(URI failureModeUri) {
-        log.info("> getComponent - {}", failureModeUri);
-
-        FailureMode failureMode = getFailureMode(failureModeUri);
-        return componentDao.findByFailureMode(failureMode);
-    }
-
     @Transactional
     public void delete(URI failureModeUri) {
         failureModeDao.remove(failureModeUri);

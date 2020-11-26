@@ -19,18 +19,4 @@ public class ComponentDao extends BaseDao<Component> {
         super(Component.class, em, config);
     }
 
-    public Component findByFailureMode(FailureMode failureMode) {
-        try {
-            // TODO delete? em.refresh(failureMode);
-
-            return em.createNativeQuery("SELECT ?x WHERE { ?x a ?type ; ?hasFm ?fmUri . }", type)
-                    .setParameter("type", typeUri)
-                    .setParameter("hasFm", URI.create(Vocabulary.s_p_hasFailureMode))
-                    .setParameter("fmUri", failureMode.getUri())
-                    .getSingleResult();
-        } catch (RuntimeException e) {
-            throw new PersistenceException(e);
-        }
-    }
-
 }

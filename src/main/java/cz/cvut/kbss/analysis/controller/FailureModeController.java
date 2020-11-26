@@ -39,13 +39,6 @@ public class FailureModeController {
         return repositoryService.find(failureModeUri);
     }
 
-    @GetMapping(value = "/{failureModeFragment}/component", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
-    public Component getComponent(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
-        log.info("> getComponent - {}", failureModeFragment);
-        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
-        return repositoryService.getComponent(failureModeUri);
-    }
-
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureMode update(@RequestBody FailureMode failureMode) {
         log.info("> update - {}", failureMode);

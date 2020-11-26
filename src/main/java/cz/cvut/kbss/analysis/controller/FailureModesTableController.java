@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
 import cz.cvut.kbss.analysis.service.FailureModesTableRepositoryService;
@@ -47,6 +48,14 @@ public class FailureModesTableController {
 
         URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
         repositoryService.delete(tableUri);
+    }
+
+    @GetMapping(value = "/{failureModeTableFragment}/computeTableData")
+    public FailureModesTableDataDTO computeTableData(@PathVariable(name = "failureModeTableFragment") String failureModeTableFragment) {
+        log.info("> computeTableData - {}", failureModeTableFragment);
+
+        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
+        return repositoryService.computeTableData(tableUri);
     }
 
 }
