@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FaultTreeDao extends BaseAuthoredDao<FaultTree> {
+public class FaultTreeDao extends BaseDao<FaultTree> {
 
     @Autowired
     protected FaultTreeDao(EntityManager em, PersistenceConf config) {

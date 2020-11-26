@@ -5,7 +5,6 @@ import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableField;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;

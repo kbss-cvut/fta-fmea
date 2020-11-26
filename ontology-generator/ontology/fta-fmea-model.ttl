@@ -191,16 +191,6 @@ fta-fmea:hasPassword
     rdfs:domain fta-fmea:User ;
     rdfs:range  xsd:string .
 
-fta-fmea:authoredBy
-    rdf:type   owl:ObjectProperty ;
-    rdfs:label "authored by" ;
-    rdfs:range fta-fmea:User .
-
-fta-fmea:hasCreationDate
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has creation date" ;
-    rdfs:domain xsd:date .
-
 fta-fmea:hasName
     rdf:type   owl:DatatypeProperty ;
     rdfs:label "has name" ;

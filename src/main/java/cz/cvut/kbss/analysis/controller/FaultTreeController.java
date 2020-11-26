@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -26,9 +25,8 @@ public class FaultTreeController {
     private final IdentifierService identifierService;
 
     @GetMapping
-    public List<FaultTree> findAll(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return repositoryService.findAllForUser(user);
+    public List<FaultTree> findAll() {
+        return repositoryService.findAll();
     }
 
     @GetMapping(value = "/{faultTreeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

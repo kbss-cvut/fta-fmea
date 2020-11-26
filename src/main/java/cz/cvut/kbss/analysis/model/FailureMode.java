@@ -1,11 +1,9 @@
 package cz.cvut.kbss.analysis.model;
 
-import cz.cvut.kbss.analysis.persistence.util.HasAuthorDataManager;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

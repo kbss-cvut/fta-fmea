@@ -29,8 +29,8 @@ public class FaultTreeRepositoryService {
     private final FaultEventRepositoryService faultEventRepositoryService;
 
     @Transactional(readOnly = true)
-    public List<FaultTree> findAllForUser(User user) {
-        return faultTreeDao.findAllForUser(user);
+    public List<FaultTree> findAll() {
+        return faultTreeDao.findAll();
     }
 
     @Transactional
