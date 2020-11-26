@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
+import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.*;
@@ -21,67 +22,49 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class FaultTreeRepositoryService {
+public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree> {
 
     private final FaultTreeDao faultTreeDao;
     private final FaultEventDao faultEventDao;
     private final FaultEventValidator faultEventValidator;
     private final FaultEventRepositoryService faultEventRepositoryService;
 
-    @Transactional(readOnly = true)
-    public List<FaultTree> findAll() {
-        return faultTreeDao.findAll();
+    @Override
+    protected GenericDao<FaultTree> getPrimaryDao() {
+        return faultTreeDao;
     }
 
     @Transactional
-    public FaultTree find(URI faultTreeUri) {
+    public FaultTree findWithPropagation(URI faultTreeUri) {
         log.info("> find - {}", faultTreeUri);
 
-        FaultTree faultTree = getFaultTree(faultTreeUri);
+        FaultTree faultTree = findRequired(faultTreeUri);
 
         log.debug("Propagating probabilities through the tree");
         propagateProbabilities(faultTree);
 
-        faultTreeDao.update(faultTree);
+        update(faultTree);
 
         return faultTree;
     }
 
-    @Transactional
-    public FaultTree create(FaultTree faultTree) {
-        log.info("> create - {}", faultTree);
+    @Override
+    protected void prePersist(FaultTree instance) {
+        faultEventValidator.validateTypes(instance.getManifestingEvent());
 
-        faultEventValidator.validateTypes(faultTree.getManifestingEvent());
-
-        URI faultEventUri = faultTree.getManifestingEvent().getUri();
+        URI faultEventUri = instance.getManifestingEvent().getUri();
         if (faultEventUri != null) {
             log.info("Reusing fault event - {}", faultEventUri);
             FaultEvent faultEvent = faultEventDao
                     .find(faultEventUri)
                     .orElseThrow(() -> new LogicViolationException("Fault Event is reused but does not exists in database!"));
-            faultTree.setManifestingEvent(faultEvent);
+            instance.setManifestingEvent(faultEvent);
         }
-        faultTreeDao.persist(faultTree);
-
-        log.info("< create - {}", faultTree);
-        return faultTree;
     }
 
-    @Transactional
-    public FaultTree update(FaultTree faultTree) {
-        log.info("> update - {}", faultTree);
-
-        propagateProbabilities(faultTree);
-
-        faultTreeDao.update(faultTree);
-
-        log.info("< update - {}", faultTree);
-        return faultTree;
-    }
-
-    @Transactional
-    public void delete(URI treeUri) {
-        faultTreeDao.remove(treeUri);
+    @Override
+    protected void preUpdate(FaultTree instance) {
+        propagateProbabilities(instance);
     }
 
     private void propagateProbabilities(FaultTree faultTree) {
@@ -96,7 +79,7 @@ public class FaultTreeRepositoryService {
     public FailureModesTable createFailureModesTable(URI faultTreeUri, FailureModesTable failureModesTable) {
         log.info("> createFailureModesTable - {}, {}", faultTreeUri, failureModesTable);
 
-        FaultTree faultTree = getFaultTree(faultTreeUri);
+        FaultTree faultTree = findRequired(faultTreeUri);
         faultTree.addFailureModeTable(failureModesTable);
 
         Set<FaultEvent> leafEvents = getLeafEvents(faultTree.getManifestingEvent());
@@ -127,9 +110,4 @@ public class FaultTreeRepositoryService {
         return leafNodes;
     }
 
-    private FaultTree getFaultTree(URI faultTreeUri) {
-        return faultTreeDao
-                .find(faultTreeUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find fault tree"));
-    }
 }

@@ -36,7 +36,7 @@ public class FailureModeController {
     public FailureMode findFailureMode(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
         log.info("> findFailureMode - {}", failureModeFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
-        return repositoryService.find(failureModeUri);
+        return repositoryService.findRequired(failureModeUri);
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
@@ -55,7 +55,7 @@ public class FailureModeController {
         log.info("> delete - {}", failureModeFragment);
 
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
-        repositoryService.delete(failureModeUri);
+        repositoryService.remove(failureModeUri);
     }
 
     @GetMapping(value = "/{failureModeFragment}/mitigation", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

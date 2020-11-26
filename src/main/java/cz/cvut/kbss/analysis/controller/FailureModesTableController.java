@@ -35,7 +35,7 @@ public class FailureModesTableController {
     public FailureModesTable update(@RequestBody FailureModesTableUpdateDTO tableUpdateDTO) {
         log.info("> update - {}", tableUpdateDTO);
 
-        FailureModesTable updatedTable = repositoryService.update(tableUpdateDTO);
+        FailureModesTable updatedTable = repositoryService.updateByDTO(tableUpdateDTO);
 
         log.info("< update - {}", updatedTable);
         return updatedTable;
@@ -47,7 +47,7 @@ public class FailureModesTableController {
         log.info("> delete - {}", failureModeTableFragment);
 
         URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
-        repositoryService.delete(tableUri);
+        repositoryService.remove(tableUri);
     }
 
     @GetMapping(value = "/{failureModeTableFragment}/computeTableData")

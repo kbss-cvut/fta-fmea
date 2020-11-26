@@ -51,7 +51,7 @@ public class UserDao extends BaseDao<User> {
      * @param username Username to check
      * @return {@code true} if a user with the specified username exists
      */
-    public boolean exists(String username) {
+    public boolean existsWithUsername(String username) {
         Objects.requireNonNull(username);
         return em
                 .createNativeQuery("ASK WHERE { ?x a ?type ; ?hasUsername ?username . }", Boolean.class)

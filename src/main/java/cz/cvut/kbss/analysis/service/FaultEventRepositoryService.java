@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
+import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
@@ -21,33 +22,26 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class FaultEventRepositoryService {
+public class FaultEventRepositoryService extends BaseRepositoryService<FaultEvent> {
 
     private final FaultEventDao faultEventDao;
     private final FaultEventValidator faultEventValidator;
 
     private final ComponentRepositoryService componentRepositoryService;
 
-    @Transactional(readOnly = true)
-    public List<FaultEvent> findFaultEvents() {
-        return faultEventDao.findAll();
+    @Override
+    protected GenericDao<FaultEvent> getPrimaryDao() {
+        return faultEventDao;
     }
 
-    @Transactional
-    public void delete(URI eventUri) {
-        faultEventDao.remove(eventUri);
-    }
-
-    @Transactional
-    public void updateEvent(FaultEvent event) {
-        faultEventValidator.validateTypes(event);
-
-        faultEventDao.update(event);
+    @Override
+    protected void preUpdate(FaultEvent instance) {
+        faultEventValidator.validateTypes(instance);
     }
 
     @Transactional
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
-        FaultEvent currentEvent = getEvent(eventUri);
+        FaultEvent currentEvent = findRequired(eventUri);
 
         if (inputEvent.getUri() == null) {
             faultEventValidator.validateDuplicates(inputEvent);
@@ -57,7 +51,7 @@ public class FaultEventRepositoryService {
         }
 
         currentEvent.addChild(inputEvent);
-        faultEventDao.update(currentEvent);
+        update(currentEvent);
 
         return inputEvent;
     }
@@ -83,7 +77,7 @@ public class FaultEventRepositoryService {
     public FailureMode getFailureMode(URI faultEventUri) {
         log.info("> getFailureMode - {}", faultEventUri);
 
-        FailureMode failureMode = getEvent(faultEventUri).getFailureMode();
+        FailureMode failureMode = findRequired(faultEventUri).getFailureMode();
         log.info("< getFailureMode - {}", failureMode);
         return failureMode;
     }
@@ -92,13 +86,13 @@ public class FaultEventRepositoryService {
     public FailureMode addFailureMode(URI faultEventUri, FailureMode failureMode) {
         log.info("> addFailureMode - {}, {}", faultEventUri, failureMode);
 
-        FaultEvent event = getEvent(faultEventUri);
+        FaultEvent event = findRequired(faultEventUri);
         failureMode.addEffect(event);
 
-        Component component = componentRepositoryService.getComponent(failureMode.getComponent().getUri());
+        Component component = componentRepositoryService.findRequired(failureMode.getComponent().getUri());
         component.addFailureMode(failureMode);
 
-        faultEventDao.update(event);
+        update(event);
 
         log.info("< addFailureMode - {}", failureMode);
         return failureMode;
@@ -108,20 +102,15 @@ public class FaultEventRepositoryService {
     public void deleteFailureMode(URI faultEventUri) {
         log.info("> deleteFailureMode - {}", faultEventUri);
 
-        FaultEvent event = getEvent(faultEventUri);
+        FaultEvent event = findRequired(faultEventUri);
         event.getFailureMode()
                 .getEffects()
                 .removeIf(e -> e.getUri().equals(faultEventUri));
         event.setFailureMode(null);
 
-        faultEventDao.update(event);
+        update(event);
 
         log.info("< deleteFailureMode");
     }
 
-    private FaultEvent getEvent(URI eventUri) {
-        return faultEventDao
-                .find(eventUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find fault event"));
-    }
 }

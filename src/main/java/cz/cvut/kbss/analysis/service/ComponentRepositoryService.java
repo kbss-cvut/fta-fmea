@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.ComponentDao;
+import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.Component;
@@ -14,40 +15,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ComponentRepositoryService {
+public class ComponentRepositoryService extends BaseRepositoryService<Component> {
 
     private final ComponentDao componentDao;
     private final ComponentValidator componentValidator;
 
-    @Transactional(readOnly = true)
-    public List<Component> findAll() {
-        return componentDao.findAll();
+    @Override
+    protected GenericDao<Component> getPrimaryDao() {
+        return componentDao;
     }
 
-    @Transactional(readOnly = true)
-    public Component persist(Component component) {
-        log.info("> persist - {}", component);
-
-        componentValidator.validateDuplicates(component);
-        componentDao.persist(component);
-        return component;
+    @Override
+    protected void prePersist(Component instance) {
+        componentValidator.validateDuplicates(instance);
     }
 
     @Transactional
-    public Component update(ComponentUpdateDTO update) {
-        log.info("> update - {}", update);
+    public Component updateByDTO(ComponentUpdateDTO updateDTO) {
+        log.info("> updateByDTO - {}", updateDTO);
 
-        Component component = getComponent(update.getUri());
-        update.copyToEntity(component);
-        componentDao.update(component);
+        Component component = findRequired(updateDTO.getUri());
+        updateDTO.copyToEntity(component);
 
-        log.info("< update - {}", update);
+        update(component);
+
         return component;
     }
 
@@ -55,10 +51,10 @@ public class ComponentRepositoryService {
     public Function addFunction(URI componentUri, Function function) {
         log.info("> addFunction - {}, {}", componentUri, function);
 
-        Component component = getComponent(componentUri);
+        Component component = findRequired(componentUri);
 
         component.addFunction(function);
-        componentDao.update(component);
+        update(component);
 
         log.info("< addFunction - {}", function);
         return function;
@@ -66,7 +62,7 @@ public class ComponentRepositoryService {
 
     @Transactional(readOnly = true)
     public Set<Function> getFunctions(URI componentUri) {
-        Component component = getComponent(componentUri);
+        Component component = findRequired(componentUri);
 
         return component.getFunctions();
     }
@@ -75,12 +71,12 @@ public class ComponentRepositoryService {
     public void deleteFunction(URI componentUri, URI functionUri) {
         log.info("> deleteFunction - {}, {}", componentUri, functionUri);
 
-        Component component = getComponent(componentUri);
+        Component component = findRequired(componentUri);
         component
                 .getFunctions()
                 .removeIf(function -> function.getUri().equals(functionUri));
 
-        componentDao.update(component);
+        update(component);
 
         log.info("> deleteFunction - deleted");
     }
@@ -89,11 +85,11 @@ public class ComponentRepositoryService {
     public Component linkComponents(URI componentUri, URI linkComponentUri) {
         log.info("> linkComponents - {}, {}", componentUri, linkComponentUri);
 
-        Component component = getComponent(componentUri);
-        Component linkComponent = getComponent(linkComponentUri);
+        Component component = findRequired(componentUri);
+        Component linkComponent = findRequired(linkComponentUri);
 
         component.setParentComponent(linkComponent);
-        componentDao.update(component);
+        update(component);
 
         log.info("< linkComponents");
         return component;
@@ -103,22 +99,12 @@ public class ComponentRepositoryService {
     public void unlinkComponents(URI componentUri) {
         log.info("> unlinkComponents - {}", componentUri);
 
-        Component component = getComponent(componentUri);
+        Component component = findRequired(componentUri);
 
         component.setParentComponent(null);
-        componentDao.update(component);
+        update(component);
 
         log.info("< unlinkComponents");
     }
 
-    @Transactional
-    public void delete(URI componentUri) {
-        componentDao.remove(componentUri);
-    }
-
-    public Component getComponent(URI componentUri) {
-        return componentDao
-                .find(componentUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find component"));
-    }
 }

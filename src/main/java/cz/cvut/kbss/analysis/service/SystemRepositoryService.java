@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
@@ -17,56 +18,34 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class SystemRepositoryService {
+public class SystemRepositoryService extends BaseRepositoryService<System> {
 
     private final SystemDao systemDao;
     private final ComponentRepositoryService componentRepositoryService;
 
-    @Transactional(readOnly = true)
-    public List<System> findAll() {
-        return systemDao.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public System find(URI systemUri) {
-        log.info("> find - {}", systemUri);
-
-        return getSystem(systemUri);
+    @Override
+    protected GenericDao<System> getPrimaryDao() {
+        return systemDao;
     }
 
     @Transactional
-    public System create(System system) {
-        log.info("> create - {}", system);
+    public System rename(System systemRename) {
+        log.info("> rename - {}", systemRename);
 
-        systemDao.persist(system);
+        System system = findRequired(systemRename.getUri());
+        system.setName(systemRename.getName());
+        update(system);
 
-        log.info("< create - {}", system);
-        return system;
-    }
-
-    @Transactional
-    public System update(System systemUpdate) {
-        log.info("> update - {}", systemUpdate);
-
-        System system = getSystem(systemUpdate.getUri());
-        system.setName(systemUpdate.getName());
-        systemDao.update(system);
-
-        log.info("< update - {}", systemUpdate);
-        return systemUpdate;
-    }
-
-    @Transactional
-    public void delete(URI systemUri) {
-        systemDao.remove(systemUri);
+        log.info("< rename - {}", systemRename);
+        return systemRename;
     }
 
     @Transactional
     public void addComponent(URI systemUri, URI componentUri) {
         log.info("> addComponent - {}, {}", systemUri, componentUri);
 
-        System system = getSystem(systemUri);
-        Component component = componentRepositoryService.getComponent(componentUri);
+        System system = findRequired(systemUri);
+        Component component = componentRepositoryService.findRequired(componentUri);
 
         system.addComponent(component);
 
@@ -77,16 +56,11 @@ public class SystemRepositoryService {
     public void removeComponent(URI systemUri, URI componentUri) {
         log.info("> removeComponent - {}, {}", systemUri, componentUri);
 
-        System system = getSystem(systemUri);
+        System system = findRequired(systemUri);
 
         system.getComponents().removeIf(c -> c.getUri().equals(componentUri));
 
         log.info("< removeComponent");
     }
 
-    private System getSystem(URI systemUri) {
-        return systemDao
-                .find(systemUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find system"));
-    }
 }

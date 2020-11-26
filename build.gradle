@@ -43,6 +43,8 @@ dependencies {
     providedRuntime 'io.jsonwebtoken:jjwt-impl:0.11.2'
     providedRuntime 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
+    implementation 'com.fasterxml:classmate:1.5.0'
+
     implementation 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

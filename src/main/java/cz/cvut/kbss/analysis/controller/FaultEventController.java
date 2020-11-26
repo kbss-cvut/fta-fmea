@@ -27,7 +27,7 @@ public class FaultEventController {
 
     @GetMapping(produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public List<FaultEvent> findAll() {
-        return repositoryService.findFaultEvents();
+        return repositoryService.findAll();
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -35,15 +35,15 @@ public class FaultEventController {
     public void delete(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
         log.info("> delete - {}", faultEventFragment);
 
-        URI nodeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
-        repositoryService.delete(nodeUri);
+        URI faultEventIri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        repositoryService.remove(faultEventIri);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public void update(@RequestBody FaultEvent faultEvent) {
         log.info("> update - updating event - {}", faultEvent);
-        repositoryService.updateEvent(faultEvent);
+        repositoryService.update(faultEvent);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

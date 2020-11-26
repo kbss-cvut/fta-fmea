@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
+import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
 import lombok.RequiredArgsConstructor;
@@ -17,44 +18,18 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class FailureModeRepositoryService {
+public class FailureModeRepositoryService extends BaseRepositoryService<FailureMode> {
 
     private final FailureModeDao failureModeDao;
-    private final ComponentDao componentDao;
 
-    @Transactional(readOnly = true)
-    public List<FailureMode> findAll() {
-        return failureModeDao.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public FailureMode find(URI failureModeUri) {
-        return getFailureMode(failureModeUri);
-    }
-
-    @Transactional
-    public FailureMode create(FailureMode failureMode) {
-        log.info("> create - {}", failureMode);
-
-        failureModeDao.persist(failureMode);
-
-        log.info("< create - {}", failureMode);
-        return failureMode;
-    }
-
-    @Transactional
-    public FailureMode update(FailureMode failureMode) {
-        log.info("> update - {}", failureMode);
-
-        failureModeDao.update(failureMode);
-
-        log.info("> update - {}", failureMode);
-        return failureMode;
+    @Override
+    protected GenericDao<FailureMode> getPrimaryDao() {
+        return failureModeDao;
     }
 
     @Transactional(readOnly = true)
     public Set<Mitigation> getMitigation(URI failureModeUri) {
-        FailureMode failureMode = getFailureMode(failureModeUri);
+        FailureMode failureMode = findRequired(failureModeUri);
 
         return failureMode.getMitigation();
     }
@@ -63,23 +38,13 @@ public class FailureModeRepositoryService {
     public Mitigation addMitigation(URI failureModeUri, Mitigation mitigation) {
         log.info("> addMitigation - {}, {}", failureModeUri, mitigation);
 
-        FailureMode failureMode = getFailureMode(failureModeUri);
+        FailureMode failureMode = findRequired(failureModeUri);
 
         failureMode.addMitigation(mitigation);
-        failureModeDao.update(failureMode);
+        update(failureMode);
 
         log.info("< addMitigation - {}", mitigation);
         return mitigation;
     }
 
-    @Transactional
-    public void delete(URI failureModeUri) {
-        failureModeDao.remove(failureModeUri);
-    }
-
-    private FailureMode getFailureMode(URI failureModeUri) {
-        return failureModeDao
-                .find(failureModeUri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure mode"));
-    }
 }

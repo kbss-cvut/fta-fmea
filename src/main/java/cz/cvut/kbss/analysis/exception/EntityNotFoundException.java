@@ -6,4 +6,8 @@ public class EntityNotFoundException extends RuntimeException {
         super(message);
     }
 
+    public static EntityNotFoundException create(String resourceName, Object identifier) {
+        return new EntityNotFoundException(resourceName + " identified by " + identifier + " not found.");
+    }
+
 }

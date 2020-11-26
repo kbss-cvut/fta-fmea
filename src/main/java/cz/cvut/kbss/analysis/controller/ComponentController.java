@@ -2,7 +2,6 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
-import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -38,13 +36,14 @@ public class ComponentController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Component create(@RequestBody Component component) {
         log.info("> create - {}", component);
-        return repositoryService.persist(component);
+        repositoryService.persist(component);
+        return component;
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Component update(@RequestBody ComponentUpdateDTO componentUpdate) {
         log.info("> update - {}", componentUpdate);
-        return repositoryService.update(componentUpdate);
+        return repositoryService.updateByDTO(componentUpdate);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -53,7 +52,7 @@ public class ComponentController {
         log.info("> delete - {}", componentFragment);
 
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-        repositoryService.delete(componentUri);
+        repositoryService.remove(componentUri);
     }
 
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

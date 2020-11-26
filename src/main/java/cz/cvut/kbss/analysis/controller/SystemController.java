@@ -34,23 +34,24 @@ public class SystemController {
     public System find(@PathVariable(name = "systemFragment") String systemFragment) {
         log.info("> find - {}", systemFragment);
         URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
-        return repositoryService.find(systemUri);
+        return repositoryService.findRequired(systemUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public System create(@RequestBody System system) {
         log.info("> create - {}", system);
-        return repositoryService.create(system);
+        repositoryService.persist(system);
+        return system;
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public System update(@RequestBody System system) {
-        log.info("> update - {}", system);
+    public System rename(@RequestBody System system) {
+        log.info("> rename - {}", system);
 
-        System updatedTree = repositoryService.update(system);
+        System updatedTree = repositoryService.rename(system);
 
-        log.info("< update - {}", updatedTree);
+        log.info("< rename - {}", updatedTree);
         return updatedTree;
     }
 
@@ -60,7 +61,7 @@ public class SystemController {
         log.info("> delete - {}", systemFragment);
 
         URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
-        repositoryService.delete(systemUri);
+        repositoryService.remove(systemUri);
     }
 
     @PostMapping(value = "/{systemFragment}/components/{componentFragment}")

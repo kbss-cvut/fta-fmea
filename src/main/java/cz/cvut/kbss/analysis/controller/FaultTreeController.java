@@ -33,14 +33,15 @@ public class FaultTreeController {
     public FaultTree find(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> find - {}", faultTreeFragment);
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
-        return repositoryService.find(faultTreeUri);
+        return repositoryService.findWithPropagation(faultTreeUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FaultTree create(@RequestBody FaultTree faultTree) {
         log.info("> create - {}", faultTree);
-        return repositoryService.create(faultTree);
+        repositoryService.persist(faultTree);
+        return faultTree;
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
@@ -59,7 +60,7 @@ public class FaultTreeController {
         log.info("> delete - {}", faultTreeFragment);
 
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
-        repositoryService.delete(faultTreeUri);
+        repositoryService.remove(faultTreeUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

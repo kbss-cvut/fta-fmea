@@ -1,10 +1,10 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FailureModesTableDao;
+import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableField;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
-import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
@@ -24,9 +24,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class FailureModesTableRepositoryService {
+public class FailureModesTableRepositoryService extends BaseRepositoryService<FailureModesTable> {
 
     private final FailureModesTableDao failureModesTableDao;
+
+    @Override
+    protected GenericDao<FailureModesTable> getPrimaryDao() {
+        return failureModesTableDao;
+    }
 
     @Transactional(readOnly = true)
     public List<FailureModesTable> findAll() {
@@ -34,27 +39,22 @@ public class FailureModesTableRepositoryService {
     }
 
     @Transactional
-    public FailureModesTable update(FailureModesTableUpdateDTO updateDTO) {
-        log.info("> update - {}", updateDTO);
+    public FailureModesTable updateByDTO(FailureModesTableUpdateDTO updateDTO) {
+        log.info("> updateByDTO - {}", updateDTO);
 
-        FailureModesTable table = getFailureModesTable(updateDTO.getUri());
+        FailureModesTable table = findRequired(updateDTO.getUri());
         updateDTO.copyToEntity(table);
-        failureModesTableDao.update(table);
+        update(table);
 
-        log.info("< update - {}", table);
+        log.info("< updateByDTO - {}", table);
         return table;
-    }
-
-    @Transactional
-    public void delete(URI tableUri) {
-        failureModesTableDao.remove(tableUri);
     }
 
     @Transactional(readOnly = true)
     public FailureModesTableDataDTO computeTableData(URI tableUri) {
         log.info("> computeTableDate - {}", tableUri);
 
-        FailureModesTable table = getFailureModesTable(tableUri);
+        FailureModesTable table = findRequired(tableUri);
 
         FailureModesTableDataDTO tableData = new FailureModesTableDataDTO(table.getName());
         List<FailureModesTableField> columns = new ArrayList<>();
@@ -136,12 +136,6 @@ public class FailureModesTableRepositoryService {
 
         log.warn("< rootToLeafEventPath - failed to find path from root to leaf");
         return new ArrayList<>();
-    }
-
-    private FailureModesTable getFailureModesTable(URI tableIri) {
-        return failureModesTableDao
-                .find(tableIri)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to find failure modes table"));
     }
 
 }
