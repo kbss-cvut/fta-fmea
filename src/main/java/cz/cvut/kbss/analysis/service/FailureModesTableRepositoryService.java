@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service;
 
+import com.opencsv.CSVWriter;
 import cz.cvut.kbss.analysis.dao.FailureModesTableDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -145,6 +147,33 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
         return rowLists.stream().flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public String export(URI tableUri) {
+        log.info("> export - {}", tableUri);
+
+        FailureModesTableDataDTO tableData = computeTableData(tableUri);
+
+        StringWriter stringWriter = new StringWriter();
+        CSVWriter csvWriter = new CSVWriter(stringWriter);
+
+        String[] headerTitles = tableData.getColumns().stream().map(FailureModesTableField::getHeaderName).toArray(String[]::new);
+        csvWriter.writeNext(headerTitles);
+
+        String[] headerFields = tableData.getColumns().stream().map(FailureModesTableField::getField).toArray(String[]::new);
+        tableData.getRows().forEach(row -> {
+            String[] rowValues = new String[headerFields.length];
+
+            for (int i = 0; i < headerFields.length; i++) {
+                rowValues[i] = Objects.toString(row.get(headerFields[i]),null);
+            }
+
+            csvWriter.writeNext(rowValues);
+        });
+
+        log.info("< export");
+        return stringWriter.toString();
     }
 
 }

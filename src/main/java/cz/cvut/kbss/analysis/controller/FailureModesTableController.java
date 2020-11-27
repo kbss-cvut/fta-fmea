@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.List;
 
@@ -56,6 +57,17 @@ public class FailureModesTableController {
 
         URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
         return repositoryService.computeTableData(tableUri);
+    }
+
+    @GetMapping(value = "/{failureModeTableFragment}/export", produces = "text/csv")
+    public String export(@PathVariable(name = "failureModeTableFragment") String failureModeTableFragment, HttpServletResponse response) {
+        log.info("> export - {}", failureModeTableFragment);
+
+        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
+
+        response.setContentType("text/csv");
+        response.addHeader("Content-Disposition", "attachment; filename=\"table.csv\"");
+        return repositoryService.export(tableUri);
     }
 
 }
