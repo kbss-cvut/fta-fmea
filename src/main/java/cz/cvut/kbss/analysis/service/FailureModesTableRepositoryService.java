@@ -57,7 +57,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         List<FailureModesTableField> columns = new ArrayList<>();
 
         columns.add(new FailureModesTableField("component", "Component"));
-        columns.add(new FailureModesTableField("func", "Function"));
+        columns.add(new FailureModesTableField("function", "Function"));
         columns.add(new FailureModesTableField("failureMode", "Failure Mode"));
         columns.add(new FailureModesTableField("localEffect", "Local Effect"));
 
@@ -91,20 +91,13 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             columns.add(new FailureModesTableField("nextEffect-" + i, "Next Effect"));
         }
 
-        return table.getRows().parallelStream().map(r -> {
+        List<List<Map<String, Object>>> rowLists = table.getRows().parallelStream().map(r -> {
             Map<String, Object> row = new HashMap<>();
 
             row.put("id", r.getUri().toString());
 
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
             row.put("localEffect", localEffect.getName());
-            FailureMode failureMode = localEffect.getFailureMode();
-            if(failureMode != null) {
-                row.put("failureMode", failureMode.getName());
-                row.put("component", failureMode.getComponent().getName());
-            }
-
-            // TODO foreach clone function?
 
             List<FaultEvent> nextEffectsList = FaultTreeTraversalUtils
                     .rootToLeafPath(tree, localEffect.getUri())
@@ -128,8 +121,31 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                 row.put("rpn", rootRPN.getSeverity() * rootRPN.getOccurrence() * rootRPN.getDetection());
             }
 
-            return row;
+            FailureMode failureMode = localEffect.getFailureMode();
+            if (failureMode != null) {
+                row.put("failureMode", failureMode.getName());
+                row.put("component", failureMode.getComponent().getName());
+
+                if (!failureMode.getFunctions().isEmpty()) {
+                    return failureMode.getFunctions().stream()
+                            .map(function -> {
+                                Map<String, Object> functionRow = new HashMap<>(row);
+                                functionRow.computeIfAbsent("id", id -> id + function.getUri());
+                                functionRow.put("function", function.getName());
+                                return functionRow;
+                            })
+                            .collect(Collectors.toList());
+                }
+
+            }
+
+            List<Map<String, Object>> resultList = new ArrayList<>();
+            resultList.add(row);
+            return resultList;
         }).collect(Collectors.toList());
+
+        return rowLists.stream().flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
 }
