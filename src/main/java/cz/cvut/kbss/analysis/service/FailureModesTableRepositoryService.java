@@ -9,8 +9,7 @@ import cz.cvut.kbss.analysis.model.FailureModesTable;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.RiskPriorityNumber;
-import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.service.util.Pair;
+import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 public class FailureModesTableRepositoryService extends BaseRepositoryService<FailureModesTable> {
 
     private final FailureModesTableDao failureModesTableDao;
+    private final FaultEventRepositoryService faultEventRepositoryService;
 
     @Override
     protected GenericDao<FailureModesTable> getPrimaryDao() {
@@ -63,21 +63,60 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         columns.add(new FailureModesTableField("func", "Function"));
         columns.add(new FailureModesTableField("failureMode", "Failure Mode"));
         columns.add(new FailureModesTableField("localEffect", "Local Effect"));
+
+        List<Map<String, Object>> rows = computeTableRows(table, columns);
+
         columns.add(new FailureModesTableField("finalEffect", "Final Effect"));
         columns.add(new FailureModesTableField("severity", "S"));
         columns.add(new FailureModesTableField("occurrence", "O"));
         columns.add(new FailureModesTableField("detection", "D"));
-        columns.add(new FailureModesTableField("rpn", "S * O * D"));
+        columns.add(new FailureModesTableField("rpn", "RPN"));
 
         tableData.setColumns(columns);
+        tableData.setRows(rows);
 
-        FaultEvent treeRoot = table.getFaultTree().getManifestingEvent();
-        List<Map<String, Object>> rows = table.getRows().stream().map(r -> {
+        log.info("< computeTableDate - {}", tableData);
+        return tableData;
+    }
+
+    private List<Map<String, Object>> computeTableRows(FailureModesTable table, List<FailureModesTableField> columns) {
+        log.info("> computeTableRows");
+
+        FaultTree tree = table.getFaultTree();
+        FaultEvent treeRoot = tree.getManifestingEvent();
+
+        int maxEffects = table.getRows().stream()
+                .mapToInt(row -> row.getEffects().size())
+                .max()
+                .orElse(1); // one for root
+
+        for (int i = 0; i < (maxEffects - 1); i++) {
+            columns.add(new FailureModesTableField("nextEffect-" + i, "Next Effect"));
+        }
+
+        return table.getRows().parallelStream().map(r -> {
             Map<String, Object> row = new HashMap<>();
+
             row.put("id", r.getUri().toString());
-            // TODO row.put("localEffect", r.getLocalEffect().getName());
+
+            FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
+            row.put("localEffect", localEffect.getName());
+            row.put("failureMode", localEffect.getFailureMode().getName());
+
+            List<FaultEvent> nextEffectsList = FaultTreeTraversalUtils
+                    .rootToLeafPath(tree, localEffect.getUri())
+                    .stream()
+                    .filter(e -> !e.getUri().equals(treeRoot.getUri()))
+                    .filter(e -> r.getEffects().contains(e.getUri()))
+                    .collect(Collectors.toList());
+
+            for (int i = 0; i < nextEffectsList.size(); i++) {
+                row.put("nextEffect-" + i, nextEffectsList.get(i).getName());
+            }
+
             row.put("finalEffect", treeRoot.getName());
 
+            // TODO take from row
             RiskPriorityNumber rootRPN = treeRoot.getRiskPriorityNumber();
             row.put("severity", rootRPN.getSeverity());
             row.put("occurrence", rootRPN.getOccurrence());
@@ -88,11 +127,6 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             return row;
         }).collect(Collectors.toList());
-
-        tableData.setRows(rows);
-
-        log.info("< computeTableDate - {}", tableData);
-        return tableData;
     }
 
 }
