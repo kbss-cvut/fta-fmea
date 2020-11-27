@@ -5,10 +5,7 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableField;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
-import cz.cvut.kbss.analysis.model.FailureModesTable;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.RiskPriorityNumber;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +98,13 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
             row.put("localEffect", localEffect.getName());
-            row.put("failureMode", localEffect.getFailureMode().getName());
+            FailureMode failureMode = localEffect.getFailureMode();
+            if(failureMode != null) {
+                row.put("failureMode", failureMode.getName());
+                row.put("component", failureMode.getComponent().getName());
+            }
+
+            // TODO foreach clone function?
 
             List<FaultEvent> nextEffectsList = FaultTreeTraversalUtils
                     .rootToLeafPath(tree, localEffect.getUri())
