@@ -112,13 +112,12 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             row.put("finalEffect", treeRoot.getName());
 
-            // TODO take from row
-            RiskPriorityNumber rootRPN = treeRoot.getRiskPriorityNumber();
-            row.put("severity", rootRPN.getSeverity());
-            row.put("occurrence", rootRPN.getOccurrence());
-            row.put("detection", rootRPN.getDetection());
-            if (rootRPN.getSeverity() != null && rootRPN.getOccurrence() != null && rootRPN.getDetection() != null) {
-                row.put("rpn", rootRPN.getSeverity() * rootRPN.getOccurrence() * rootRPN.getDetection());
+            RiskPriorityNumber rpn = r.getRiskPriorityNumber();
+            row.put("severity", rpn.getSeverity());
+            row.put("occurrence", rpn.getOccurrence());
+            row.put("detection", rpn.getDetection());
+            if (rpn.getSeverity() != null && rpn.getOccurrence() != null && rpn.getDetection() != null) {
+                row.put("rpn", rpn.getSeverity() * rpn.getOccurrence() * rpn.getDetection());
             }
 
             FailureMode failureMode = localEffect.getFailureMode();

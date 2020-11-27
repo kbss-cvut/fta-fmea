@@ -19,7 +19,8 @@ public class FailureModesRow extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect, fetch = FetchType.EAGER)
     private Set<URI> effects;
 
-    // TODO add RPN
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private RiskPriorityNumber riskPriorityNumber;
 
     @Override
     public String toString() {

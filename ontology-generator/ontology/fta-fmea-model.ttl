@@ -61,12 +61,6 @@ fta-fmea:hasEffect
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has effects" .
 
-fta-fmea:hasRPN
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has risk priority number" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:RiskPriorityNumber .
-
 fta-fmea:isManifestedBy
     rdf:type   owl:ObjectProperty ;
     rdfs:label "is manifested by" .
@@ -172,6 +166,12 @@ fta-fmea:hasLocalEffect
     rdfs:label  "has local effect" ;
     rdfs:domain fta-fmea:FailureModesRow ;
     rdfs:range  fta-fmea:FaultEvent .
+
+fta-fmea:hasRPN
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has risk priority number" ;
+    rdfs:domain fta-fmea:FailureModesRow ;
+    rdfs:range  fta-fmea:RiskPriorityNumber .
 
 fta-fmea:User
     rdf:type   owl:Class ;

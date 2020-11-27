@@ -29,10 +29,6 @@ public class FaultEvent extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
     private String description;
 
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private RiskPriorityNumber riskPriorityNumber;
-
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
 
