@@ -75,7 +75,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         List<Map<String, Object>> rows = table.getRows().stream().map(r -> {
             Map<String, Object> row = new HashMap<>();
             row.put("id", r.getUri().toString());
-            row.put("localEffect", r.getLocalEffect().getName());
+            // TODO row.put("localEffect", r.getLocalEffect().getName());
             row.put("finalEffect", treeRoot.getName());
 
             RiskPriorityNumber rootRPN = treeRoot.getRiskPriorityNumber();

@@ -16,7 +16,6 @@ public class FailureModesTable extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    // TODO link back from FaultTree?
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
     private FaultTree faultTree;

@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
@@ -75,10 +76,10 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         FaultTree faultTree = findRequired(faultTreeUri);
 
-        Set<FaultEvent> leafEvents = getLeafEvents(faultTree.getManifestingEvent());
+        Set<FaultEvent> leafEvents = FaultTreeTraversalUtils.getLeafEvents(faultTree.getManifestingEvent());
 
         List<List<FaultEvent>> treePaths = leafEvents.parallelStream()
-                .map(leaf -> rootToLeafPath(faultTree, leaf.getUri()))
+                .map(leaf -> FaultTreeTraversalUtils.rootToLeafPath(faultTree, leaf.getUri()))
                 .collect(Collectors.toList());
 
         log.info("< exploreTreePaths - {}", treePaths);
@@ -92,75 +93,10 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         FaultTree faultTree = findRequired(faultTreeUri);
         faultTree.addFailureModeTable(failureModesTable);
 
-        Set<FaultEvent> leafEvents = getLeafEvents(faultTree.getManifestingEvent());
-        Set<FailureModesRow> failureModesRows = leafEvents.stream().map(leaf -> {
-            FailureModesRow row = new FailureModesRow();
-            row.setLocalEffect(leaf);
-            return row;
-        }).collect(Collectors.toSet());
-
-        failureModesTable.setRows(failureModesRows);
-
         update(faultTree);
 
         log.info("< createFailureModesTable - {}", failureModesTable);
         return failureModesTable;
-    }
-
-    private Set<FaultEvent> getLeafEvents(FaultEvent event) {
-        Set<FaultEvent> leafNodes = new HashSet<>();
-
-        if (event.getChildren().isEmpty()) {
-            leafNodes.add(event);
-        } else {
-            for (FaultEvent child : event.getChildren()) {
-                leafNodes.addAll(getLeafEvents(child));
-            }
-        }
-        return leafNodes;
-    }
-
-    private List<FaultEvent> rootToLeafPath(FaultTree tree, URI leafEventUri) {
-        log.info("> rootToLeafEventPath - {}, {}", tree, leafEventUri);
-
-        Set<FaultEvent> visited = new HashSet<>();
-        LinkedList<Pair<FaultEvent, List<FaultEvent>>> queue = new LinkedList<>();
-
-        FaultEvent startEvent = tree.getManifestingEvent();
-        List<FaultEvent> startList = new ArrayList<>();
-        startList.add(startEvent);
-
-        queue.push(Pair.of(startEvent, startList));
-
-        while (!queue.isEmpty()) {
-            Pair<FaultEvent, List<FaultEvent>> pair = queue.pop();
-            FaultEvent currentEvent = pair.getFirst();
-            List<FaultEvent> path = pair.getSecond();
-            visited.add(currentEvent);
-
-            for (FaultEvent child : currentEvent.getChildren()) {
-                if (child.getUri().equals(leafEventUri)) {
-                    if (child.getEventType() == EventType.INTERMEDIATE) {
-                        log.warn("Intermediate event must not be the end of the path!");
-                        return new ArrayList<>();
-                    }
-
-                    path.add(child);
-                    Collections.reverse(path);
-                    return path;
-                } else {
-                    if (!visited.contains(child)) {
-                        visited.add(child);
-                        List<FaultEvent> newPath = new ArrayList<>(path);
-                        newPath.add(child);
-                        queue.push(Pair.of(child, newPath));
-                    }
-                }
-            }
-        }
-
-        log.warn("< rootToLeafEventPath - failed to find path from root to leaf");
-        return new ArrayList<>();
     }
 
 }

@@ -59,9 +59,7 @@ fta-fmea:isMitigatedBy
 
 fta-fmea:hasEffect
     rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has effects" ;
-    rdfs:domain fta-fmea:FailureMode ;
-    rdfs:range  fta-fmea:FaultEvent .
+    rdfs:label  "has effects" .
 
 fta-fmea:hasRPN
     rdf:type    owl:ObjectProperty ;
