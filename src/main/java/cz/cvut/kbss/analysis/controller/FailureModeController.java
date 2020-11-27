@@ -58,20 +58,4 @@ public class FailureModeController {
         repositoryService.remove(failureModeUri);
     }
 
-    @GetMapping(value = "/{failureModeFragment}/mitigation", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
-    public Set<Mitigation> getMitigation(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
-        log.info("> getMitigation - {}", failureModeFragment);
-        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
-        return repositoryService.getMitigation(failureModeUri);
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/{failureModeFragment}/mitigation", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public Mitigation addMitigation(@PathVariable(name = "failureModeFragment") String failureModeFragment, @RequestBody Mitigation mitigation) {
-        log.info("> addMitigation - {}, {}", failureModeFragment, mitigation);
-        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
-
-        return repositoryService.addMitigation(failureModeUri, mitigation);
-    }
-
 }

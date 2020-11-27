@@ -13,10 +13,6 @@ import java.util.Objects;
 @Data
 public class Mitigation extends AbstractEntity {
 
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
-
     @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
     private String description;
 

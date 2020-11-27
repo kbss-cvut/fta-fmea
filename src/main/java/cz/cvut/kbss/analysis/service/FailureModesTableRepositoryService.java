@@ -70,6 +70,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         columns.add(new FailureModesTableField("occurrence", "O"));
         columns.add(new FailureModesTableField("detection", "D"));
         columns.add(new FailureModesTableField("rpn", "RPN"));
+        columns.add(new FailureModesTableField("mitigation", "Mitigation"));
 
         tableData.setColumns(columns);
         tableData.setRows(rows);
@@ -126,6 +127,10 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             if (failureMode != null) {
                 row.put("failureMode", failureMode.getName());
                 row.put("component", failureMode.getComponent().getName());
+
+                if(failureMode.getMitigation() != null) {
+                    row.put("mitigation", failureMode.getMitigation().getDescription());
+                }
 
                 if (!failureMode.getFunctions().isEmpty()) {
                     return failureMode.getFunctions().stream()

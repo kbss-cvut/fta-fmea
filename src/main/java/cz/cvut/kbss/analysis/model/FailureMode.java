@@ -25,12 +25,8 @@ public class FailureMode extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_influences, cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Function> functions;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL)
-    private Set<Mitigation> mitigation = new HashSet<>();
-
-    public void addMitigation(Mitigation mitigation) {
-        getMitigation().add(mitigation);
-    }
+    @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Mitigation mitigation;
 
     public void addEffect(FaultEvent faultEvent) {
         faultEvent.setFailureMode(this);

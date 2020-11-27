@@ -27,24 +27,5 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
         return failureModeDao;
     }
 
-    @Transactional(readOnly = true)
-    public Set<Mitigation> getMitigation(URI failureModeUri) {
-        FailureMode failureMode = findRequired(failureModeUri);
-
-        return failureMode.getMitigation();
-    }
-
-    @Transactional
-    public Mitigation addMitigation(URI failureModeUri, Mitigation mitigation) {
-        log.info("> addMitigation - {}, {}", failureModeUri, mitigation);
-
-        FailureMode failureMode = findRequired(failureModeUri);
-
-        failureMode.addMitigation(mitigation);
-        update(failureMode);
-
-        log.info("< addMitigation - {}", mitigation);
-        return mitigation;
-    }
 
 }
