@@ -128,7 +128,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                 row.put("failureMode", failureMode.getName());
                 row.put("component", failureMode.getComponent().getName());
 
-                if(failureMode.getMitigation() != null) {
+                if (failureMode.getMitigation() != null) {
                     row.put("mitigation", failureMode.getMitigation().getDescription());
                 }
 
@@ -136,7 +136,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                     return failureMode.getFunctions().stream()
                             .map(function -> {
                                 Map<String, Object> functionRow = new HashMap<>(row);
-                                functionRow.computeIfAbsent("id", id -> id + function.getUri());
+                                functionRow.put("id", functionRow.get("id") + function.getUri().toString());
                                 functionRow.put("function", function.getName());
                                 return functionRow;
                             })
@@ -171,7 +171,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             String[] rowValues = new String[headerFields.length];
 
             for (int i = 0; i < headerFields.length; i++) {
-                rowValues[i] = Objects.toString(row.get(headerFields[i]),null);
+                rowValues[i] = Objects.toString(row.get(headerFields[i]), null);
             }
 
             csvWriter.writeNext(rowValues);
