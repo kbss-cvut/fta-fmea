@@ -63,6 +63,14 @@ public class FaultTreeController {
         repositoryService.remove(faultTreeUri);
     }
 
+    @GetMapping(value = "/{faultTreeFragment}/reusableEvents", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<FaultEvent> reusableEvents(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
+        log.info("> reusableEvents - {}", faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+
+        return repositoryService.getReusableEvents(faultTreeUri);
+    }
+
     @GetMapping(value = "/{faultTreeFragment}/treePaths", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public List<List<FaultEvent>> getTreePaths(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> getTreePaths - {}", faultTreeFragment);

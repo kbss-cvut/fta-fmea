@@ -3,9 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.*;
-import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
-import cz.cvut.kbss.analysis.service.util.Pair;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +69,20 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     }
 
     @Transactional(readOnly = true)
+    public List<FaultEvent> getReusableEvents(URI faultTreeUri) {
+        log.info("> getReusableEvents - {}", faultTreeUri);
+
+        FaultTree faultTree = findRequired(faultTreeUri);
+        List<FaultEvent> allEvents = faultEventRepositoryService.findAll();
+
+        List<FaultEvent> treeEvents = getTreeEvents(faultTree);
+        allEvents.removeAll(treeEvents);
+
+        log.info("< getReusableEvents");
+        return allEvents;
+    }
+
+    @Transactional(readOnly = true)
     public List<List<FaultEvent>> getTreePaths(URI faultTreeUri) {
         log.info("> exploreTreePaths - {}", faultTreeUri);
 
@@ -98,5 +110,20 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         log.info("< createFailureModesTable - {}", failureModesTable);
         return failureModesTable;
     }
+
+    private List<FaultEvent> getTreeEvents(FaultTree tree) {
+        List<FaultEvent> treeEvents = new ArrayList<>();
+        getTreeEventsRecursive(tree.getManifestingEvent(), treeEvents);
+        return treeEvents;
+    }
+
+    private void getTreeEventsRecursive(FaultEvent node, List<FaultEvent> eventList) {
+        if (node != null) {
+            eventList.add(node);
+            node.getChildren()
+                    .forEach(child -> getTreeEventsRecursive(child, eventList));
+        }
+    }
+
 
 }
