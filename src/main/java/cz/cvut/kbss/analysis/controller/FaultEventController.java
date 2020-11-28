@@ -36,7 +36,8 @@ public class FaultEventController {
         log.info("> delete - {}", faultEventFragment);
 
         URI faultEventIri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
-        repositoryService.remove(faultEventIri);
+        FaultEvent instance = repositoryService.findRequired(faultEventIri);
+        repositoryService.remove(instance);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

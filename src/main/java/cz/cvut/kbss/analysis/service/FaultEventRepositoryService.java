@@ -1,8 +1,10 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
+import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
@@ -29,6 +31,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     private final ComponentRepositoryService componentRepositoryService;
 
+    private final FaultTreeDao faultTreeDao;
+
     @Override
     protected GenericDao<FaultEvent> getPrimaryDao() {
         return faultEventDao;
@@ -37,6 +41,12 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Override
     protected void preUpdate(FaultEvent instance) {
         faultEventValidator.validateTypes(instance);
+    }
+
+    @Override
+    protected void preRemove(FaultEvent instance) {
+        boolean isRootEvent = faultTreeDao.isRootEvent(instance.getUri());
+        if (isRootEvent) throw new LogicViolationException("Root event of tree mustn't be deleted!");
     }
 
     @Transactional
