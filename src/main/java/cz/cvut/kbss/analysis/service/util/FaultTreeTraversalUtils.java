@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service.util;
 
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.util.EventType;
@@ -45,8 +46,9 @@ public class FaultTreeTraversalUtils {
             for (FaultEvent child : currentEvent.getChildren()) {
                 if (child.getUri().equals(leafEventUri)) {
                     if (child.getEventType() == EventType.INTERMEDIATE) {
-                        log.warn("Intermediate event must not be the end of the path!");
-                        return new ArrayList<>();
+                        String message = "Intermediate event must not be the end of the path!";
+                        log.warn(message);
+                        throw new LogicViolationException(message);
                     }
 
                     path.add(child);
