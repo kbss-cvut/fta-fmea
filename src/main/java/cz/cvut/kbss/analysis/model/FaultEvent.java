@@ -10,9 +10,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @OWLClass(iri = Vocabulary.s_c_FaultEvent)
 @Data
@@ -41,10 +39,18 @@ public class FaultEvent extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private FailureMode failureMode;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_hasSequenceProbability)
+    private Double sequenceProbability;
+
+    @Sequence
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildrenSequence, fetch = FetchType.EAGER)
+    private List<URI> childrenSequence = new ArrayList<>();
+
     public void addChild(FaultEvent child) {
         getChildren().add(child);
     }
 
+    public void addChildSequenceUri(URI childUri) {getChildrenSequence().add(childUri);}
 
     @Override
     public String toString() {

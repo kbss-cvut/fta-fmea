@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service.strategy;
 
+import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.service.strategy.probability.ProbabilityPropagationStrategy;
 import lombok.AllArgsConstructor;
 
@@ -13,10 +14,10 @@ public class XorProbabilityPropagationStrategy implements ProbabilityPropagation
     private final ProbabilityPropagationStrategy orStrategy;
 
     @Override
-    public double propagate(List<Double> probabilities) {
+    public double propagate(List<Double> probabilities, FaultEvent event) {
         if (probabilities.size() == 1) {
             return probabilities.get(0);
         }
-        return orStrategy.propagate(probabilities) - andStrategy.propagate(probabilities);
+        return orStrategy.propagate(probabilities, event) - andStrategy.propagate(probabilities, event);
     }
 }

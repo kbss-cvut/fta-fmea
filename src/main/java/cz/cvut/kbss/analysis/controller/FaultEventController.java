@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FaultEventController {
-    
+
     private final FaultEventRepositoryService repositoryService;
     private final IdentifierService identifierService;
 
@@ -81,5 +81,15 @@ public class FaultEventController {
         repositoryService.deleteFailureMode(faultEventUri);
         log.info("< deleteFailureMode");
     }
-    
+
+    @PutMapping(value = "/{faultEventFragment}/childrenSequence")
+    public void updateChildrenSequence(
+            @PathVariable(name = "faultEventFragment") String faultEventFragment,
+            @RequestBody List<URI> childrenSequence) {
+        log.info("> updateChildrenSequence - {}, {}", faultEventFragment, childrenSequence);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+
+        repositoryService.updateChildrenSequence(faultEventUri, childrenSequence);
+    }
+
 }

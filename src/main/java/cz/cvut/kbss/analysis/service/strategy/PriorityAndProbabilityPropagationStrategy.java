@@ -1,25 +1,26 @@
 package cz.cvut.kbss.analysis.service.strategy;
 
+import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.service.strategy.probability.ProbabilityPropagationStrategy;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class PriorityAndProbabilityPropagationStrategy implements ProbabilityPropagationStrategy {
 
+    private final ProbabilityPropagationStrategy andStrategy;
+
     @Override
-    public double propagate(List<Double> probabilities) {
-        if(probabilities.isEmpty()) {
-            return 0.0;
-        }
+    public double propagate(List<Double> probabilities, FaultEvent event) {
+        double sequenceCoefficient = (event.getSequenceProbability() != null) ? event.getSequenceProbability() : 0.0;
+        double multipliedProbability = andStrategy.propagate(probabilities, event) * sequenceCoefficient;
 
-        // TODO events are independent, thus P(A) * P(B) / P(B) = P(A)
-        // conditional probability P(A|B) = P(A and B) / P(B)
-        double resultProbability = probabilities.get(0);
-        for (int i = 1; i < probabilities.size(); i++) {
-            resultProbability = (probabilities.get(i) * resultProbability) / resultProbability;
-        }
+        return restrictToBoundaries(multipliedProbability, 0, 1);
+    }
 
-        return resultProbability;
+    private double restrictToBoundaries(double value, double min, double max) {
+        return Math.min(max, Math.max(min, value));
     }
 
 }

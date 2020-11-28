@@ -101,23 +101,27 @@ fta-fmea:hasProbability
     rdfs:domain fta-fmea:FaultEvent ;
     rdfs:range  xsd:float .
 
+fta-fmea:hasChildren
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has children" ;
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  fta-fmea:FaultEvent .
+
+fta-fmea:hasSequenceProbability
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "has sequence probability" ;
+    rdfs:domain fta-fmea:FaultEvent ;
+    rdfs:range  xsd:float .
+
+fta-fmea:hasChildrenSequence
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has children sequence" .
+
 fta-fmea:hasGateType
     rdf:type    owl:DatatypeProperty ;
     rdfs:label  "has gate type" ;
     rdfs:domain fta-fmea:FaultEvent ;
     rdfs:range  xsd:string .
-
-fta-fmea:consistsOf
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "consists of" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:FaultEvent .
-
-fta-fmea:produces
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "produces" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:FaultEvent .
 
 fta-fmea:hasFaultEventType
     rdf:type    owl:DatatypeProperty ;
@@ -128,12 +132,6 @@ fta-fmea:hasFaultEventType
 fta-fmea:FaultTree
     rdf:type   owl:Class ;
     rdfs:label "Fault Tree" .
-
-fta-fmea:hasChildren
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has children" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:FaultEvent .
 
 fta-fmea:hasFailureModesTable
     rdf:type    owl:ObjectProperty ;

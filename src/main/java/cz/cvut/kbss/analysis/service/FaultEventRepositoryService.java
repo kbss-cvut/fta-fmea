@@ -3,12 +3,12 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +63,10 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         currentEvent.addChild(inputEvent);
         update(currentEvent);
 
+        // TODO optimize? Two phase 'update' is necessary because 'inputEvent' is persisted and has no URI yet.
+        currentEvent.addChildSequenceUri(inputEvent.getUri());
+        update(currentEvent);
+
         return inputEvent;
     }
 
@@ -74,7 +78,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             List<Double> childProbabilities = event.getChildren().stream()
                     .map(this::propagateProbability).collect(Collectors.toList());
 
-            double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities);
+            double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities, event);
             event.setProbability(eventProbability);
         }
 
@@ -123,4 +127,14 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         log.info("< deleteFailureMode");
     }
 
+    @Transactional
+    public void updateChildrenSequence(URI faultEventUri, List<URI> childrenSequence) {
+        log.info("> updateChildrenSequence - {}, {}", faultEventUri, childrenSequence);
+
+        FaultEvent faultEvent = findRequired(faultEventUri);
+        faultEvent.setChildrenSequence(childrenSequence);
+        update(faultEvent);
+
+        log.info("< updateChildrenSequence");
+    }
 }

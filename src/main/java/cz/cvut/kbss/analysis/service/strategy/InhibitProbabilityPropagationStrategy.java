@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service.strategy;
 
+import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.service.strategy.probability.ProbabilityPropagationStrategy;
 import lombok.AllArgsConstructor;
 
@@ -11,7 +12,7 @@ public class InhibitProbabilityPropagationStrategy implements ProbabilityPropaga
     private final ProbabilityPropagationStrategy andStrategy;
 
     @Override
-    public double propagate(List<Double> probabilities) {
-        return andStrategy.propagate(probabilities);
+    public double propagate(List<Double> probabilities, FaultEvent event) {
+        return andStrategy.propagate(probabilities, event);
     }
 }
