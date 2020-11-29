@@ -16,13 +16,13 @@ public class FailureMode extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect)
     private Set<FaultEvent> effects = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
     private Component component;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_influences, cascade = {CascadeType.REFRESH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_influences, fetch = FetchType.EAGER)
     private Set<Function> functions;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
