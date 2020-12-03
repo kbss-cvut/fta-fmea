@@ -88,6 +88,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         return resultProbability;
     }
 
+    @Transactional(readOnly = true)
     public FailureMode getFailureMode(URI faultEventUri) {
         log.info("> getFailureMode - {}", faultEventUri);
 
