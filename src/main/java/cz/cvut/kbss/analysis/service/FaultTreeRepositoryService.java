@@ -103,12 +103,18 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         log.info("> createFailureModesTable - {}, {}", faultTreeUri, failureModesTable);
 
         FaultTree faultTree = findRequired(faultTreeUri);
-        faultTree.addFailureModeTable(failureModesTable);
+        faultTree.setFailureModesTable(failureModesTable);
+        failureModesTable.setFaultTree(faultTree);
 
         update(faultTree);
 
         log.info("< createFailureModesTable - {}", failureModesTable);
         return failureModesTable;
+    }
+
+    @Transactional(readOnly = true)
+    public FailureModesTable getFailureModesTable(URI faultTreeUri) {
+        return findRequired(faultTreeUri).getFailureModesTable();
     }
 
     private List<FaultEvent> getTreeEvents(FaultTree tree) {
@@ -124,6 +130,4 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     .forEach(child -> getTreeEventsRecursive(child, eventList));
         }
     }
-
-
 }

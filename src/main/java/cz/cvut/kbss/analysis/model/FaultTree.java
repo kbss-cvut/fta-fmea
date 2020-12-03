@@ -21,12 +21,7 @@ public class FaultTree extends AbstractEntity {
     private FaultEvent manifestingEvent;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureModesTable, cascade = CascadeType.ALL)
-    private Set<FailureModesTable> failureModesTables = new HashSet<>();
-
-    public void addFailureModeTable(FailureModesTable table) {
-        getFailureModesTables().add(table);
-        table.setFaultTree(this);
-    }
+    private FailureModesTable failureModesTable;
 
     @Override
     public String toString() {

@@ -90,4 +90,12 @@ public class FaultTreeController {
         return repositoryService.createFailureModesTable(faultTreeUri, failureModesTable);
     }
 
+    @GetMapping(value = "/{faultTreeFragment}/failureModesTable", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureModesTable getFailureModesTable(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
+        log.info("> getFailureModesTable - {}", faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+
+        return repositoryService.getFailureModesTable(faultTreeUri);
+    }
+
 }
