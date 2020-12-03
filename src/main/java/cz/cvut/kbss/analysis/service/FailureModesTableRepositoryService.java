@@ -94,7 +94,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             columns.add(new FailureModesTableField("nextEffect-" + i, "Next Effect"));
         }
 
-        List<List<Map<String, Object>>> rowLists = table.getRows().parallelStream().map(r -> {
+        List<List<Map<String, Object>>> rowLists = table.getRows().stream().map(r -> {
             Map<String, Object> row = new HashMap<>();
 
             row.put("id", r.getUri().toString());
