@@ -8,6 +8,7 @@ import cz.cvut.kbss.analysis.dto.table.FailureModesTableField;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
+import cz.cvut.kbss.analysis.service.util.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -103,15 +105,20 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
             row.put("localEffect", localEffect.getName());
 
-            List<FaultEvent> nextEffectsList = FaultTreeTraversalUtils
-                    .rootToLeafPath(tree, localEffect.getUri())
-                    .stream()
-                    .filter(e -> !e.getUri().equals(treeRoot.getUri()))
-                    .filter(e -> r.getEffects().contains(e.getUri()))
+            List<FaultEvent> treePathList = FaultTreeTraversalUtils
+                    .rootToLeafPath(tree, localEffect.getUri());
+
+            Collections.reverse(treePathList);
+
+            List<Pair<FaultEvent, Integer>> indexedNextEffects = IntStream.range(0, treePathList.size())
+                    .boxed()
+                    .map(index -> Pair.of(treePathList.get(index), index))
+                    .filter(pair -> !pair.getFirst().getUri().equals(treeRoot.getUri()))
+                    .filter(pair -> r.getEffects().contains(pair.getFirst().getUri()))
                     .collect(Collectors.toList());
 
-            for (int i = 0; i < nextEffectsList.size(); i++) {
-                row.put("nextEffect-" + i, nextEffectsList.get(i).getName());
+            for (Pair<FaultEvent, Integer> pair : indexedNextEffects) {
+                row.put("nextEffect-" +  (maxEffects - pair.getSecond() - 1), pair.getFirst().getName());
             }
 
             row.put("finalEffect", treeRoot.getName());
