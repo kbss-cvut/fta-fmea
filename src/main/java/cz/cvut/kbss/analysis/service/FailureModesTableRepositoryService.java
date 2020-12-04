@@ -98,6 +98,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             Map<String, Object> row = new HashMap<>();
 
             row.put("id", r.getUri().toString());
+            row.put("rowId", r.getUri().toString());
 
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
             row.put("localEffect", localEffect.getName());
