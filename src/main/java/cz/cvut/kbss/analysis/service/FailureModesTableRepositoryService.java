@@ -34,11 +34,6 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         return failureModesTableDao;
     }
 
-    @Transactional(readOnly = true)
-    public List<FailureModesTable> findAll() {
-        return failureModesTableDao.findAll();
-    }
-
     @Transactional
     public FailureModesTable updateByDTO(FailureModesTableUpdateDTO updateDTO) {
         log.info("> updateByDTO - {}", updateDTO);

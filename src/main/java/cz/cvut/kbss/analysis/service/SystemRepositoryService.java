@@ -48,6 +48,7 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
         Component component = componentRepositoryService.findRequired(componentUri);
 
         system.addComponent(component);
+        update(system);
 
         log.info("< addComponent");
     }
@@ -59,6 +60,7 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
         System system = findRequired(systemUri);
 
         system.getComponents().removeIf(c -> c.getUri().equals(componentUri));
+        update(system);
 
         log.info("< removeComponent");
     }
