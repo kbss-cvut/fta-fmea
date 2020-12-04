@@ -5,13 +5,16 @@ import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jopa.model.annotations.ParticipationConstraints;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
 @OWLClass(iri = Vocabulary.s_c_RiskPriorityNumber)
-@Data
+@Getter
+@Setter
 public class RiskPriorityNumber extends AbstractEntity {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasSeverity)

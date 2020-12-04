@@ -4,12 +4,15 @@ import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.mapdb.Fun;
 
 import java.util.*;
 
 @OWLClass(iri = Vocabulary.s_c_Function)
-@Data
+@Getter
+@Setter
 public class Function extends AbstractEntity {
 
     @ParticipationConstraints(nonEmpty = true)

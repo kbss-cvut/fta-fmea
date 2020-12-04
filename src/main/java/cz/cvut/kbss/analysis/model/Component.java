@@ -3,13 +3,16 @@ package cz.cvut.kbss.analysis.model;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_Component)
-@Data
+@Getter
+@Setter
 public class Component extends AbstractEntity {
 
     @ParticipationConstraints(nonEmpty = true)

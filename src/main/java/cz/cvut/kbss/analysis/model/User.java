@@ -5,6 +5,8 @@ import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +16,8 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 @OWLClass(iri = Vocabulary.s_c_User)
-@Data
+@Getter
+@Setter
 public class User extends AbstractEntity implements UserDetails {
 
     @ParticipationConstraints(nonEmpty = true)
