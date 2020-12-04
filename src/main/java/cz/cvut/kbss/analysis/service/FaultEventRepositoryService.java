@@ -8,7 +8,6 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;

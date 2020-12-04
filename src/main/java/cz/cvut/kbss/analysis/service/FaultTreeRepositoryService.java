@@ -31,7 +31,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     @Transactional
     public FaultTree findWithPropagation(URI faultTreeUri) {
-        log.info("> find - {}", faultTreeUri);
+        log.info("> findWithPropagation - {}", faultTreeUri);
 
         FaultTree faultTree = findRequired(faultTreeUri);
 
