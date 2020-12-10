@@ -2,12 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.config.conf.JwtConf;
 import cz.cvut.kbss.analysis.exception.InvalidJwtAuthenticationException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -35,15 +27,6 @@ public class JwtTokenProvider {
     private final JwtConf jwtConf;
     private final UserDetailsService userDetailsService;
 
-    private Key key;
-
-    @PostConstruct
-    protected void init() {
-        String secretKey = Base64.getEncoder().encodeToString(jwtConf.getSecretKey().getBytes());
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
-
     public String createToken(String username, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", roles);
@@ -54,7 +37,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(key)
+                .signWith(SignatureAlgorithm.HS512, jwtConf.getSecretKey())
                 .compact();
     }
 
@@ -75,7 +58,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(jwtConf.getSecretKey()).parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
@@ -83,7 +66,7 @@ public class JwtTokenProvider {
     }
 
     private String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(jwtConf.getSecretKey()).parseClaimsJws(token)
+                .getBody().getSubject();
     }
 }
