@@ -137,4 +137,10 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
         log.info("< updateChildrenSequence");
     }
+
+    @Transactional(readOnly = true)
+    public boolean isRootEventReused(FaultEvent rootEvent){
+        return faultEventDao.isChild(rootEvent.getUri());
+    }
+
 }

@@ -79,6 +79,13 @@ public class FaultTreeController {
         return repositoryService.getTreePaths(faultTreeUri);
     }
 
+    @GetMapping(value = "/treeAggregate/treePathsAggregate", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<List<FaultEvent>> getAggregateTreePaths() {
+        log.info("> getAggregateTreePaths");
+
+        return repositoryService.getTreePathsAggregate();
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{faultTreeFragment}/failureModesTable", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureModesTable createFailureModesTable(

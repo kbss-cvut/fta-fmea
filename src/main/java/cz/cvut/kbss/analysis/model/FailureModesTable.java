@@ -19,7 +19,6 @@ public class FailureModesTable extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
     private FaultTree faultTree;
 

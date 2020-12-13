@@ -25,17 +25,16 @@ public class FaultTreeTraversalUtils {
         return leafNodes;
     }
 
-    public static List<FaultEvent> rootToLeafPath(FaultTree tree, URI leafEventUri) {
-        log.info("> rootToLeafEventPath - {}, {}", tree, leafEventUri);
+    public static List<FaultEvent> rootToLeafPath(FaultEvent rootEvent, URI leafEventUri) {
+        log.info("> rootToLeafEventPath - {}, {}", rootEvent, leafEventUri);
 
         Set<FaultEvent> visited = new HashSet<>();
         LinkedList<Pair<FaultEvent, List<FaultEvent>>> queue = new LinkedList<>();
 
-        FaultEvent startEvent = tree.getManifestingEvent();
         List<FaultEvent> startList = new ArrayList<>();
-        startList.add(startEvent);
+        startList.add(rootEvent);
 
-        queue.push(Pair.of(startEvent, startList));
+        queue.push(Pair.of(rootEvent, startList));
 
         while (!queue.isEmpty()) {
             Pair<FaultEvent, List<FaultEvent>> pair = queue.pop();

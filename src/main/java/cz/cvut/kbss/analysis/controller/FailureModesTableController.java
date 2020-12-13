@@ -70,4 +70,14 @@ public class FailureModesTableController {
         return repositoryService.export(tableUri);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureModesTable createTableAggregate(@RequestBody FailureModesTable failureModesTable) {
+        log.info("> createTableAggregate - {}", failureModesTable);
+
+        repositoryService.persist(failureModesTable);
+        log.info("< createTableAggregate - {}", failureModesTable);
+        return failureModesTable;
+    }
+
 }

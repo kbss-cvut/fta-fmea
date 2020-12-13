@@ -16,6 +16,10 @@ import java.util.Set;
 public class FailureModesRow extends AbstractEntity {
 
     @ParticipationConstraints(nonEmpty = true)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFinalEffect, fetch = FetchType.EAGER)
+    private URI finalEffect;
+
+    @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasLocalEffect, fetch = FetchType.EAGER)
     private URI localEffect;
 

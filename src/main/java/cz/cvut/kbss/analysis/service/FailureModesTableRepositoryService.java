@@ -6,7 +6,10 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableField;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
-import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.FailureMode;
+import cz.cvut.kbss.analysis.model.FailureModesTable;
+import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.RiskPriorityNumber;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import lombok.RequiredArgsConstructor;
@@ -79,9 +82,6 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
     private List<Map<String, Object>> computeTableRows(FailureModesTable table, List<FailureModesTableField> columns) {
         log.info("> computeTableRows");
 
-        FaultTree tree = table.getFaultTree();
-        FaultEvent treeRoot = tree.getManifestingEvent();
-
         int maxEffects = table.getRows().stream()
                 .mapToInt(row -> row.getEffects().size())
                 .max()
@@ -92,16 +92,19 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         }
 
         List<List<Map<String, Object>>> rowLists = table.getRows().stream().map(r -> {
+            FaultEvent treeRoot = faultEventRepositoryService.findRequired(r.getFinalEffect());
+
             Map<String, Object> row = new HashMap<>();
 
             row.put("id", r.getUri().toString());
             row.put("rowId", r.getUri().toString());
 
+            // TODO be less strict due to deleted events??
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
             row.put("localEffect", localEffect.getName());
 
             List<FaultEvent> treePathList = FaultTreeTraversalUtils
-                    .rootToLeafPath(tree, localEffect.getUri());
+                    .rootToLeafPath(treeRoot, localEffect.getUri());
 
             Collections.reverse(treePathList);
 
@@ -113,7 +116,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                     .collect(Collectors.toList());
 
             for (Pair<FaultEvent, Integer> pair : indexedNextEffects) {
-                row.put("nextEffect-" +  (maxEffects - pair.getSecond() - 1), pair.getFirst().getName());
+                row.put("nextEffect-" + (maxEffects - pair.getSecond() - 1), pair.getFirst().getName());
             }
 
             row.put("finalEffect", treeRoot.getName());

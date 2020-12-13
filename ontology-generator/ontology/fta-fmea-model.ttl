@@ -159,6 +159,12 @@ fta-fmea:FailureModesRow
     rdf:type   owl:Class ;
     rdfs:label "Faulure Modes Row" .
 
+fta-fmea:hasFinalEffect
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has final effect" ;
+    rdfs:domain fta-fmea:FailureModesRow ;
+    rdfs:range  fta-fmea:FaultEvent .
+
 fta-fmea:hasLocalEffect
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has local effect" ;

@@ -2,7 +2,9 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.FailureModesTable;
+import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,18 +88,33 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     @Transactional(readOnly = true)
     public List<List<FaultEvent>> getTreePaths(URI faultTreeUri) {
-        log.info("> exploreTreePaths - {}", faultTreeUri);
+        log.info("> getTreePaths - {}", faultTreeUri);
 
         FaultTree faultTree = findRequired(faultTreeUri);
 
         Set<FaultEvent> leafEvents = FaultTreeTraversalUtils.getLeafEvents(faultTree.getManifestingEvent());
 
         List<List<FaultEvent>> treePaths = leafEvents.parallelStream()
-                .map(leaf -> FaultTreeTraversalUtils.rootToLeafPath(faultTree, leaf.getUri()))
+                .map(leaf -> FaultTreeTraversalUtils.rootToLeafPath(faultTree.getManifestingEvent(), leaf.getUri()))
                 .collect(Collectors.toList());
 
-        log.info("< exploreTreePaths - {}", treePaths);
+        log.info("< getTreePaths - {}", treePaths);
         return treePaths;
+    }
+
+    @Transactional(readOnly = true)
+    public List<List<FaultEvent>> getTreePathsAggregate() {
+        log.info("> getTreePathsAggregate");
+
+        List<FaultTree> trees = findAll();
+        List<List<FaultEvent>> treePathsAggregate = trees.stream()
+                .filter(t -> !faultEventRepositoryService.isRootEventReused(t.getManifestingEvent()))
+                .map(t -> getTreePaths(t.getUri()))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        log.info("< getTreePathsAggregate");
+        return treePathsAggregate;
     }
 
     @Transactional
