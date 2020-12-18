@@ -86,7 +86,7 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         Component component = findRequired(componentUri);
         Component linkComponent = findRequired(linkComponentUri);
 
-        component.setParentComponent(linkComponent);
+        component.setParentComponent(linkComponent.getUri());
         update(component);
 
         log.info("< linkComponents");

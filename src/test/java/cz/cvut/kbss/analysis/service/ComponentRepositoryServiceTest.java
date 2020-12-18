@@ -122,14 +122,14 @@ class ComponentRepositoryServiceTest {
         repositoryService.linkComponents(component.getUri(), linkComponent.getUri());
 
         Mockito.verify(componentDao).update(component);
-        Assert.assertEquals(linkComponent, component.getParentComponent());
+        Assert.assertEquals(linkComponent.getUri(), component.getParentComponent());
     }
 
     @Test
     void linkComponents_shouldFindComponent_shouldSetParentNull_shouldCallUpdate() {
         Component component = new Component();
         component.setUri(Generator.generateUri());
-        component.setParentComponent(new Component());
+        component.setParentComponent(Generator.generateUri());
 
         Mockito.when(componentDao.find(eq(component.getUri()))).thenReturn(Optional.of(component));
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);
