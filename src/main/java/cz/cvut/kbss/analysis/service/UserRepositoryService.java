@@ -7,25 +7,30 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.exception.UsernameNotAvailableException;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.Optional;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserRepositoryService extends BaseRepositoryService<User> {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserRepositoryService(@Qualifier("defaultValidator") Validator validator, UserDao userDao, PasswordEncoder passwordEncoder) {
+        super(validator);
+        this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     protected GenericDao<User> getPrimaryDao() {
@@ -50,12 +55,12 @@ public class UserRepositoryService extends BaseRepositoryService<User> {
         log.info("> updateCurrent - {}", userUpdate.getUsername());
 
         User currentUser = SecurityUtils.currentUser();
-        if(!currentUser.getUri().equals(userUpdate.getUri())) {
+        if (!currentUser.getUri().equals(userUpdate.getUri())) {
             log.warn("< updateCurrent - URIs do not match! {} != {}", currentUser.getUri(), userUpdate.getUri());
             throw new LogicViolationException("User update uri does not match current user!");
         }
 
-        if(!passwordEncoder.matches(userUpdate.getPassword(), currentUser.getPassword())) {
+        if (!passwordEncoder.matches(userUpdate.getPassword(), currentUser.getPassword())) {
             log.warn("< updateCurrent - Old password incorrect!");
             throw new LogicViolationException("Old password incorrect!");
         }

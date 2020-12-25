@@ -10,11 +10,12 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.List;
@@ -22,24 +23,23 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class FaultEventRepositoryService extends BaseRepositoryService<FaultEvent> {
 
     private final FaultEventDao faultEventDao;
-    private final FaultEventValidator faultEventValidator;
-
     private final ComponentRepositoryService componentRepositoryService;
-
     private final FaultTreeDao faultTreeDao;
+
+    @Autowired
+    public FaultEventRepositoryService(@Qualifier("faultEventValidator") Validator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao) {
+        super(validator);
+        this.faultEventDao = faultEventDao;
+        this.componentRepositoryService = componentRepositoryService;
+        this.faultTreeDao = faultTreeDao;
+    }
 
     @Override
     protected GenericDao<FaultEvent> getPrimaryDao() {
         return faultEventDao;
-    }
-
-    @Override
-    protected void preUpdate(FaultEvent instance) {
-        faultEventValidator.validateTypes(instance);
     }
 
     @Override
@@ -51,13 +51,6 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Transactional
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
         FaultEvent currentEvent = findRequired(eventUri);
-
-        if (inputEvent.getUri() == null) {
-            faultEventValidator.validateDuplicates(inputEvent);
-            faultEventValidator.validateTypes(inputEvent);
-        } else {
-            log.info("Using existing event - {}", inputEvent);
-        }
 
         currentEvent.addChild(inputEvent);
         update(currentEvent);
@@ -139,7 +132,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     }
 
     @Transactional(readOnly = true)
-    public boolean isRootEventReused(FaultEvent rootEvent){
+    public boolean isRootEventReused(FaultEvent rootEvent) {
         return faultEventDao.isChild(rootEvent.getUri());
     }
 

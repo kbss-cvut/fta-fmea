@@ -1,12 +1,17 @@
 package cz.cvut.kbss.analysis.exception;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.ObjectError;
+
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = false)
+@Data
+@RequiredArgsConstructor
 public class ValidationException extends RuntimeException {
 
-    public ValidationException(String message) {
-        super(message);
-    }
+    private final List<ObjectError> errors;
 
-    public ValidationException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

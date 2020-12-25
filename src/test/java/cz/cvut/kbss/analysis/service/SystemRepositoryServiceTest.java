@@ -13,10 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
 class SystemRepositoryServiceTest {
@@ -25,7 +27,8 @@ class SystemRepositoryServiceTest {
     SystemDao systemDao;
     @Mock
     ComponentRepositoryService componentRepositoryService;
-
+    @Mock
+    Validator validator;
     @InjectMocks
     SystemRepositoryService repositoryService;
 
@@ -46,6 +49,7 @@ class SystemRepositoryServiceTest {
 
         Mockito.when(systemDao.find(eq(systemRename.getUri()))).thenReturn(Optional.of(system));
         Mockito.when(systemDao.exists(eq(system.getUri()))).thenReturn(true);
+        Mockito.when(validator.supports(any())).thenReturn(true);
         Mockito.when(systemDao.update(eq(system))).thenReturn(system);
 
         repositoryService.rename(systemRename);
@@ -65,6 +69,7 @@ class SystemRepositoryServiceTest {
         Mockito.when(systemDao.find(eq(system.getUri()))).thenReturn(Optional.of(system));
         Mockito.when(componentRepositoryService.findRequired(eq(component.getUri()))).thenReturn(component);
         Mockito.when(systemDao.exists(eq(system.getUri()))).thenReturn(true);
+        Mockito.when(validator.supports(any())).thenReturn(true);
         Mockito.when(systemDao.update(eq(system))).thenReturn(system);
 
         repositoryService.addComponent(system.getUri(), component.getUri());
@@ -85,6 +90,7 @@ class SystemRepositoryServiceTest {
         Mockito.when(systemDao.find(eq(system.getUri()))).thenReturn(Optional.of(system));
         Mockito.when(componentRepositoryService.findRequired(eq(component.getUri()))).thenReturn(component);
         Mockito.when(systemDao.exists(eq(system.getUri()))).thenReturn(true);
+        Mockito.when(validator.supports(any())).thenReturn(true);
         Mockito.when(systemDao.update(eq(system))).thenReturn(system);
 
         repositoryService.removeComponent(system.getUri(), component.getUri());

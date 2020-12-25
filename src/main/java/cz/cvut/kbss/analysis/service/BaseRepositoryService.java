@@ -4,15 +4,23 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
+import cz.cvut.kbss.analysis.exception.ValidationException;
 import cz.cvut.kbss.analysis.model.util.HasIdentifier;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+
 
 /**
  * Taken from: https://github.com/opendata-mvcr/sgov
@@ -36,6 +44,12 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      * @return Data access object
      */
     protected abstract GenericDao<T> getPrimaryDao();
+
+    private final Validator validator;
+
+    protected BaseRepositoryService(Validator validator) {
+        this.validator = validator;
+    }
 
     // Read methods are intentionally not transactional because, for example, when postLoad
     // manipulates the resulting entity in any way, transaction commit would attempt to insert the
@@ -124,7 +138,9 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      *
      * @param instance The instance to be persisted, not {@code null}
      */
-    protected void prePersist(@NonNull T instance) { }
+    protected void prePersist(@NonNull T instance) {
+        validate(instance);
+    }
 
     /**
      * Merges the specified updated instance into the repository.
@@ -155,6 +171,7 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
         if (!exists(instance.getUri())) {
             throw EntityNotFoundException.create(instance.getClass().getSimpleName(), instance.getUri());
         }
+        validate(instance);
     }
 
     /**
@@ -223,6 +240,23 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      */
     public boolean exists(URI id) {
         return getPrimaryDao().exists(id);
+    }
+
+    /**
+     * Validates the specified instance.
+     *
+     * @param instance The instance to validate
+     * @throws ValidationException In case the instance is not valid
+     */
+    protected void validate(T instance) {
+        DataBinder binder = new DataBinder(instance);
+        binder.setValidator(validator);
+        BindingResult bindingResult = binder.getBindingResult();
+
+        validator.validate(instance, bindingResult);
+        if(bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getAllErrors());
+        }
     }
 
 }

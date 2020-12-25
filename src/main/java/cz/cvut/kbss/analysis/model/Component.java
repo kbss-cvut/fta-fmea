@@ -5,6 +5,7 @@ import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Setter
 public class Component extends AbstractEntity {
 
+    @NotEmpty(message = "Name must not be empty")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;

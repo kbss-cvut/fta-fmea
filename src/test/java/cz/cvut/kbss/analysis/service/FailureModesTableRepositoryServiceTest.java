@@ -11,16 +11,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
 class FailureModesTableRepositoryServiceTest {
 
     @Mock
     FailureModesTableDao failureModesTableDao;
-
+    @Mock
+    Validator validator;
     @InjectMocks
     FailureModesTableRepositoryService repositoryService;
 
@@ -41,6 +44,7 @@ class FailureModesTableRepositoryServiceTest {
 
         Mockito.when(failureModesTableDao.find(eq(updateDTO.getUri()))).thenReturn(Optional.of(table));
         Mockito.when(failureModesTableDao.exists(eq(table.getUri()))).thenReturn(true);
+        Mockito.when(validator.supports(any())).thenReturn(true);
         Mockito.when(failureModesTableDao.update(eq(table))).thenReturn(table);
 
         repositoryService.updateByDTO(updateDTO);

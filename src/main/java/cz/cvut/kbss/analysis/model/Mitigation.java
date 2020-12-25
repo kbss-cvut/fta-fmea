@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 @OWLClass(iri = Vocabulary.s_c_Mitigation)

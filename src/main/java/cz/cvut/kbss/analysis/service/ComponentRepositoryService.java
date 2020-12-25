@@ -6,31 +6,31 @@ import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.Set;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ComponentRepositoryService extends BaseRepositoryService<Component> {
 
     private final ComponentDao componentDao;
-    private final ComponentValidator componentValidator;
+
+    @Autowired
+    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao) {
+        super(validator);
+        this.componentDao = componentDao;
+    }
 
     @Override
     protected GenericDao<Component> getPrimaryDao() {
         return componentDao;
-    }
-
-    @Override
-    protected void prePersist(Component instance) {
-        componentValidator.validateDuplicates(instance);
     }
 
     @Transactional

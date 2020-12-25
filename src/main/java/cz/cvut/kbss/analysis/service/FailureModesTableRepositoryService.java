@@ -12,11 +12,12 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.RiskPriorityNumber;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.io.StringWriter;
 import java.net.URI;
@@ -25,12 +26,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FailureModesTableRepositoryService extends BaseRepositoryService<FailureModesTable> {
 
     private final FailureModesTableDao failureModesTableDao;
     private final FaultEventRepositoryService faultEventRepositoryService;
+
+    @Autowired
+    public FailureModesTableRepositoryService(@Qualifier("defaultValidator") Validator validator, FailureModesTableDao failureModesTableDao, FaultEventRepositoryService faultEventRepositoryService) {
+        super(validator);
+        this.failureModesTableDao = failureModesTableDao;
+        this.faultEventRepositoryService = faultEventRepositoryService;
+    }
 
     @Override
     protected GenericDao<FailureModesTable> getPrimaryDao() {

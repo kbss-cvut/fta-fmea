@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Set;
@@ -15,10 +16,12 @@ import java.util.Set;
 @Setter
 public class FailureModesRow extends AbstractEntity {
 
+    @NotNull(message = "Final Effect must be chosen")
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFinalEffect, fetch = FetchType.EAGER)
     private URI finalEffect;
 
+    @NotNull(message = "Local Effect must be chosen")
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasLocalEffect, fetch = FetchType.EAGER)
     private URI localEffect;

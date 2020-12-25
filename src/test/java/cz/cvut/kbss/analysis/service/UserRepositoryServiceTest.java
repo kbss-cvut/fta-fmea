@@ -14,8 +14,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 class UserRepositoryServiceTest {
 
@@ -23,7 +25,8 @@ class UserRepositoryServiceTest {
     UserDao userDao;
     @Mock
     PasswordEncoder passwordEncoder;
-
+    @Mock
+    Validator validator;
     @InjectMocks
     UserRepositoryService repositoryService;
 
@@ -50,6 +53,7 @@ class UserRepositoryServiceTest {
         user.setUsername("password");
 
         Mockito.when(userDao.existsWithUsername(user.getUsername())).thenReturn(false);
+        Mockito.when(validator.supports(any())).thenReturn(true);
 
         repositoryService.register(user);
 
@@ -83,6 +87,7 @@ class UserRepositoryServiceTest {
 
         Mockito.when(passwordEncoder.matches(updateDTO.getPassword(), user.getPassword())).thenReturn(true);
         Mockito.when(userDao.exists(user.getUri())).thenReturn(true);
+        Mockito.when(validator.supports(any())).thenReturn(true);
         Mockito.when(userDao.update(user)).thenReturn(user);
 
         repositoryService.updateCurrent(updateDTO);

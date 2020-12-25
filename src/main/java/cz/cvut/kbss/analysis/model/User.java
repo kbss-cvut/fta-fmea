@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -20,10 +21,12 @@ import static java.util.stream.Collectors.toList;
 @Setter
 public class User extends AbstractEntity implements UserDetails {
 
+    @NotEmpty(message = "Username must not be empty")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasUsername)
     private String username;
 
+    @NotEmpty(message = "Password must not be empty")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasPassword)

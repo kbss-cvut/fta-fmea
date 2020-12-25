@@ -5,12 +5,15 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.exception.ValidationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.util.Vocabulary;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -18,7 +21,8 @@ class ComponentValidatorTest {
 
     @Mock
     ComponentDao componentDao;
-
+    @Mock
+    SpringValidatorAdapter validatorAdapter;
     @InjectMocks
     ComponentValidator componentValidator;
 
@@ -31,22 +35,28 @@ class ComponentValidatorTest {
     void validateDuplicates_duplicateExists_shouldThrowException() {
         Component component = new Component();
         component.setName("Duplicate Name");
-        component.setUri(Generator.generateUri());
 
         Mockito.when(componentDao.existsWithPredicate(Vocabulary.s_p_hasName, component.getName())).thenReturn(true);
 
-        assertThrows(ValidationException.class, () -> componentValidator.validateDuplicates(component));
+
+        BindingResult bindingResult = ValidationTestUtils.createBinding(component, componentValidator);
+        componentValidator.validate(component, bindingResult);
+
+        Assert.assertTrue(bindingResult.hasErrors());
+        Assert.assertNotNull(bindingResult.getFieldError("name"));
     }
 
     @Test
     void validateDuplicates_noDuplicate_shouldJustRun() {
         Component component = new Component();
         component.setName("Valid Name");
-        component.setUri(Generator.generateUri());
 
         Mockito.when(componentDao.existsWithPredicate(Vocabulary.s_p_hasName, component.getName())).thenReturn(false);
 
-        componentValidator.validateDuplicates(component);
+        BindingResult bindingResult = ValidationTestUtils.createBinding(component, componentValidator);
+        componentValidator.validate(component, bindingResult);
+
+        Assert.assertFalse(bindingResult.hasErrors());
     }
 
 }

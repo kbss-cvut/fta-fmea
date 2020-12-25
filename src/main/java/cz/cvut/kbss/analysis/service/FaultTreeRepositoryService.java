@@ -6,12 +6,12 @@ import cz.cvut.kbss.analysis.model.FailureModesTable;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
-import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,13 +20,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree> {
 
     private final FaultTreeDao faultTreeDao;
-    private final FaultEventValidator faultEventValidator;
     private final FaultEventRepositoryService faultEventRepositoryService;
+
+    @Autowired
+    public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator, FaultTreeDao faultTreeDao, FaultEventRepositoryService faultEventRepositoryService) {
+        super(validator);
+        this.faultTreeDao = faultTreeDao;
+        this.faultEventRepositoryService = faultEventRepositoryService;
+    }
 
     @Override
     protected GenericDao<FaultTree> getPrimaryDao() {
@@ -49,7 +54,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     @Override
     protected void prePersist(FaultTree instance) {
-        faultEventValidator.validateTypes(instance.getManifestingEvent());
+        super.prePersist(instance);
 
         URI faultEventUri = instance.getManifestingEvent().getUri();
         if (faultEventUri != null) {
@@ -61,6 +66,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     @Override
     protected void preUpdate(FaultTree instance) {
+        super.preUpdate(instance);
         propagateProbabilities(instance);
     }
 

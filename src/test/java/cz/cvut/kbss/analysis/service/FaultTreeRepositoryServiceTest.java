@@ -4,7 +4,6 @@ import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,17 +11,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 class FaultTreeRepositoryServiceTest {
 
     @Mock
     FaultTreeDao faultTreeDao;
     @Mock
-    FaultEventValidator faultEventValidator;
+    Validator validator;
     @Mock
     FaultEventRepositoryService faultEventRepositoryService;
 
@@ -41,6 +44,8 @@ class FaultTreeRepositoryServiceTest {
         tree.setManifestingEvent(new FaultEvent());
 
         Mockito.when(faultTreeDao.find(tree.getUri())).thenReturn(Optional.of(tree));
+        Mockito.when(faultTreeDao.exists(tree.getUri())).thenReturn(true);
+        Mockito.when(validator.supports(any())).thenReturn(true);
         Mockito.when(faultTreeDao.update(tree)).thenReturn(tree);
 
         repositoryService.findWithPropagation(tree.getUri());
@@ -55,10 +60,11 @@ class FaultTreeRepositoryServiceTest {
         tree.setManifestingEvent(new FaultEvent());
 
         Mockito.when(faultTreeDao.find(tree.getUri())).thenReturn(Optional.of(tree));
+        Mockito.when(validator.supports(any())).thenReturn(true);
 
         repositoryService.persist(tree);
 
-        Mockito.verify(faultEventValidator).validateTypes(tree.getManifestingEvent());
+        Mockito.verify(validator).validate(eq(tree), any());
         Mockito.verify(faultTreeDao).persist(tree);
     }
 
@@ -72,10 +78,11 @@ class FaultTreeRepositoryServiceTest {
 
         Mockito.when(faultTreeDao.find(tree.getUri())).thenReturn(Optional.of(tree));
         Mockito.when(faultEventRepositoryService.findRequired(manifestingEvent.getUri())).thenReturn(manifestingEvent);
+        Mockito.when(validator.supports(any())).thenReturn(true);
 
         repositoryService.persist(tree);
 
-        Mockito.verify(faultEventValidator).validateTypes(tree.getManifestingEvent());
+        Mockito.verify(validator).validate(eq(tree), any());
         Mockito.verify(faultEventRepositoryService).findRequired(manifestingEvent.getUri());
         Mockito.verify(faultTreeDao).persist(tree);
     }

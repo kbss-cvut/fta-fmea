@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.mapdb.Fun;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.*;
 
 @OWLClass(iri = Vocabulary.s_c_Function)
@@ -15,6 +16,7 @@ import java.util.*;
 @Setter
 public class Function extends AbstractEntity {
 
+    @NotEmpty(message = "Name must not be empty")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;

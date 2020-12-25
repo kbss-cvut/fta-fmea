@@ -9,6 +9,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
@@ -19,10 +23,12 @@ import java.util.*;
 @Setter
 public class FaultEvent extends AbstractEntity {
 
+    @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
     private EventType eventType;
 
+    @NotEmpty(message = "Name must not be empty")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;

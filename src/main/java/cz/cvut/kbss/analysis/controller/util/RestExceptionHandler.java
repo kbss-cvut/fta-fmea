@@ -3,7 +3,9 @@ package cz.cvut.kbss.analysis.controller.util;
 import cz.cvut.kbss.analysis.dto.error.ErrorInfo;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
+import cz.cvut.kbss.analysis.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +13,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -35,6 +40,19 @@ public class RestExceptionHandler {
     public ErrorInfo handleLogicViolationError(HttpServletRequest request, Throwable t) {
         log.warn("> handleLogicViolationError - {}", request.getRequestURI());
         return new ErrorInfo(t.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorInfo handleValidationException(HttpServletRequest request, ValidationException e) {
+        log.warn("> handleValidationException - {}", request.getRequestURI());
+
+        String errorMessage = e.getErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(",", "[", "]"));
+
+        return new ErrorInfo(errorMessage, request.getRequestURI());
     }
 
 }

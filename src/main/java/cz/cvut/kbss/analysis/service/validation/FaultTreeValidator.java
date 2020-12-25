@@ -14,11 +14,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
-@Qualifier("faultEventValidator")
+@Qualifier("faultTreeValidator")
 @Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class FaultEventValidator implements Validator {
+public class FaultTreeValidator implements Validator {
 
     private final FaultEventDao faultEventDao;
     private final SpringValidatorAdapter validatorAdapter;

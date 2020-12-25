@@ -15,7 +15,7 @@ import org.mockito.*;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 
 class ComponentRepositoryServiceTest {
 
@@ -23,7 +23,6 @@ class ComponentRepositoryServiceTest {
     ComponentDao componentDao;
     @Mock
     ComponentValidator componentValidator;
-
     @Captor
     ArgumentCaptor<Component> componentCaptor;
 
@@ -40,9 +39,11 @@ class ComponentRepositoryServiceTest {
         Component component = new Component();
         component.setUri(Generator.generateUri());
 
+        Mockito.when(componentValidator.supports(any())).thenReturn(true);
+
         repositoryService.persist(component);
 
-        Mockito.verify(componentValidator).validateDuplicates(component);
+        Mockito.verify(componentValidator, Mockito.times(1)).validate(eq(component), any());
     }
 
     @Test
@@ -57,6 +58,7 @@ class ComponentRepositoryServiceTest {
 
         Mockito.when(componentDao.find(eq(updateDTO.getUri()))).thenReturn(Optional.of(component));
         Mockito.when(componentDao.exists(eq(updateDTO.getUri()))).thenReturn(true);
+        Mockito.when(componentValidator.supports(any())).thenReturn(true);
         Mockito.when(componentDao.update(eq(component))).thenReturn(component);
 
         Component result = repositoryService.updateByDTO(updateDTO);
@@ -76,6 +78,7 @@ class ComponentRepositoryServiceTest {
 
         Mockito.when(componentDao.find(eq(component.getUri()))).thenReturn(Optional.of(component));
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);
+        Mockito.when(componentValidator.supports(any())).thenReturn(true);
         Mockito.when(componentDao.update(eq(component))).thenReturn(component);
 
         repositoryService.addFunction(component.getUri(), function);
@@ -97,6 +100,7 @@ class ComponentRepositoryServiceTest {
 
         Mockito.when(componentDao.find(eq(component.getUri()))).thenReturn(Optional.of(component));
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);
+        Mockito.when(componentValidator.supports(any())).thenReturn(true);
         Mockito.when(componentDao.update(eq(component))).thenReturn(component);
 
         repositoryService.deleteFunction(component.getUri(), function.getUri());
@@ -117,6 +121,7 @@ class ComponentRepositoryServiceTest {
         Mockito.when(componentDao.find(eq(linkComponent.getUri()))).thenReturn(Optional.of(linkComponent));
 
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);
+        Mockito.when(componentValidator.supports(any())).thenReturn(true);
         Mockito.when(componentDao.update(eq(component))).thenReturn(component);
 
         repositoryService.linkComponents(component.getUri(), linkComponent.getUri());
@@ -133,6 +138,8 @@ class ComponentRepositoryServiceTest {
 
         Mockito.when(componentDao.find(eq(component.getUri()))).thenReturn(Optional.of(component));
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);
+        Mockito.when(componentValidator.supports(any())).thenReturn(true);
+
         Mockito.when(componentDao.update(eq(component))).thenReturn(component);
 
         repositoryService.unlinkComponents(component.getUri());

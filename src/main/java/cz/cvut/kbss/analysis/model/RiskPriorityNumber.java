@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
@@ -17,12 +19,18 @@ import java.util.Objects;
 @Setter
 public class RiskPriorityNumber extends AbstractEntity {
 
+    @Min(value = 1, message = "Severity must not be lower than 1")
+    @Max(value = 10, message = "Severity must not be greater than 10")
     @OWLDataProperty(iri = Vocabulary.s_p_hasSeverity)
     private Integer severity;
 
+    @Min(value = 1, message = "Occurrence must not be lower than 1")
+    @Max(value = 10, message = "Occurrence must not be greater than 10")
     @OWLDataProperty(iri = Vocabulary.s_p_hasOccurrence)
     private Integer occurrence;
 
+    @Min(value = 1, message = "Detection must not be lower than 1")
+    @Max(value = 10, message = "Detection must not be greater than 10")
     @OWLDataProperty(iri = Vocabulary.s_p_hasDetection)
     private Integer detection;
 

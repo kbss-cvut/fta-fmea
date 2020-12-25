@@ -1,26 +1,25 @@
 package cz.cvut.kbss.analysis.service;
 
-import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.model.*;
-import lombok.RequiredArgsConstructor;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
+import org.springframework.validation.Validator;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FailureModeRepositoryService extends BaseRepositoryService<FailureMode> {
 
     private final FailureModeDao failureModeDao;
+
+    @Autowired
+    public FailureModeRepositoryService(@Qualifier("defaultValidator") Validator validator, FailureModeDao failureModeDao) {
+        super(validator);
+        this.failureModeDao = failureModeDao;
+    }
 
     @Override
     protected GenericDao<FailureMode> getPrimaryDao() {

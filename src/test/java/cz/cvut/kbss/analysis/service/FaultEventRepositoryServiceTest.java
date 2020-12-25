@@ -48,11 +48,13 @@ public class FaultEventRepositoryServiceTest {
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
 
+        Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
+        Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
         Mockito.when(faultEventDao.update(eq(event))).thenReturn(event);
 
         repositoryService.update(event);
 
-        Mockito.verify(faultEventValidator).validateTypes(event);
+        Mockito.verify(faultEventValidator).validate(eq(event), any());
     }
 
     @Test
@@ -78,30 +80,6 @@ public class FaultEventRepositoryServiceTest {
     }
 
     @Test
-    void addInputEvent_duplicatesExists_shouldThrowException() {
-        URI parentUri = Generator.generateUri();
-        FaultEvent inputEvent = new FaultEvent();
-        inputEvent.setUri(Generator.generateUri());
-
-        Mockito.when(faultEventDao.find(eq(parentUri))).thenReturn(Optional.of(new FaultEvent()));
-        Mockito.doThrow(LogicViolationException.class).when(faultEventValidator).validateDuplicates(any(FaultEvent.class));
-
-        assertThrows(LogicViolationException.class, () -> repositoryService.addInputEvent(parentUri, new FaultEvent()));
-    }
-
-    @Test
-    void addInputEvent_invalidTypes_shouldThrowException() {
-        URI parentUri = Generator.generateUri();
-        FaultEvent inputEvent = new FaultEvent();
-        inputEvent.setUri(Generator.generateUri());
-
-        Mockito.when(faultEventDao.find(eq(parentUri))).thenReturn(Optional.of(new FaultEvent()));
-        Mockito.doThrow(LogicViolationException.class).when(faultEventValidator).validateTypes(any(FaultEvent.class));
-
-        assertThrows(LogicViolationException.class, () -> repositoryService.addInputEvent(parentUri, new FaultEvent()));
-    }
-
-    @Test
     void addInputEvent_shouldDo2PhaseUpdate() {
         FaultEvent inputEvent = new FaultEvent();
         inputEvent.setUri(Generator.generateUri());
@@ -111,6 +89,8 @@ public class FaultEventRepositoryServiceTest {
 
 
         Mockito.when(faultEventDao.find(eq(parentEvent.getUri()))).thenReturn(Optional.of(parentEvent));
+        Mockito.when(faultEventDao.exists(parentEvent.getUri())).thenReturn(true);
+        Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
         Mockito.when(faultEventDao.update(eq(parentEvent))).thenReturn(parentEvent);
 
         repositoryService.addInputEvent(parentEvent.getUri(), new FaultEvent());
@@ -155,6 +135,8 @@ public class FaultEventRepositoryServiceTest {
 
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
         Mockito.when(componentRepositoryService.findRequired(eq(failureMode.getComponent().getUri()))).thenReturn(component);
+        Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
+        Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
         Mockito.when(faultEventDao.update(eq(event))).thenReturn(event);
 
         FailureMode result = repositoryService.addFailureMode(event.getUri(), failureMode);
@@ -176,6 +158,8 @@ public class FaultEventRepositoryServiceTest {
         failureMode.addEffect(event);
 
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
+        Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
+        Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
         Mockito.when(faultEventDao.update(eq(event))).thenReturn(event);
 
         repositoryService.deleteFailureMode(event.getUri());
