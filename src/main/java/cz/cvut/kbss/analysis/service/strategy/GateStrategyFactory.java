@@ -12,12 +12,11 @@ public class GateStrategyFactory {
 
     static {
         ProbabilityPropagationStrategy andStrategy = new AndProbabilityPropagationStrategy();
-        ProbabilityPropagationStrategy orStrategy = new OrProbabilityPropagationStrategy();
 
         gatePropagationStrategyMap = new HashMap<>();
         gatePropagationStrategyMap.put(GateType.AND, andStrategy);
-        gatePropagationStrategyMap.put(GateType.OR, orStrategy);
-        gatePropagationStrategyMap.put(GateType.XOR, new XorProbabilityPropagationStrategy(andStrategy, orStrategy));
+        gatePropagationStrategyMap.put(GateType.OR, new OrProbabilityPropagationStrategy());
+        gatePropagationStrategyMap.put(GateType.XOR, new XorProbabilityPropagationStrategy());
         gatePropagationStrategyMap.put(GateType.INHIBIT, new InhibitProbabilityPropagationStrategy(andStrategy));
         gatePropagationStrategyMap.put(GateType.PRIORITY_AND, new PriorityAndProbabilityPropagationStrategy(andStrategy));
     }
