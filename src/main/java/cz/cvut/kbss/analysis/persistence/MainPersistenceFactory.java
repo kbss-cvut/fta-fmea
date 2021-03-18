@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static cz.cvut.kbss.jopa.model.JOPAPersistenceProperties.*;
 import static cz.cvut.kbss.jopa.model.PersistenceProperties.JPA_PERSISTENCE_PROVIDER;
+import static cz.cvut.kbss.ontodriver.config.OntoDriverProperties.*;
 
 /**
  * Sets up persistence and provides {@link EntityManagerFactory} as Spring bean.
@@ -60,11 +61,16 @@ public class MainPersistenceFactory {
     @PostConstruct
     private void init() {
         final Map<String, String> properties = defaultParams();
+
         properties.put(ONTOLOGY_PHYSICAL_URI_KEY, repositoryConf.getUrl());
         properties.put(DATA_SOURCE_CLASS, persistenceConf.getDriver());
         properties.put(LANG, persistenceConf.getLanguage());
         properties.put(CACHE_ENABLED, "false");
 
+        if(repositoryConf.getUsername() != null && repositoryConf.getPassword() != null) {
+            properties.put(DATA_SOURCE_USERNAME, repositoryConf.getUsername());
+            properties.put(DATA_SOURCE_PASSWORD, repositoryConf.getPassword());
+        }
         // OPTIMIZATION: Always use statement retrieval with unbound property. Should spare
         // repository queries
         properties.put(SesameOntoDriverProperties.SESAME_LOAD_ALL_THRESHOLD, "1");
