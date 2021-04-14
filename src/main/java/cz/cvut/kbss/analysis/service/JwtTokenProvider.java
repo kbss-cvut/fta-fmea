@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class JwtTokenProvider {
     private final JwtConf jwtConf;
     private final UserDetailsService userDetailsService;
 
-    public String createToken(String username, List<String> roles) {
+    public String createToken(String username, Collection<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", roles);
         Date now = new Date();

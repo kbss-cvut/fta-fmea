@@ -11,4 +11,5 @@ public class AuthenticationResponse {
     private URI uri;
     private String username;
     private String token;
+    private String[] roles;
 }

@@ -32,8 +32,8 @@ public class User extends AbstractEntity implements UserDetails {
     @OWLDataProperty(iri = Vocabulary.s_p_hasPassword)
     private String password;
 
-    @Transient
-    private List<String> roles = Collections.singletonList("ROLE_USER");
+    @OWLDataProperty(iri = Vocabulary.s_p_hasRole)
+    private Set<String> roles = Collections.singleton("ROLE_USER");
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

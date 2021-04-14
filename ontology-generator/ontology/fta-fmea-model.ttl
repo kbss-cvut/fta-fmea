@@ -198,6 +198,12 @@ fta-fmea:hasName
     rdfs:label "has name" ;
     rdfs:range xsd:string .
 
+fta-fmea:hasRole
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "has role" ;
+    rdfs:domain fta-fmea:User ;
+    rdfs:range  xsd:string .
+
 fta-fmea:hasDescription
     rdf:type   owl:DatatypeProperty ;
     rdfs:label "has description" ;
