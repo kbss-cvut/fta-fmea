@@ -51,6 +51,12 @@ fta-fmea:influences
     rdfs:domain fta-fmea:FailureMode ;
     rdfs:range  fta-fmea:Function .
 
+fta-fmea:requires
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "requires" ;
+    rdfs:domain fta-fmea:Function ;
+    rdfs:range  fta-fmea:Function .
+
 fta-fmea:isMitigatedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "is mitigated by" ;
