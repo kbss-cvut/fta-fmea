@@ -25,7 +25,6 @@ public class Function extends AbstractEntity {
     private Set<Function> requiredFunctions = new HashSet<>();
 
     public void addFunction(Function function){ getRequiredFunctions().add(function); }
-    public void addFunction(Function ...functions){ Arrays.stream(functions).forEach(this::addFunction); }
 
     @Override
     public String toString() {

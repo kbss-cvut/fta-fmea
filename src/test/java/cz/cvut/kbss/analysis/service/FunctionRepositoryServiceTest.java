@@ -54,11 +54,12 @@ public class FunctionRepositoryServiceTest {
         dependentFunction.setUri(Generator.generateUri());
 
         Mockito.when(functionDao.find(eq(function.getUri()))).thenReturn(Optional.of(function));
+        Mockito.when(functionDao.find(eq(dependentFunction.getUri()))).thenReturn(Optional.of(dependentFunction));
         Mockito.when(functionDao.exists(eq(function.getUri()))).thenReturn(true);
         Mockito.when(functionValidator.supports(any())).thenReturn(true);
         Mockito.when(functionDao.update(eq(function))).thenReturn(function);
 
-        functionRepositoryService.addFunction(function.getUri(), dependentFunction);
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction.getUri());
         Mockito.verify(functionDao).update(functionCaptor.capture());
 
         Function functionToUpdate = functionCaptor.getValue();
@@ -79,15 +80,17 @@ public class FunctionRepositoryServiceTest {
         Function dependentFunction3 = new Function();
         dependentFunction3.setUri(Generator.generateUri());
 
-
         Mockito.when(functionDao.find(eq(function.getUri()))).thenReturn(Optional.of(function));
+        Mockito.when(functionDao.find(eq(dependentFunction.getUri()))).thenReturn(Optional.of(dependentFunction));
+        Mockito.when(functionDao.find(eq(dependentFunction2.getUri()))).thenReturn(Optional.of(dependentFunction2));
+        Mockito.when(functionDao.find(eq(dependentFunction3.getUri()))).thenReturn(Optional.of(dependentFunction3));
         Mockito.when(functionDao.exists(eq(function.getUri()))).thenReturn(true);
         Mockito.when(functionValidator.supports(any())).thenReturn(true);
         Mockito.when(functionDao.update(eq(function))).thenReturn(function);
 
-        functionRepositoryService.addFunction(function.getUri(), dependentFunction);
-        functionRepositoryService.addFunction(function.getUri(), dependentFunction2);
-        functionRepositoryService.addFunction(function.getUri(), dependentFunction3);
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction.getUri());
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction2.getUri());
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction3.getUri());
 
         Mockito.verify(functionDao,times(3)).update(functionCaptor.capture());
 
@@ -109,6 +112,7 @@ public class FunctionRepositoryServiceTest {
         function.addFunction(dependentFunction);
 
         Mockito.when(functionDao.find(eq(function.getUri()))).thenReturn(Optional.of(function));
+        Mockito.when(functionDao.find(eq(dependentFunction.getUri()))).thenReturn(Optional.of(dependentFunction));
         Mockito.when(functionDao.exists(eq(function.getUri()))).thenReturn(true);
         Mockito.when(functionValidator.supports(any())).thenReturn(true);
         Mockito.when(functionDao.update(eq(function))).thenReturn(function);
@@ -133,17 +137,22 @@ public class FunctionRepositoryServiceTest {
         Function dependentFunction3 = new Function();
         dependentFunction3.setUri(Generator.generateUri());
 
-        function.addFunction(dependentFunction,dependentFunction2,dependentFunction3);
-
         Mockito.when(functionDao.find(eq(function.getUri()))).thenReturn(Optional.of(function));
+        Mockito.when(functionDao.find(eq(dependentFunction.getUri()))).thenReturn(Optional.of(dependentFunction));
+        Mockito.when(functionDao.find(eq(dependentFunction2.getUri()))).thenReturn(Optional.of(dependentFunction2));
+        Mockito.when(functionDao.find(eq(dependentFunction3.getUri()))).thenReturn(Optional.of(dependentFunction3));
         Mockito.when(functionDao.exists(eq(function.getUri()))).thenReturn(true);
         Mockito.when(functionValidator.supports(any())).thenReturn(true);
         Mockito.when(functionDao.update(eq(function))).thenReturn(function);
 
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction.getUri());
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction2.getUri());
+        functionRepositoryService.addRequiredFunction(function.getUri(), dependentFunction3.getUri());
+
         functionRepositoryService.deleteFunction(function.getUri(), dependentFunction.getUri());
         functionRepositoryService.deleteFunction(function.getUri(), dependentFunction2.getUri());
 
-        Mockito.verify(functionDao,times(2)).update(function);
+        Mockito.verify(functionDao,times(5)).update(function);
         Assertions.assertFalse(function.getRequiredFunctions().contains(dependentFunction));
         Assertions.assertFalse(function.getRequiredFunctions().contains(dependentFunction2));
         Assertions.assertTrue(function.getRequiredFunctions().contains(dependentFunction3));

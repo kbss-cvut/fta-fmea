@@ -37,15 +37,15 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     }
 
     @Transactional
-    public Function addFunction(URI functionUri, URI requiredFunctionUri) {
-        log.info("> addFunction - {}, {}", functionUri, requiredFunctionUri);
+    public Function addRequiredFunction(URI functionUri, URI requiredFunctionUri) {
+        log.info("> addRequiredFunction - {}, {}", functionUri, requiredFunctionUri);
 
         Function function = findRequired(functionUri);
         Function requiredFunction = findRequired(requiredFunctionUri);
         function.addFunction(requiredFunction);
 
         update(function);
-        log.info("< addFunction - {}", function);
+        log.info("< addRequiredFunction - {}", function);
         return function;
     }
 

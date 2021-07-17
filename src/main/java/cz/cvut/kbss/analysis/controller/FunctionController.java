@@ -29,29 +29,29 @@ public class FunctionController {
         return functionRepositoryService.findAll();
     }
 
-    @GetMapping(value = "/{functionFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/{functionFragment}/requiredFunctions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<Function> getFunctions(@PathVariable(name = "functionFragment") String function) {
-        log.info("> getFunctions - {}", function);
+        log.info("> getRequiredFunctions - {}", function);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
         return functionRepositoryService.getFunctions(functionUri);
     }
 
-    @PostMapping(value = "/{functionFragment}/functions/{requiredFunctionFragment}")
-    public Function addFunction(@PathVariable(name = "functionFragment") String functionFragment,@PathVariable(name = "requiredFunctionFragment") String requiredFunctionFragment ) {
-        log.info("> addFunction - {}, {}", functionFragment, requiredFunctionFragment);
+    @PostMapping(value = "/{functionFragment}/requiredFunctions/{requiredFunctionFragment}")
+    public Function addRequiredFunction(@PathVariable(name = "functionFragment") String functionFragment,@PathVariable(name = "requiredFunctionFragment") String requiredFunctionFragment ) {
+        log.info("> addRequiredFunction - {}, {}", functionFragment, requiredFunctionFragment);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
         URI requiredFunctionURI = identifierService.composeIdentifier(Vocabulary.s_c_Function, requiredFunctionFragment);
-        return functionRepositoryService.addFunction(functionUri, requiredFunctionURI);
+        return functionRepositoryService.addRequiredFunction(functionUri, requiredFunctionURI);
     }
 
-    @DeleteMapping(value = "/{functionFragment}/functions/{requiredFunctionFragment}")
+    @DeleteMapping(value = "/{functionFragment}/requiredFunctions/{requiredFunctionFragment}")
     public void deleteFunction(@PathVariable(name = "functionFragment") String functionFragment, @PathVariable(name = "requiredFunctionFragment") String requiredFunctionFragment) {
-        log.info("> deleteFunction - {}, {}", functionFragment, functionFragment);
+        log.info("> deleteRequiredFunction - {}, {}", functionFragment, functionFragment);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
         URI requiredFunctionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, requiredFunctionFragment);
 
         functionRepositoryService.deleteFunction(functionUri,requiredFunctionUri);
-        log.info("< deleteFunction");
+        log.info("< deleteRequiredFunction");
     }
 
 }
