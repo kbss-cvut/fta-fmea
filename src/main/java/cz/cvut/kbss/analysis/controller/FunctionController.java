@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.FunctionRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -54,5 +55,11 @@ public class FunctionController {
         log.info("< deleteRequiredFunction");
     }
 
+    @GetMapping(value = "/{functionFragment}/getComponent", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Component getComponent(@PathVariable(name = "functionFragment") String function) {
+        log.info("> getComponent - {}", function);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
+        return functionRepositoryService.getComponent(functionUri);
+    }
 }
 
