@@ -195,6 +195,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 processRequiredFunctions(f,tmp);
             }
             faultEvent.setChildren(faultEvents);
+        }else{
+            faultEvent.setEventType(EventType.BASIC);
         }
     }
 
@@ -207,7 +209,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         }else{
             FaultEvent faultEvent = new FaultEvent();
             faultEvent.setUri(faultEventUri);
-            faultEvent.setName(functionToTransfer.getName());
+            faultEvent.setName(functionToTransfer.getName() + " failure");
             faultEvent.setEventType(EventType.INTERMEDIATE);
             faultEvent.setGateType(GateType.OR);
 
