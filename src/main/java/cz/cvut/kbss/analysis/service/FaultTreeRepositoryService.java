@@ -2,19 +2,23 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.model.FailureModesTable;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
+import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
+import java.lang.System;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,12 +29,24 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     private final FaultTreeDao faultTreeDao;
     private final FaultEventRepositoryService faultEventRepositoryService;
+    private final FunctionRepositoryService functionRepositoryService;
+    private final FailureModeRepositoryService failureModeRepositoryService;
+    private final IdentifierService identifierService;
 
     @Autowired
-    public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator, FaultTreeDao faultTreeDao, FaultEventRepositoryService faultEventRepositoryService) {
+    public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
+                                      FaultTreeDao faultTreeDao,
+                                      FaultEventRepositoryService faultEventRepositoryService,
+                                      FunctionRepositoryService functionRepositoryService,
+                                      FailureModeRepositoryService failureModeRepositoryService,
+                                      IdentifierService identifierService
+    ) {
         super(validator);
         this.faultTreeDao = faultTreeDao;
         this.faultEventRepositoryService = faultEventRepositoryService;
+        this.functionRepositoryService = functionRepositoryService;
+        this.failureModeRepositoryService = failureModeRepositoryService;
+        this.identifierService = identifierService;
     }
 
     @Override
@@ -155,4 +171,58 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     .forEach(child -> getTreeEventsRecursive(child, eventList));
         }
     }
+
+    @Transactional
+    public FaultTree generateFunctionDependencyTree(URI functionUri, String faultTreeName){
+        Function function = functionRepositoryService.findRequired(functionUri);
+        FaultEvent faultEvent = transferFunctionToFaultEvent(function);
+
+        FaultTree faultTree = new FaultTree();
+        faultTree.setName(faultTreeName);
+        faultTree.setManifestingEvent(faultEvent);
+
+        processRequiredFunctions(function,faultEvent);
+        persist(faultTree);
+        return faultTree;
+    }
+
+    private void processRequiredFunctions(Function function,FaultEvent faultEvent){
+        if(!function.getRequiredFunctions().isEmpty()){
+            Set<FaultEvent> faultEvents = new LinkedHashSet<>();
+            for(Function f: function.getRequiredFunctions()){
+                FaultEvent tmp = transferFunctionToFaultEvent(f);
+                faultEvents.add(tmp);
+                processRequiredFunctions(f,tmp);
+            }
+            faultEvent.setChildren(faultEvents);
+        }else{
+            faultEvent.setEventType(EventType.BASIC);
+        }
+    }
+
+    private FaultEvent transferFunctionToFaultEvent(Function functionToTransfer){
+        String functionUri = functionToTransfer.getUri().toString();
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent,functionUri.substring(functionUri.lastIndexOf("/") + 1));
+
+        if(faultEventRepositoryService.exists(faultEventUri)){
+            return faultEventRepositoryService.findRequired(faultEventUri);
+        }else{
+            FaultEvent faultEvent = new FaultEvent();
+            faultEvent.setUri(faultEventUri);
+            faultEvent.setName(functionToTransfer.getName() + " failure");
+            faultEvent.setEventType(EventType.INTERMEDIATE);
+            faultEvent.setGateType(GateType.OR);
+
+            FailureMode failureMode = new FailureMode();
+            failureMode.setName(functionToTransfer.getName() + " failure mode");
+            failureMode.setComponent(functionRepositoryService.getComponent(functionToTransfer.getUri()));
+            failureMode.setFunctions(functionToTransfer.getRequiredFunctions());
+            faultEvent.setFailureMode(failureMode);
+
+            failureModeRepositoryService.persist(failureMode);
+            faultEventRepositoryService.persist(faultEvent);
+            return faultEvent;
+        }
+    }
+
 }
