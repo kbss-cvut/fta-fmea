@@ -105,4 +105,11 @@ public class FaultTreeController {
         return repositoryService.getFailureModesTable(faultTreeUri);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{functionFragment}/generateFunctionalDependencies/{faultTreeName}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FaultTree generateFunctionalDependenciesFaultTree(@PathVariable("functionFragment") String functionFragment,@PathVariable("faultTreeName") String faultTreeName){
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        log.info("> generateFunctionalDependenciesFaultTree - {}, {}", functionFragment, faultTreeName);
+        return repositoryService.generateFunctionDependencyTree(functionUri,faultTreeName);
+    }
 }

@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
+import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +64,9 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
         log.info("> deleteFunction - deleted");
     }
 
+    @Transactional
+    public Component getComponent(URI functionUri){
+        log.info("> getComponent - {}", functionUri);
+        return functionDao.getComponent(functionUri);
+    }
 }
