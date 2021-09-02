@@ -9,6 +9,7 @@ import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,13 @@ public class FunctionController {
 
         functionRepositoryService.deleteFunction(functionUri,requiredFunctionUri);
         log.info("< deleteRequiredFunction");
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE},produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public void updateFunction(@RequestBody Function function){
+        log.info("> update - {}", function);
+        functionRepositoryService.update(function);
     }
 
     @GetMapping(value = "/{functionFragment}/getComponent", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
