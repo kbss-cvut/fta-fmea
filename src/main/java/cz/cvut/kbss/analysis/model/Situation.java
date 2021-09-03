@@ -1,0 +1,25 @@
+package cz.cvut.kbss.analysis.model;
+
+import cz.cvut.kbss.analysis.util.Vocabulary;
+import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@OWLClass(iri = Vocabulary.s_c_Situation)
+@Getter
+@Setter
+public class Situation extends AbstractEntity {
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_broughtAboutBy)
+    private Set<Event> broughtAboutByEvents = new HashSet<>();
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_triggers)
+    private Set<Event> triggersEvents = new HashSet<>();
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_activates)
+    private Set<Behavior> behaviors = new HashSet<>();
+}
