@@ -22,5 +22,9 @@ public class RepositoryConf {
      * Language used to store strings in the repository (persistence unit language).
      */
     private String language = "en";
+
+    private String username;
+
+    private String password;
 }
 
