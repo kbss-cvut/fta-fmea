@@ -13,6 +13,7 @@ public class PriorityAndProbabilityPropagationStrategy implements ProbabilityPro
 
     @Override
     public double propagate(List<Double> probabilities, FaultEvent event) {
+        checkArguments(probabilities, event);
         double sequenceCoefficient = (event.getSequenceProbability() != null) ? event.getSequenceProbability() : 0.0;
         double multipliedProbability = andStrategy.propagate(probabilities, event) * sequenceCoefficient;
 

@@ -3,12 +3,14 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
+import cz.cvut.kbss.analysis.exception.CalculationException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
+import cz.cvut.kbss.analysis.service.strategy.probability.ProbabilityPropagationStrategy;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,11 +72,17 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             List<Double> childProbabilities = event.getChildren().stream()
                     .map(this::propagateProbability).collect(Collectors.toList());
 
-            double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities, event);
-            event.setProbability(eventProbability);
+            try {
+                double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities, event);
+                event.setProbability(eventProbability);
+            }catch (CalculationException ex){
+                log.info(ex.getMessage());
+            }
         }
 
         Double resultProbability = event.getProbability();
+        if(resultProbability == null)
+            log.info(CalculationException.probabilityNotSetMessage(event));
 
         log.info("< propagateProbability - {}", resultProbability);
         return resultProbability;
