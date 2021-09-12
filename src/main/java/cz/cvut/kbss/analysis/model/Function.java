@@ -23,11 +23,11 @@ public class Function extends Behavior {
     @OWLObjectProperty(iri = Vocabulary.s_p_requires, fetch = FetchType.EAGER)
     private Set<Function> requiredFunctions = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_activatedBy)
-    private Set<Situation> activatedBySituations = new HashSet<>();
-
     @OWLObjectProperty(iri = Vocabulary.s_p_manifestedBy)
     private Set<FunctionEvent> manifestedByEvents = new HashSet<>();
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_impairedBy)
+    private Set<FailureMode> failureModes = new HashSet<>();
 
     public void addFunction(Function function){ getRequiredFunctions().add(function); }
 

@@ -45,12 +45,6 @@ fta-fmea:FailureMode
     rdf:type   owl:Class ;
     rdfs:label "Failure mode" .
 
-fta-fmea:influences
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "influences" ;
-    rdfs:domain fta-fmea:FailureMode ;
-    rdfs:range  fta-fmea:Function .
-
 fta-fmea:requires
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "requires" ;
@@ -244,6 +238,18 @@ fta-fmea:manifestedBy
 fta-fmea:Behavior
     rdf:type owl:Class;
     rdfs:label "Behavior".
+
+fta-fmea:impairedBy
+    rdf:typeowl:ObjectProperty;
+    rdfs:label "impaired by";
+    rdfs:domain fta-fmea:Behavior;
+    rdfs:range fta-fmea:Behavior.
+
+fta-fmea:impairs
+rdf:type owl:ObjectProperty;
+rdfs:label "impairs";
+rdfs:domain fta-fmea:Behavior;
+rdfs:range fta-fmea:Behavior.
 
 fta-fmea:activatedBy
     rdf:type    owl:ObjectProperty ;

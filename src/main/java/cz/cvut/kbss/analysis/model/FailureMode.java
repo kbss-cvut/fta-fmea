@@ -26,7 +26,7 @@ public class FailureMode extends Behavior {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
     private Component component;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_influences, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_impairs, fetch = FetchType.EAGER)
     private Set<Function> functions;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
