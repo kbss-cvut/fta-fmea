@@ -210,13 +210,13 @@ fta-fmea:Event
 fta-fmea:triggeredBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "triggered by" ;
-    rdfs:domain fta-fmea:Situation ;
+    rdfs:domain fta-fmea:Event ;
     rdfs:range  fta-fmea:Situation .
 
 fta-fmea:bringsAbout
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "brings about" ;
-    rdfs:domain fta-fmea:Situation ;
+    rdfs:domain fta-fmea:Event ;
     rdfs:range  fta-fmea:Situation .
 
 fta-fmea:FunctionEvent
@@ -226,13 +226,13 @@ fta-fmea:FunctionEvent
 fta-fmea:manifestationOf
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "manifestation of" ;
-    rdfs:domain fta-fmea:Function ;
+    rdfs:domain fta-fmea:FunctionEvent ;
     rdfs:range  fta-fmea:Function .
 
 fta-fmea:manifestedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "manifested by" ;
-    rdfs:domain fta-fmea:FunctionEvent ;
+    rdfs:domain fta-fmea:Function ;
     rdfs:range  fta-fmea:FunctionEvent .
 
 fta-fmea:Behavior
@@ -240,7 +240,7 @@ fta-fmea:Behavior
     rdfs:label "Behavior".
 
 fta-fmea:impairedBy
-    rdf:typeowl:ObjectProperty;
+    rdf:type owl:ObjectProperty;
     rdfs:label "impaired by";
     rdfs:domain fta-fmea:Behavior;
     rdfs:range fta-fmea:Behavior.
@@ -254,7 +254,7 @@ rdfs:range fta-fmea:Behavior.
 fta-fmea:activatedBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "activated by" ;
-    rdfs:domain fta-fmea:Situation ;
+    rdfs:domain fta-fmea:Behavior ;
     rdfs:range  fta-fmea:Situation .
 
 fta-fmea:Situation
@@ -264,17 +264,17 @@ fta-fmea:Situation
 fta-fmea:activates
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "activates" ;
-    rdfs:domain fta-fmea:Behavior ;
+    rdfs:domain fta-fmea:Situation ;
     rdfs:range  fta-fmea:Behavior .
 
 fta-fmea:broughtAboutBy
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "brought about by" ;
-    rdfs:domain fta-fmea:Event ;
+    rdfs:domain fta-fmea:Situation ;
     rdfs:range  fta-fmea:Event .
 
 fta-fmea:triggers
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "triggers" ;
-    rdfs:domain fta-fmea:Event ;
+    rdfs:domain fta-fmea:Situation ;
     rdfs:range  fta-fmea:Event .
