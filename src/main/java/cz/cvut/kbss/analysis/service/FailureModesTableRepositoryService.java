@@ -141,16 +141,17 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                 row.put("failureMode", failureMode.getName());
                 row.put("component", failureMode.getComponent().getName());
 
-                if (failureMode.getMitigation() != null) {
-                    row.put("mitigation", failureMode.getMitigation().getDescription());
-                }
+                //TODO: discuss on standup
+//                if (failureMode.getMitigation() != null) {
+//                    row.put("mitigation", failureMode.getMitigation().getDescription());
+//                }
 
-                if (!failureMode.getFunctions().isEmpty()) {
-                    return failureMode.getFunctions().stream()
-                            .map(function -> {
+                if (!failureMode.getRequiredBehaviors().isEmpty()) {
+                    return failureMode.getRequiredBehaviors().stream()
+                            .map(behavior -> {
                                 Map<String, Object> functionRow = new HashMap<>(row);
-                                functionRow.put("id", functionRow.get("id") + function.getUri().toString());
-                                functionRow.put("function", function.getName());
+                                functionRow.put("id", functionRow.get("id") + behavior.getUri().toString());
+                                functionRow.put("function", behavior.getName());
                                 return functionRow;
                             })
                             .collect(Collectors.toList());

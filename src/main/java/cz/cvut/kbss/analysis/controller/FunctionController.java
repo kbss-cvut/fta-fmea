@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.FunctionRepositoryService;
@@ -32,10 +33,10 @@ public class FunctionController {
     }
 
     @GetMapping(value = "/{functionFragment}/requiredFunctions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
-    public Set<Function> getFunctions(@PathVariable(name = "functionFragment") String function) {
+    public Set<Behavior> getFunctions(@PathVariable(name = "functionFragment") String function) {
         log.info("> getRequiredFunctions - {}", function);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
-        return functionRepositoryService.getFunctions(functionUri);
+        return functionRepositoryService.getRequiredBehavior(functionUri);
     }
 
     @PostMapping(value = "/{functionFragment}/requiredFunctions/{requiredFunctionFragment}")
@@ -43,7 +44,7 @@ public class FunctionController {
         log.info("> addRequiredFunction - {}, {}", functionFragment, requiredFunctionFragment);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
         URI requiredFunctionURI = identifierService.composeIdentifier(Vocabulary.s_c_Function, requiredFunctionFragment);
-        return functionRepositoryService.addRequiredFunction(functionUri, requiredFunctionURI);
+        return functionRepositoryService.addRequiredBehavior(functionUri, requiredFunctionURI);
     }
 
     @DeleteMapping(value = "/{functionFragment}/requiredFunctions/{requiredFunctionFragment}")

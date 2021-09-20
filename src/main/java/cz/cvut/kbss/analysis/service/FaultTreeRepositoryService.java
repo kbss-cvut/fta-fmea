@@ -174,34 +174,36 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     @Transactional
     public FaultTree generateFunctionDependencyTree(URI functionUri, String faultTreeName){
-        Function function = functionRepositoryService.findRequired(functionUri);
-        FaultEvent faultEvent = transferFunctionToFaultEvent(function);
+        Behavior behavior = functionRepositoryService.findRequired(functionUri);
+        FaultEvent faultEvent = transferBehaviorToFaultEvent(behavior);
 
         FaultTree faultTree = new FaultTree();
         faultTree.setName(faultTreeName);
         faultTree.setManifestingEvent(faultEvent);
 
-        processRequiredFunctions(function,faultEvent);
+        processRequiredFunctions(behavior,faultEvent);
+        faultEvent.setEventType(EventType.INTERMEDIATE);
         persist(faultTree);
         return faultTree;
     }
 
-    private void processRequiredFunctions(Function function,FaultEvent faultEvent){
-        if(!function.getRequiredFunctions().isEmpty()){
+    private void processRequiredFunctions(Behavior behavior,FaultEvent faultEvent){
+        if(!behavior.getRequiredBehaviors().isEmpty()){
             Set<FaultEvent> faultEvents = new LinkedHashSet<>();
-            for(Function f: function.getRequiredFunctions()){
-                FaultEvent tmp = transferFunctionToFaultEvent(f);
+            for(Behavior b: behavior.getRequiredBehaviors()){
+                FaultEvent tmp = transferBehaviorToFaultEvent(b);
                 faultEvents.add(tmp);
-                processRequiredFunctions(f,tmp);
+                processRequiredFunctions(b,tmp);
             }
             faultEvent.setChildren(faultEvents);
         }else{
             faultEvent.setEventType(EventType.BASIC);
+            faultEvent.setProbability(1.);
         }
     }
 
-    private FaultEvent transferFunctionToFaultEvent(Function functionToTransfer){
-        String functionUri = functionToTransfer.getUri().toString();
+    private FaultEvent transferBehaviorToFaultEvent(Behavior behavior){
+        String functionUri = behavior.getUri().toString();
         URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent,functionUri.substring(functionUri.lastIndexOf("/") + 1));
 
         if(faultEventRepositoryService.exists(faultEventUri)){
@@ -209,14 +211,14 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         }else{
             FaultEvent faultEvent = new FaultEvent();
             faultEvent.setUri(faultEventUri);
-            faultEvent.setName(functionToTransfer.getName() + " failure");
+            faultEvent.setName(behavior.getName() + " failure");
             faultEvent.setEventType(EventType.INTERMEDIATE);
             faultEvent.setGateType(GateType.OR);
 
             FailureMode failureMode = new FailureMode();
-            failureMode.setName(functionToTransfer.getName() + " failure mode");
-            failureMode.setComponent(functionRepositoryService.getComponent(functionToTransfer.getUri()));
-            failureMode.setFunctions(functionToTransfer.getRequiredFunctions());
+            failureMode.setName(behavior.getName() + " failure mode");
+            failureMode.setComponent(functionRepositoryService.getComponent(behavior.getUri()));
+            failureMode.setRequiredBehaviors(behavior.getRequiredBehaviors());
             faultEvent.setFailureMode(failureMode);
 
             failureModeRepositoryService.persist(failureMode);

@@ -5,26 +5,12 @@ import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_Function)
 @Getter
 @Setter
-public class Function extends AbstractEntity {
-
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_requires, fetch = FetchType.EAGER)
-    private Set<Function> requiredFunctions = new HashSet<>();
-
-    public void addFunction(Function function){ getRequiredFunctions().add(function); }
+public class Function extends Behavior {
 
     @Override
     public String toString() {
