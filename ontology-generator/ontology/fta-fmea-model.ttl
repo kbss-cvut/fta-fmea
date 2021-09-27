@@ -45,12 +45,6 @@ fta-fmea:FailureMode
     rdf:type   owl:Class ;
     rdfs:label "Failure mode" .
 
-fta-fmea:influences
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "influences" ;
-    rdfs:domain fta-fmea:FailureMode ;
-    rdfs:range  fta-fmea:Function .
-
 fta-fmea:requires
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "requires" ;
@@ -208,3 +202,79 @@ fta-fmea:hasDescription
     rdf:type   owl:DatatypeProperty ;
     rdfs:label "has description" ;
     rdfs:range xsd:string .
+
+fta-fmea:Event
+    rdf:type owl:Class;
+    rdfs:label "Event".
+
+fta-fmea:triggeredBy
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "triggered by" ;
+    rdfs:domain fta-fmea:Event ;
+    rdfs:range  fta-fmea:Situation .
+
+fta-fmea:bringsAbout
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "brings about" ;
+    rdfs:domain fta-fmea:Event ;
+    rdfs:range  fta-fmea:Situation .
+
+fta-fmea:FunctionEvent
+    rdf:type owl:Class;
+    rdfs:label "Function Event".
+
+fta-fmea:manifestationOf
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "manifestation of" ;
+    rdfs:domain fta-fmea:FunctionEvent ;
+    rdfs:range  fta-fmea:Function .
+
+fta-fmea:manifestedBy
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "manifested by" ;
+    rdfs:domain fta-fmea:Function ;
+    rdfs:range  fta-fmea:FunctionEvent .
+
+fta-fmea:Behavior
+    rdf:type owl:Class;
+    rdfs:label "Behavior".
+
+fta-fmea:impairedBy
+    rdf:type owl:ObjectProperty;
+    rdfs:label "impaired by";
+    rdfs:domain fta-fmea:Behavior;
+    rdfs:range fta-fmea:Behavior.
+
+fta-fmea:impairs
+rdf:type owl:ObjectProperty;
+rdfs:label "impairs";
+rdfs:domain fta-fmea:Behavior;
+rdfs:range fta-fmea:Behavior.
+
+fta-fmea:activatedBy
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "activated by" ;
+    rdfs:domain fta-fmea:Behavior ;
+    rdfs:range  fta-fmea:Situation .
+
+fta-fmea:Situation
+    rdf:type owl:Class;
+    rdfs:label "Situation".
+
+fta-fmea:activates
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "activates" ;
+    rdfs:domain fta-fmea:Situation ;
+    rdfs:range  fta-fmea:Behavior .
+
+fta-fmea:broughtAboutBy
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "brought about by" ;
+    rdfs:domain fta-fmea:Situation ;
+    rdfs:range  fta-fmea:Event .
+
+fta-fmea:triggers
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "triggers" ;
+    rdfs:domain fta-fmea:Situation ;
+    rdfs:range  fta-fmea:Event .

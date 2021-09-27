@@ -197,6 +197,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             faultEvent.setChildren(faultEvents);
         }else{
             faultEvent.setEventType(EventType.BASIC);
+            faultEvent.setProbability(1.);
         }
     }
 

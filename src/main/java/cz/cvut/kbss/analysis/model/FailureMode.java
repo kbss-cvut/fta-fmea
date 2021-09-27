@@ -2,7 +2,6 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_FailureMode)
 @Getter
 @Setter
-public class FailureMode extends AbstractEntity {
+public class FailureMode extends Behavior {
 
     @NotEmpty(message = "Name must not be empty")
     @ParticipationConstraints(nonEmpty = true)
@@ -27,7 +26,7 @@ public class FailureMode extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
     private Component component;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_influences, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_impairs, fetch = FetchType.EAGER)
     private Set<Function> functions;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
