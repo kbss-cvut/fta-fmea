@@ -145,7 +145,7 @@ public class FaultEventRepositoryServiceTest {
 
         Assert.assertEquals(failureMode, result);
         Assert.assertTrue(component.getFailureModes().contains(failureMode));
-        Assert.assertTrue(failureMode.getEffects().contains(event));
+        Assert.assertTrue(failureMode.getManifestations().contains(event));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class FaultEventRepositoryServiceTest {
 
         FailureMode failureMode = new FailureMode();
         failureMode.setUri(Generator.generateUri());
-        failureMode.addEffect(event);
+        failureMode.addManifestationBehavior(event);
 
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
         Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);

@@ -215,13 +215,6 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             faultEvent.setEventType(EventType.INTERMEDIATE);
             faultEvent.setGateType(GateType.OR);
 
-            FailureMode failureMode = new FailureMode();
-            failureMode.setName(behavior.getName() + " failure mode");
-            failureMode.setComponent(functionRepositoryService.getComponent(behavior.getUri()));
-            failureMode.setRequiredBehaviors(behavior.getRequiredBehaviors());
-            faultEvent.setFailureMode(failureMode);
-
-            failureModeRepositoryService.persist(failureMode);
             faultEventRepositoryService.persist(faultEvent);
             return faultEvent;
         }

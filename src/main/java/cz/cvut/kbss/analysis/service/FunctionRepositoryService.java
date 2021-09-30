@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -53,12 +55,12 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
 
 
     @Transactional
-    public void deleteFunction(URI functionUri, URI dependentBehaviorUri) {
-        log.info("> deleteFunction - {}, {}", functionUri, dependentBehaviorUri);
+    public void deleteRequiredBehavior(URI functionUri, URI requiredFunction) {
+        log.info("> deleteFunction - {}, {}", functionUri, requiredFunction);
 
         Function function = findRequired(functionUri);
         function.getRequiredBehaviors()
-                .removeIf(f -> f.getUri().equals(dependentBehaviorUri));
+                .removeIf(f -> f.getUri().equals(requiredFunction));
 
         update(function);
 
@@ -69,5 +71,11 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     public Component getComponent(URI functionUri){
         log.info("> getComponent - {}", functionUri);
         return functionDao.getComponent(functionUri);
+    }
+
+    @Transactional
+    public List<FailureMode> getImpairedBehaviors(URI functionUri){
+        log.info("> getImpairedBehaviors - {}", functionUri);
+        return functionDao.getImpairedBehaviors(functionUri);
     }
 }

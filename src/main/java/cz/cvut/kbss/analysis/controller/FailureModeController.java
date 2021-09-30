@@ -58,4 +58,22 @@ public class FailureModeController {
         repositoryService.remove(failureModeUri);
     }
 
+    @PostMapping(value = "/{failureModeFragment}/impairedBehavior/{impairedBehaviorFragment}")
+    public FailureMode addImpairedBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+                                        ,@PathVariable(name = "impairedBehaviorFragment") String impairedBehaviorFragment ) {
+        log.info("> addImpairedBehavior - {}, {}", failureModeFragment, impairedBehaviorFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI impairedBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, impairedBehaviorFragment);
+        return repositoryService.addImpairedBehavior(failureModeUri, impairedBehaviorUri);
+    }
+
+    @DeleteMapping(value = "/{failureModeFragment}/impairedBehavior/{impairedBehaviorFragment}")
+    public void removeImpairedBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+            ,@PathVariable(name = "impairedBehaviorFragment") String impairedBehaviorFragment ) {
+        log.info("> removeImpairedBehavior - {}, {}", failureModeFragment, impairedBehaviorFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI impairedBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, impairedBehaviorFragment);
+        repositoryService.removeImpairedBehavior(failureModeUri, impairedBehaviorUri);
+    }
+
 }

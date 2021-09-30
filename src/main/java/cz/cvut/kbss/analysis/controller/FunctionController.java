@@ -53,7 +53,7 @@ public class FunctionController {
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
         URI requiredFunctionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, requiredFunctionFragment);
 
-        functionRepositoryService.deleteFunction(functionUri,requiredFunctionUri);
+        functionRepositoryService.deleteRequiredBehavior(functionUri,requiredFunctionUri);
         log.info("< deleteRequiredFunction");
     }
 

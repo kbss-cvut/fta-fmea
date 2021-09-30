@@ -17,9 +17,6 @@ import java.util.Objects;
 @Setter
 public class Mitigation extends Behavior {
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
-    private String description;
-
     @Override
     public String toString() {
         return "Mitigation <" + getUri() + "/>";

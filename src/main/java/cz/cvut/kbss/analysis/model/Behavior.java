@@ -20,13 +20,16 @@ public abstract class Behavior extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
+    private String description;
+
     @OWLDataProperty(iri = Vocabulary.s_p_hasBehaviorType)
     private BehaviorType behaviorType;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_requires, fetch = FetchType.EAGER)
     private Set<Behavior> requiredBehaviors = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_impairedBy, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_impairs, fetch = FetchType.EAGER)
     private Set<Behavior> impairedBehaviors = new HashSet<>();
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildBehavior)
