@@ -99,7 +99,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         log.info("> addFailureMode - {}, {}", faultEventUri, failureMode);
 
         FaultEvent event = findRequired(faultEventUri);
-        failureMode.addManifestationBehavior(event);
+        event.setBehavior(failureMode);
 
         Component component = componentRepositoryService.findRequired(failureMode.getComponent().getUri());
         component.addFailureMode(failureMode);

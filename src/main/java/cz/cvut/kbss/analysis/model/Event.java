@@ -14,11 +14,19 @@ import java.util.Set;
 @Setter
 public class Event extends AbstractEntity {
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf)
+    private Behavior behavior;
+
     @OWLObjectProperty(iri = Vocabulary.s_p_bringsAbout)
     private Set<Situation> bringsAboutSituations = new HashSet<>();
 
     @OWLObjectProperty(iri = Vocabulary.s_p_triggeredBy)
     private Set<Situation> triggeredBySituations = new HashSet<>();
+
+    public void setBehavior(Behavior behavior){
+        this.behavior = behavior;
+        behavior.addManifestation(this);
+    }
 
     public void addBringsAboutSituation(Situation situation){
         situation.getBroughtAboutByEvents().add(this);

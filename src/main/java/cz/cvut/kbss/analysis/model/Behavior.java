@@ -24,7 +24,7 @@ public abstract class Behavior extends AbstractEntity {
     private String description;
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasBehaviorType)
-    private BehaviorType behaviorType;
+    private BehaviorType behaviorType = BehaviorType.AtomicBehavior;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_requires, fetch = FetchType.EAGER)
     private Set<Behavior> requiredBehaviors = new HashSet<>();
@@ -52,10 +52,10 @@ public abstract class Behavior extends AbstractEntity {
     public void addRequiredBehavior(Behavior behavior){getRequiredBehaviors().add(behavior);}
     public void addImpairedBehavior(Behavior behavior){getImpairedBehaviors().add(behavior);}
     public void addChildBehavior(Behavior behavior){getChildBehaviors().add(behavior);}
-    public void addManifestationBehavior(Event event){getManifestations().add(event);}
+    public void addManifestation(Event event){getManifestations().add(event);}
 
     public void removeImpairedBehavior(Behavior behavior){getImpairedBehaviors().remove(behavior);}
     public void removeRequiredBehavior(Behavior behavior){getRequiredBehaviors().remove(behavior);}
     public void removeChildBehavior(Behavior behavior){getChildBehaviors().remove(behavior);}
-    public void removeManifestationBehavior(Event event){getManifestations().remove(event);}
+    public void removeManifestation(Event event){getManifestations().remove(event);}
 }

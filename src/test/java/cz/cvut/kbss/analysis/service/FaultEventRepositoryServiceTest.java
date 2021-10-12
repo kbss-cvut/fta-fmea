@@ -155,7 +155,7 @@ public class FaultEventRepositoryServiceTest {
 
         FailureMode failureMode = new FailureMode();
         failureMode.setUri(Generator.generateUri());
-        failureMode.addManifestationBehavior(event);
+        event.setBehavior(failureMode);
 
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
         Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
