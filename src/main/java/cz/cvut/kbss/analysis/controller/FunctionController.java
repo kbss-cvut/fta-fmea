@@ -70,5 +70,12 @@ public class FunctionController {
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
         return functionRepositoryService.getComponent(functionUri);
     }
+
+    @GetMapping(value = "/{functionFragment}/impairedBehaviors", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public List<Behavior> getImpairedBehaviors(@PathVariable(name = "functionFragment") String function) {
+        log.info("> getImpairedBehaviors - {}", function);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
+        return functionRepositoryService.getImpairedBehaviors(functionUri);
+    }
 }
 

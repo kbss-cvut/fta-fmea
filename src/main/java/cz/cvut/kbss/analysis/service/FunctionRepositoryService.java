@@ -74,7 +74,7 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     }
 
     @Transactional
-    public List<FailureMode> getImpairedBehaviors(URI functionUri){
+    public List<Behavior> getImpairedBehaviors(URI functionUri){
         log.info("> getImpairedBehaviors - {}", functionUri);
         return functionDao.getImpairedBehaviors(functionUri);
     }

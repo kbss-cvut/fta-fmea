@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
+import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
@@ -28,9 +29,9 @@ public class FunctionDao extends BaseDao<Function> {
                 .getResultList().stream().findFirst().orElse(null);
     }
 
-    public List<FailureMode> getImpairedBehaviors(URI functionUri){
+    public List<Behavior> getImpairedBehaviors(URI functionUri){
         return em
-                .createNativeQuery("SELECT ?failureMode WHERE { ?failureMode ?impairs ?function }", FailureMode.class)
+                .createNativeQuery("SELECT ?failureMode WHERE { ?failureMode ?impairs ?function }", Behavior.class)
                 .setParameter("impairs", URI.create(Vocabulary.s_p_impairs))
                 .setParameter("function", functionUri)
                 .getResultList();

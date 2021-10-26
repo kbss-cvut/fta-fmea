@@ -32,7 +32,7 @@ public abstract class Behavior extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_impairs, fetch = FetchType.EAGER)
     private Set<Behavior> impairedBehaviors = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildBehavior)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildBehavior, fetch = FetchType.EAGER)
     private Set<Behavior> childBehaviors = new HashSet<>();
 
     @OWLObjectProperty(iri = Vocabulary.s_p_manifested_by)

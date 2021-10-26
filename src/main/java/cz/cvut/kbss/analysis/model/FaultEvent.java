@@ -51,7 +51,7 @@ public class FaultEvent extends Event {
     public void addChild(FaultEvent child) {
         getChildren().add(child);
     }
-
+    public void addChildren(Set<FaultEvent> children){getChildren().addAll(children);}
     public void addChildSequenceUri(URI childUri) {getChildrenSequence().add(childUri);}
 
     @Override
