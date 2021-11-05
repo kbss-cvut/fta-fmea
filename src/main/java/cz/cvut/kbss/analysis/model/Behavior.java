@@ -1,11 +1,13 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
+
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,6 +42,7 @@ public abstract class Behavior extends AbstractEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
     private Component component;
+
 
     @OWLObjectProperty(iri = Vocabulary.s_p_activatedBy)
     private Set<Situation> activatedBySituations = new HashSet<>();

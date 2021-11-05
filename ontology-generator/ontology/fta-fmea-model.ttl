@@ -218,6 +218,7 @@ fta-fmea:bringsAbout
     rdfs:label  "brings about" ;
     rdfs:domain fta-fmea:Event ;
     rdfs:range  fta-fmea:Situation .
+
 fta-fmea:FunctionEvent
     rdf:type owl:Class;
     rdfs:label "Function Event".
@@ -279,6 +280,7 @@ fta-fmea:impairs
     rdfs:label "impairs";
     rdfs:domain fta-fmea:Behavior;
     rdfs:range fta-fmea:Behavior.
+
 
 fta-fmea:activatedBy
     rdf:type    owl:ObjectProperty ;
