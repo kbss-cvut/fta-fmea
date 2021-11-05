@@ -6,10 +6,7 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableField;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
-import cz.cvut.kbss.analysis.model.FailureMode;
-import cz.cvut.kbss.analysis.model.FailureModesTable;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.RiskPriorityNumber;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import lombok.extern.slf4j.Slf4j;
@@ -141,16 +138,17 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                 row.put("failureMode", failureMode.getName());
                 row.put("component", failureMode.getComponent().getName());
 
-                if (failureMode.getMitigation() != null) {
-                    row.put("mitigation", failureMode.getMitigation().getDescription());
-                }
+                failureMode.getImpairedBehaviors()
+                        .stream()
+                        .filter(Mitigation.class::isInstance)
+                        .forEach(mitigation -> row.put("mitigation", mitigation.getDescription()));
 
-                if (!failureMode.getFunctions().isEmpty()) {
-                    return failureMode.getFunctions().stream()
-                            .map(function -> {
+                if (!failureMode.getRequiredBehaviors().isEmpty()) {
+                    return failureMode.getRequiredBehaviors().stream()
+                            .map(behavior -> {
                                 Map<String, Object> functionRow = new HashMap<>(row);
-                                functionRow.put("id", functionRow.get("id") + function.getUri().toString());
-                                functionRow.put("function", function.getName());
+                                functionRow.put("id", functionRow.get("id") + behavior.getUri().toString());
+                                functionRow.put("function", behavior.getName());
                                 return functionRow;
                             })
                             .collect(Collectors.toList());

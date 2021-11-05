@@ -10,7 +10,6 @@ import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
-import cz.cvut.kbss.analysis.service.strategy.probability.ProbabilityPropagationStrategy;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +80,6 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         }
 
         Double resultProbability = event.getProbability();
-        if(resultProbability == null)
-            log.info(CalculationException.probabilityNotSetMessage(event));
 
         log.info("< propagateProbability - {}", resultProbability);
         return resultProbability;
@@ -102,7 +99,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         log.info("> addFailureMode - {}, {}", faultEventUri, failureMode);
 
         FaultEvent event = findRequired(faultEventUri);
-        failureMode.addEffect(event);
+        event.setBehavior(failureMode);
 
         Component component = componentRepositoryService.findRequired(failureMode.getComponent().getUri());
         component.addFailureMode(failureMode);
@@ -119,7 +116,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
         FaultEvent event = findRequired(faultEventUri);
         event.getFailureMode()
-                .getEffects()
+                .getManifestations()
                 .removeIf(e -> e.getUri().equals(faultEventUri));
         event.setFailureMode(null);
 

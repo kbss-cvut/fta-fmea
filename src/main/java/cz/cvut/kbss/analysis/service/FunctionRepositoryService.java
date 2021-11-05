@@ -2,7 +2,9 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
+import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -32,18 +35,18 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     }
 
     @Transactional(readOnly = true)
-    public Set<Function> getFunctions(URI functionUri) {
+    public Set<Behavior> getRequiredBehavior(URI functionUri) {
         Function function = findRequired(functionUri);
-        return function.getRequiredFunctions();
+        return function.getRequiredBehaviors();
     }
 
     @Transactional
-    public Function addRequiredFunction(URI functionUri, URI requiredFunctionUri) {
-        log.info("> addRequiredFunction - {}, {}", functionUri, requiredFunctionUri);
+    public Function addRequiredBehavior(URI functionUri, URI requiredBehaviorUri) {
+        log.info("> addRequiredFunction - {}, {}", functionUri, requiredBehaviorUri);
 
         Function function = findRequired(functionUri);
-        Function requiredFunction = findRequired(requiredFunctionUri);
-        function.addFunction(requiredFunction);
+        Behavior behavior = findRequired(requiredBehaviorUri);
+        function.addRequiredBehavior(behavior);
 
         update(function);
         log.info("< addRequiredFunction - {}", function);
@@ -52,12 +55,12 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
 
 
     @Transactional
-    public void deleteFunction(URI functionUri, URI dependentFunctionUri) {
-        log.info("> deleteFunction - {}, {}", functionUri, dependentFunctionUri);
+    public void deleteRequiredBehavior(URI functionUri, URI requiredFunction) {
+        log.info("> deleteFunction - {}, {}", functionUri, requiredFunction);
 
         Function function = findRequired(functionUri);
-        function.getRequiredFunctions()
-                .removeIf(f -> f.getUri().equals(dependentFunctionUri));
+        function.getRequiredBehaviors()
+                .removeIf(f -> f.getUri().equals(requiredFunction));
 
         update(function);
 
@@ -68,5 +71,11 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     public Component getComponent(URI functionUri){
         log.info("> getComponent - {}", functionUri);
         return functionDao.getComponent(functionUri);
+    }
+
+    @Transactional
+    public List<FailureMode> getImpairedBehaviors(URI functionUri){
+        log.info("> getImpairedBehaviors - {}", functionUri);
+        return functionDao.getImpairedBehaviors(functionUri);
     }
 }

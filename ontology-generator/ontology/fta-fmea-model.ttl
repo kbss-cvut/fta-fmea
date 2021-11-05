@@ -48,8 +48,8 @@ fta-fmea:FailureMode
 fta-fmea:requires
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "requires" ;
-    rdfs:domain fta-fmea:Function ;
-    rdfs:range  fta-fmea:Function .
+    rdfs:domain fta-fmea:Behavior ;
+    rdfs:range  fta-fmea:Behavior .
 
 fta-fmea:isMitigatedBy
     rdf:type    owl:ObjectProperty ;
@@ -239,6 +239,36 @@ fta-fmea:Behavior
     rdf:type owl:Class;
     rdfs:label "Behavior".
 
+fta-fmea:hasBehaviorType
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "has behavior type" ;
+    rdfs:domain fta-fmea:Behavior ;
+    rdfs:range  xsd:string .
+
+fta-fmea:hasChildBehavior
+    rdf:type owl:ObjectProperty;
+    rdfs:label "has child behavior";
+    rdfs:domain fta-fmea:Behavior;
+    rdfs:range fta-fmea:Behavior.
+
+fta-fmea:isChildBehaviorOf
+    rdf:type owl:ObjectProperty;
+    rdfs:label "is child behavior of";
+    rdfs:domain fta-fmea:Behavior;
+    rdfs:range fta-fmea:Behavior.
+
+fta-fmea:manifested-by
+    rdf:type owl:ObjectProperty;
+    rdfs:label "manifested by";
+    rdfs:domain fta-fmea:Behavior;
+    rdfs:range fta-fmea:Event.
+
+fta-fmea:manifestation-of
+    rdf:type owl:ObjectProperty;
+    rdfs:label "manifestation of";
+    rdfs:domain fta-fmea:Event;
+    rdfs:range fta-fmea:Behavior.
+
 fta-fmea:impairedBy
     rdf:type owl:ObjectProperty;
     rdfs:label "impaired by";
@@ -246,10 +276,11 @@ fta-fmea:impairedBy
     rdfs:range fta-fmea:Behavior.
 
 fta-fmea:impairs
-rdf:type owl:ObjectProperty;
-rdfs:label "impairs";
-rdfs:domain fta-fmea:Behavior;
-rdfs:range fta-fmea:Behavior.
+    rdf:type owl:ObjectProperty;
+    rdfs:label "impairs";
+    rdfs:domain fta-fmea:Behavior;
+    rdfs:range fta-fmea:Behavior.
+
 
 fta-fmea:activatedBy
     rdf:type    owl:ObjectProperty ;

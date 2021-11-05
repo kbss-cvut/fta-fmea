@@ -18,7 +18,7 @@ public class FunctionEvent extends Event{
     private Set<Function> functions = new HashSet<>();
 
     public void addFunction(Function function){
-        function.getManifestedByEvents().add(this);
+        function.getManifestations().add(this);
         getFunctions().add(function);
     }
 }
