@@ -4,7 +4,6 @@ import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
-import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +73,8 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     }
 
     @Transactional
-    public List<Behavior> getImpairedBehaviors(URI functionUri){
+    public List<Behavior> getImpairingBehaviors(URI functionUri){
         log.info("> getImpairedBehaviors - {}", functionUri);
-        return functionDao.getImpairedBehaviors(functionUri);
+        return functionDao.getImpairingBehaviors(functionUri);
     }
 }

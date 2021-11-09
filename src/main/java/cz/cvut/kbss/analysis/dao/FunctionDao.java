@@ -29,7 +29,8 @@ public class FunctionDao extends BaseDao<Function> {
                 .getResultList().stream().findFirst().orElse(null);
     }
 
-    public List<Behavior> getImpairedBehaviors(URI functionUri){
+    // This function gets the impairING behaviors. The input behavior is the one that is impairED.
+    public List<Behavior> getImpairingBehaviors(URI functionUri){
         return em
                 .createNativeQuery("SELECT ?failureMode WHERE { ?failureMode ?impairs ?function }", Behavior.class)
                 .setParameter("impairs", URI.create(Vocabulary.s_p_impairs))

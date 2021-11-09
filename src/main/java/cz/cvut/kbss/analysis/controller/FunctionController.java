@@ -75,7 +75,7 @@ public class FunctionController {
     public List<Behavior> getImpairedBehaviors(@PathVariable(name = "functionFragment") String function) {
         log.info("> getImpairedBehaviors - {}", function);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
-        return functionRepositoryService.getImpairedBehaviors(functionUri);
+        return functionRepositoryService.getImpairingBehaviors(functionUri);
     }
 }
 
