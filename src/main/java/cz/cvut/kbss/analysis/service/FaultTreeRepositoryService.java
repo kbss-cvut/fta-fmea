@@ -189,7 +189,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     private void processBehavior(Behavior behavior, FaultEvent parentFaultEvent) throws URISyntaxException {
         Set<FaultEvent> faultEvents = new LinkedHashSet<>();
-        List<Behavior> impairedBehaviors = functionRepositoryService.getImpairedBehaviors(behavior.getUri());
+        List<Behavior> impairingBehaviors = functionRepositoryService.getImpairingBehaviors(behavior.getUri());
 
         if(!behavior.getChildBehaviors().isEmpty() ){
             processChildBehaviors(behavior, parentFaultEvent);
@@ -267,7 +267,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         }
     }
 
-    private FaultEvent processImpairedBehavior(Behavior behavior, Behavior parentBehavior) throws URISyntaxException {
+    private FaultEvent processImpairingBehavior(Behavior impairingBehavior, Behavior impairedBehavior) throws URISyntaxException {
         FaultEvent faultEvent;
         if(impairingBehavior.getBehaviorType() == BehaviorType.AtomicBehavior && impairedBehavior instanceof Function) {
             faultEvent = transferBehaviorToFaultEvent(impairingBehavior, impairedBehavior);

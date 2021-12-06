@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,13 @@ import java.util.Set;
 public class ComponentRepositoryService extends BaseRepositoryService<Component> {
 
     private final ComponentDao componentDao;
+    private final FailureModeRepositoryService failureModeRepositoryService;
 
     @Autowired
-    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao) {
+    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao, FailureModeRepositoryService failureModeRepositoryService) {
         super(validator);
         this.componentDao = componentDao;
+        this.failureModeRepositoryService = failureModeRepositoryService;
     }
 
     @Override
@@ -66,6 +69,12 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
     }
 
     @Transactional
+    public Set<FailureMode> getFailureModes(URI componentUri) {
+        Component component = findRequired(componentUri);
+        return component.getFailureModes();
+    }
+
+    @Transactional
     public void deleteFunction(URI componentUri, URI functionUri) {
         log.info("> deleteFunction - {}, {}", componentUri, functionUri);
 
@@ -78,6 +87,33 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
 
         log.info("> deleteFunction - deleted");
     }
+
+
+    @Transactional
+    public FailureMode addFailureMode(URI componentUri, FailureMode failureMode) {
+        log.info("> addFailureMode - {}, {}", componentUri, failureMode);
+
+        Component component = findRequired(componentUri);
+        component.addFailureMode(failureMode);
+        update(component);
+        log.info("< addFailureMode - {}, {}", componentUri, failureMode);
+        return failureMode;
+    }
+
+    @Transactional
+    public void deleteFailureMode(URI componentUri, URI failureModeUri) {
+        log.info("> deleteFunction - {}, {}", componentUri, failureModeUri);
+
+        Component component = findRequired(componentUri);
+        component
+                .getFailureModes()
+                .removeIf(function -> function.getUri().equals(failureModeUri));
+
+        update(component);
+
+        log.info("> deleteFailureMode - deleted");
+    }
+
 
     @Transactional
     public Component linkComponents(URI componentUri, URI linkComponentUri) {

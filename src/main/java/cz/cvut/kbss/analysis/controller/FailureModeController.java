@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
 import cz.cvut.kbss.analysis.service.FailureModeRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -39,6 +40,13 @@ public class FailureModeController {
         return repositoryService.findRequired(failureModeUri);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public FailureMode createFailureMode(@RequestBody FailureMode failureMode) {
+        log.info("> createFailureMode - {} ", failureMode);
+        return repositoryService.createFailureMode(failureMode);
+    }
+
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureMode update(@RequestBody FailureMode failureMode) {
         log.info("> update - {}", failureMode);
@@ -74,6 +82,42 @@ public class FailureModeController {
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI impairedBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, impairedBehaviorFragment);
         repositoryService.removeImpairedBehavior(failureModeUri, impairedBehaviorUri);
+    }
+
+    @PostMapping(value = "/{failureModeFragment}/requiredBehavior/{requiredBehaviorFragment}")
+    public FailureMode addRequiredBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+            ,@PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment ) {
+        log.info("> addRequiredBehavior - {}, {}", failureModeFragment, requiredBehaviorFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI requiredBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, requiredBehaviorFragment);
+        return repositoryService.addRequiredBehavior(failureModeUri, requiredBehaviorUri);
+    }
+
+    @DeleteMapping(value = "/{failureModeFragment}/requiredBehavior/{requiredBehaviorFragment}")
+    public void removeRequiredBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+            ,@PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment ) {
+        log.info("> removeRequiredBehavior - {}, {}", failureModeFragment, requiredBehaviorFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI requiredBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, requiredBehaviorFragment);
+        repositoryService.removeRequiredBehavior(failureModeUri, requiredBehaviorUri);
+    }
+
+    @PostMapping(value = "/{failureModeFragment}/childBehavior/{childBehaviorFragment}")
+    public FailureMode addChildBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+        log.info("> addChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, childBehaviorFragment);
+        return repositoryService.addChildBehavior(failureModeUri, childBehaviorUri);
+    }
+
+    @DeleteMapping(value = "/{failureModeFragment}/childBehavior/{childBehaviorFragment}")
+    public void removeChildBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+        log.info("> removeChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, childBehaviorFragment);
+        repositoryService.removeChildBehavior(failureModeUri, childBehaviorUri);
     }
 
 }

@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -60,6 +61,32 @@ public class ComponentController {
         log.info("> getFunctions - {}", componentFragment);
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
         return repositoryService.getFunctions(componentUri);
+    }
+
+    @GetMapping(value = "/{componentFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<FailureMode> getFailureModes(@PathVariable(name = "componentFragment") String componentFragment) {
+        log.info("> getFailureModes - {}", componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        return repositoryService.getFailureModes(componentUri);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{componentFragment}/failureModes", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public FailureMode addFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody FailureMode failureMode) {
+        log.info("> addFailureMode - {}, {}", componentFragment, failureMode);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+
+        return repositoryService.addFailureMode(componentUri,failureMode);
+    }
+
+    @DeleteMapping(value = "/{componentFragment}/failureModes/{failureModeFragment}")
+    public void deleteFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "failureModeFragment") String failureModeFragment) {
+        log.info("> deleteFailureMode - {}, {}", componentFragment, failureModeFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+
+        repositoryService.deleteFailureMode(componentUri, failureModeUri);
+        log.info("< deleteFailureMode");
     }
 
     @ResponseStatus(HttpStatus.CREATED)

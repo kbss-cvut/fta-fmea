@@ -32,6 +32,12 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
     }
 
     @Transactional
+    public FailureMode createFailureMode(FailureMode failureMode){
+        persist(failureMode);
+        return failureMode;
+    }
+
+    @Transactional
     public FailureMode addImpairedBehavior(URI failureModeUri, URI impairedBehaviorUri) {
         log.info("> addImpairedBehavior - {}, {}", failureModeUri, impairedBehaviorUri);
 
@@ -51,5 +57,46 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
         update(failureMode);
         log.info("> removeImpairedBehavior - removed");
     }
+
+    @Transactional
+    public FailureMode addRequiredBehavior(URI failureModeUri, URI requiredBehaviorUri) {
+        log.info("> addRequiredBehavior - {}, {}", failureModeUri, requiredBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getRequiredBehaviors().add(findRequired(requiredBehaviorUri));
+
+        return update(failureMode);
+    }
+    @Transactional
+    public void removeRequiredBehavior(URI failureModeUri, URI requiredBehaviorUri) {
+        log.info("> removeRequiredBehavior - {}, {}", failureModeUri, requiredBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getRequiredBehaviors().removeIf(behavior -> behavior.getUri().equals(requiredBehaviorUri));
+
+        update(failureMode);
+        log.info("> removeRequiredBehavior - removed");
+    }
+
+    @Transactional
+    public FailureMode addChildBehavior(URI failureModeUri, URI childBehaviorUri) {
+        log.info("> addChildBehavior - {}, {}", failureModeUri, childBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getChildBehaviors().add(findRequired(childBehaviorUri));
+
+        return update(failureMode);
+    }
+    @Transactional
+    public void removeChildBehavior(URI failureModeUri, URI childBehaviorUri) {
+        log.info("> removeChildBehavior - {}, {}", failureModeUri, childBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getChildBehaviors().removeIf(behavior -> behavior.getUri().equals(childBehaviorUri));
+
+        update(failureMode);
+        log.info("> removeChildBehavior - removed");
+    }
+
 
 }

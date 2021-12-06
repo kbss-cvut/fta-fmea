@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.System;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -69,4 +72,13 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
         log.info("< removeComponent");
     }
 
+    @Transactional
+    public Set<FailureMode> getAllFailureModes(URI systemUri) {
+        System system = findRequired(systemUri);
+        Set<FailureMode> failureModes = new HashSet<>();
+        for(Component comp: system.getComponents()) {
+            failureModes.addAll(comp.getFailureModes());
+        }
+        return failureModes;
+    }
 }
