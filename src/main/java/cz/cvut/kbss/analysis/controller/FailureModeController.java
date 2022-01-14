@@ -85,12 +85,12 @@ public class FailureModeController {
     }
 
     @PostMapping(value = "/{failureModeFragment}/requiredBehavior/{requiredBehaviorFragment}")
-    public FailureMode addRequiredBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+    public void addRequiredBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
             ,@PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment ) {
         log.info("> addRequiredBehavior - {}, {}", failureModeFragment, requiredBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI requiredBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, requiredBehaviorFragment);
-        return repositoryService.addRequiredBehavior(failureModeUri, requiredBehaviorUri);
+        repositoryService.addRequiredBehavior(failureModeUri, requiredBehaviorUri);
     }
 
     @DeleteMapping(value = "/{failureModeFragment}/requiredBehavior/{requiredBehaviorFragment}")
@@ -103,12 +103,12 @@ public class FailureModeController {
     }
 
     @PostMapping(value = "/{failureModeFragment}/childBehavior/{childBehaviorFragment}")
-    public FailureMode addChildBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
+    public void addChildBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
             ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
         log.info("> addChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, childBehaviorFragment);
-        return repositoryService.addChildBehavior(failureModeUri, childBehaviorUri);
+        repositoryService.addChildBehavior(failureModeUri, childBehaviorUri);
     }
 
     @DeleteMapping(value = "/{failureModeFragment}/childBehavior/{childBehaviorFragment}")

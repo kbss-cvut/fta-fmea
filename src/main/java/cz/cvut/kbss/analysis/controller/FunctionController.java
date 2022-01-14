@@ -77,5 +77,24 @@ public class FunctionController {
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
         return functionRepositoryService.getImpairingBehaviors(functionUri);
     }
+
+    @PostMapping(value = "/{functionFragment}/childBehavior/{childBehaviorFragment}")
+    public void addChildBehavior(@PathVariable(name = "functionFragment") String functionFragment
+            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+        log.info("> addChildBehavior - {}, {}", functionFragment, childBehaviorFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, childBehaviorFragment);
+        functionRepositoryService.addChildBehavior(functionUri, childBehaviorUri);
+    }
+
+    @DeleteMapping(value = "/{functionFragment}/childBehavior/{childBehaviorFragment}")
+    public void removeChildBehavior(@PathVariable(name = "functionFragment") String failureModeFragment
+            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+        log.info("> removeChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, failureModeFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, childBehaviorFragment);
+        functionRepositoryService.removeChildBehavior(functionUri, childBehaviorUri);
+    }
+
 }
 

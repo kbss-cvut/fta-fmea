@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,4 +78,27 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
         log.info("> getImpairedBehaviors - {}", functionUri);
         return functionDao.getImpairingBehaviors(functionUri);
     }
+
+    @Transactional
+    public void addChildBehavior(URI functionUri, URI childFunctionUri) {
+        log.info("> addChildBehavior - {}, {}", functionUri, childFunctionUri);
+
+        Function function = findRequired(functionUri);
+        function.getChildBehaviors().add(findRequired(childFunctionUri));
+
+        update(function);
+    }
+
+    @Transactional
+    public void removeChildBehavior(URI functionUri, URI childFunctionUri) {
+        log.info("> removeChildBehavior - {}, {}", functionUri, childFunctionUri);
+
+        Function function = findRequired(functionUri);
+        function.getChildBehaviors().removeIf(behavior -> behavior.getUri().equals(childFunctionUri));
+
+        update(function);
+        log.info("> removeChildBehavior - removed");
+    }
+
+
 }
