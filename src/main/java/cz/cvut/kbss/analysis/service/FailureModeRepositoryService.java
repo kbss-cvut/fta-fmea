@@ -38,6 +38,18 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
     }
 
     @Transactional
+    public FailureMode updateFailureModeProperties(FailureMode failureModeProperties){
+        log.info("> updateFailureModeProperties - {}", failureModeProperties.getUri());
+
+        FailureMode failureMode = getPrimaryDao().find(failureModeProperties.getUri()).orElse(null);
+
+        failureMode.setName(failureModeProperties.getName());
+        failureMode.setBehaviorType(failureModeProperties.getBehaviorType());
+
+        return failureMode;
+    }
+
+    @Transactional
     public FailureMode addImpairedBehavior(URI failureModeUri, URI impairedBehaviorUri) {
         log.info("> addImpairedBehavior - {}, {}", failureModeUri, impairedBehaviorUri);
 

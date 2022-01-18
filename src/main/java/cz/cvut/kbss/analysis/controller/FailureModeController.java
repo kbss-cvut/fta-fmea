@@ -51,7 +51,7 @@ public class FailureModeController {
     public FailureMode update(@RequestBody FailureMode failureMode) {
         log.info("> update - {}", failureMode);
 
-        FailureMode updatedFailureMode = repositoryService.update(failureMode);
+        FailureMode updatedFailureMode = repositoryService.updateFailureModeProperties(failureMode);
 
         log.info("< update - {}", failureMode);
         return updatedFailureMode;
