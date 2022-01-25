@@ -96,5 +96,11 @@ public class FunctionController {
         functionRepositoryService.removeChildBehavior(functionUri, childBehaviorUri);
     }
 
+    @GetMapping(value = "/{functionFragment}/transitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<URI> getTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
+        log.info("> getTransitiveClosure - {}", functionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        return functionRepositoryService.getTransitiveClosure(functionUri);
+    }
 }
 

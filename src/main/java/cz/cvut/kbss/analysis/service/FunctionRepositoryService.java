@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -100,5 +101,19 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
         log.info("> removeChildBehavior - removed");
     }
 
+    @Transactional
+    public Set<URI> getTransitiveClosure(URI functionUri) {
+        log.info("> getTransitiveClosure - {}", functionUri);
+        Set<URI> transitiveFunctions = new HashSet<>();
+        Function function = findRequired(functionUri);
+        function.getChildBehaviors().forEach(f -> processFunction(transitiveFunctions,f));
+        return transitiveFunctions;
+    }
 
+    private void processFunction(Set<URI> transitiveFunctions, Behavior function){
+        for (Behavior f: function.getChildBehaviors()){
+            transitiveFunctions.add(f.getUri());
+            processFunction(transitiveFunctions,f);
+        }
+    }
 }
