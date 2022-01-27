@@ -102,18 +102,23 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     }
 
     @Transactional
-    public Set<URI> getTransitiveClosure(URI functionUri) {
-        log.info("> getTransitiveClosure - {}", functionUri);
+    public Set<URI> getTransitiveClosure(URI functionUri, String type) {
+        log.info("> get{}TransitiveClosure - {}", type, functionUri);
         Set<URI> transitiveFunctions = new HashSet<>();
         Function function = findRequired(functionUri);
-        function.getChildBehaviors().forEach(f -> processFunction(transitiveFunctions,f));
+
+        if (type.equals("child")) {
+            function.getChildBehaviors().forEach(f -> processFunction(transitiveFunctions, f, type));
+        } else {
+            function.getRequiredBehaviors().forEach(f -> processFunction(transitiveFunctions, f, type));
+        }
         return transitiveFunctions;
     }
 
-    private void processFunction(Set<URI> transitiveFunctions, Behavior function){
-        for (Behavior f: function.getChildBehaviors()){
+    private void processFunction(Set<URI> transitiveFunctions, Behavior function, String type){
+        for (Behavior f: (type.equals("child") ? function.getChildBehaviors() : function.getRequiredBehaviors())){
             transitiveFunctions.add(f.getUri());
-            processFunction(transitiveFunctions,f);
+            processFunction(transitiveFunctions, f, type);
         }
     }
 }
