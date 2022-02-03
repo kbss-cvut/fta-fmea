@@ -5,6 +5,7 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
+import cz.cvut.kbss.analysis.service.FunctionRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
@@ -96,6 +97,16 @@ public class ComponentController {
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
 
         return repositoryService.addFunction(componentUri, function);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{componentFragment}/functions/{functionFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public Function addFunctionByURI(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "functionFragment") String functionFragment) {
+        log.info("> addFunction - {}, {}", componentFragment, functionFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        
+        return repositoryService.addFunctionByURI(componentUri, functionUri);
     }
 
     @DeleteMapping(value = "/{componentFragment}/functions/{functionFragment}")

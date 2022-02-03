@@ -23,12 +23,15 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
 
     private final ComponentDao componentDao;
     private final FailureModeRepositoryService failureModeRepositoryService;
+    private final FunctionRepositoryService functionService;
 
     @Autowired
-    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao, FailureModeRepositoryService failureModeRepositoryService) {
+    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao
+            , FailureModeRepositoryService failureModeRepositoryService, FunctionRepositoryService functionService) {
         super(validator);
         this.componentDao = componentDao;
         this.failureModeRepositoryService = failureModeRepositoryService;
+        this.functionService = functionService;
     }
 
     @Override
@@ -54,6 +57,19 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
 
         Component component = findRequired(componentUri);
 
+        component.addFunction(function);
+        update(component);
+
+        log.info("< addFunction - {}", function);
+        return function;
+    }
+
+    @Transactional
+    public Function addFunctionByURI(URI componentUri, URI functionUri) {
+        log.info("> addFunction - {}, {}", componentUri, functionUri);
+
+        Component component = findRequired(componentUri);
+        Function function = functionService.findRequired(functionUri);
         component.addFunction(function);
         update(component);
 

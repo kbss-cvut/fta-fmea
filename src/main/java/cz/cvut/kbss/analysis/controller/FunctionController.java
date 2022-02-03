@@ -57,11 +57,11 @@ public class FunctionController {
         log.info("< deleteRequiredFunction");
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE},produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
-    public void updateFunction(@RequestBody Function function){
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Function updateFunction(@RequestBody Function function){
         log.info("> update - {}", function);
-        functionRepositoryService.update(function);
+        return functionRepositoryService.update(function);
     }
 
     @GetMapping(value = "/{functionFragment}/getComponent", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
