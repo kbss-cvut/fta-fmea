@@ -109,9 +109,9 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
         Function function = findRequired(functionUri);
 
         if (type.equals("child")) {
-            function.getChildBehaviors().forEach(f -> processFunction(transitiveFunctions, f, type));
+            transitiveFunctions = functionDao.getTransitiveBehaviorParts(functionUri);
         } else {
-            function.getRequiredBehaviors().forEach(f -> processFunction(transitiveFunctions, f, type));
+            transitiveFunctions = functionDao.getTransitiveRequiredBehaviors(functionUri);
         }
         return transitiveFunctions;
     }
