@@ -101,16 +101,27 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
     }
 
     @Transactional
+    public void addFailureModeByUri(URI componentUri, URI failureModeUri) {
+        log.info("> addFailureModeByUri - {}, {}", componentUri, failureModeUri);
+        Component component = findRequired(componentUri);
+        FailureMode failureMode = failureModeRepositoryService.findRequired(failureModeUri);
+        component.addFailureMode(failureMode);
+        update(component);
+    }
+
+    @Transactional
     public void deleteFailureMode(URI componentUri, URI failureModeUri) {
-        log.info("> deleteFunction - {}, {}", componentUri, failureModeUri);
+        log.info("> deleteFailureMode - {}, {}", componentUri, failureModeUri);
 
         Component component = findRequired(componentUri);
+        FailureMode failureMode = failureModeRepositoryService.findRequired(failureModeUri);
         component
                 .getFailureModes()
                 .removeIf(function -> function.getUri().equals(failureModeUri));
 
         update(component);
-
+        failureMode.setComponent(null);
+        failureModeRepositoryService.update(failureMode);
         log.info("> deleteFailureMode - deleted");
     }
 

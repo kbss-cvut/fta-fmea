@@ -79,6 +79,15 @@ public class ComponentController {
         return repositoryService.addFailureMode(componentUri,failureMode);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{componentFragment}/failureModes/{failureModeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public void addFailureModeByURI(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "failureModeFragment") String failureModeFragment) {
+        log.info("> addFailureModeByUri - {}, {}", componentFragment, failureModeFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        repositoryService.addFailureModeByUri(componentUri, failureModeUri);
+    }
+
     @DeleteMapping(value = "/{componentFragment}/failureModes/{failureModeFragment}")
     public void deleteFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "failureModeFragment") String failureModeFragment) {
         log.info("> deleteFailureMode - {}, {}", componentFragment, failureModeFragment);
