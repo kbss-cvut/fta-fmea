@@ -68,7 +68,7 @@ public class FailureModeController {
 
     @PostMapping(value = "/{failureModeFragment}/impairedBehavior/{impairedBehaviorFragment}")
     public FailureMode addImpairedBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
-                                        ,@PathVariable(name = "impairedBehaviorFragment") String impairedBehaviorFragment ) {
+            , @PathVariable(name = "impairedBehaviorFragment") String impairedBehaviorFragment) {
         log.info("> addImpairedBehavior - {}, {}", failureModeFragment, impairedBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI impairedBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, impairedBehaviorFragment);
@@ -77,7 +77,7 @@ public class FailureModeController {
 
     @DeleteMapping(value = "/{failureModeFragment}/impairedBehavior/{impairedBehaviorFragment}")
     public void removeImpairedBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
-            ,@PathVariable(name = "impairedBehaviorFragment") String impairedBehaviorFragment ) {
+            , @PathVariable(name = "impairedBehaviorFragment") String impairedBehaviorFragment) {
         log.info("> removeImpairedBehavior - {}, {}", failureModeFragment, impairedBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI impairedBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, impairedBehaviorFragment);
@@ -86,7 +86,7 @@ public class FailureModeController {
 
     @PostMapping(value = "/{failureModeFragment}/requiredBehavior/{requiredBehaviorFragment}")
     public void addRequiredBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
-            ,@PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment ) {
+            , @PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment) {
         log.info("> addRequiredBehavior - {}, {}", failureModeFragment, requiredBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI requiredBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, requiredBehaviorFragment);
@@ -95,7 +95,7 @@ public class FailureModeController {
 
     @DeleteMapping(value = "/{failureModeFragment}/requiredBehavior/{requiredBehaviorFragment}")
     public void removeRequiredBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
-            ,@PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment ) {
+            , @PathVariable(name = "requiredBehaviorFragment") String requiredBehaviorFragment) {
         log.info("> removeRequiredBehavior - {}, {}", failureModeFragment, requiredBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI requiredBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, requiredBehaviorFragment);
@@ -104,7 +104,7 @@ public class FailureModeController {
 
     @PostMapping(value = "/{failureModeFragment}/childBehavior/{childBehaviorFragment}")
     public void addChildBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
-            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+            , @PathVariable(name = "childBehaviorFragment") String childBehaviorFragment) {
         log.info("> addChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, childBehaviorFragment);
@@ -113,11 +113,24 @@ public class FailureModeController {
 
     @DeleteMapping(value = "/{failureModeFragment}/childBehavior/{childBehaviorFragment}")
     public void removeChildBehavior(@PathVariable(name = "failureModeFragment") String failureModeFragment
-            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+            , @PathVariable(name = "childBehaviorFragment") String childBehaviorFragment) {
         log.info("> removeChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
         URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
         URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, childBehaviorFragment);
         repositoryService.removeChildBehavior(failureModeUri, childBehaviorUri);
     }
 
+    @GetMapping(value = "/{failureModeFragment}/childTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<URI> getChildTransitiveClosure(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
+        log.info("> getChildTransitiveClosure - {}", failureModeFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        return repositoryService.getTransitiveClosure(failureModeUri, "child");
+    }
+
+    @GetMapping(value = "/{failureModeFragment}/requiredTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<URI> getRequiredTransitiveClosure(@PathVariable(name = "failureModeFragment") String failureModeFragment) {
+        log.info("> getRequiredTransitiveClosure - {}", failureModeFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        return repositoryService.getTransitiveClosure(failureModeUri, "required");
+    }
 }

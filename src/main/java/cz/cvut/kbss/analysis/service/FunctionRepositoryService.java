@@ -105,21 +105,15 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     @Transactional
     public Set<URI> getTransitiveClosure(URI functionUri, String type) {
         log.info("> get{}TransitiveClosure - {}", type, functionUri);
-        Set<URI> transitiveFunctions = new HashSet<>();
-        Function function = findRequired(functionUri);
+        Set<URI> transitiveFunctions;
 
         if (type.equals("child")) {
-            transitiveFunctions = functionDao.getTransitiveBehaviorParts(functionUri);
-        } else {
-            transitiveFunctions = functionDao.getTransitiveRequiredBehaviors(functionUri);
+            transitiveFunctions = functionDao.getIndirectBehaviorParts(functionUri);
+        }else if(type.equals("required")) {
+            transitiveFunctions = functionDao.getIndirectRequiredBehaviors(functionUri);
+        }else{
+            transitiveFunctions = functionDao.getIndirectImpairingBehaviors(functionUri);
         }
         return transitiveFunctions;
-    }
-
-    private void processFunction(Set<URI> transitiveFunctions, Behavior function, String type){
-        for (Behavior f: (type.equals("child") ? function.getChildBehaviors() : function.getRequiredBehaviors())){
-            transitiveFunctions.add(f.getUri());
-            processFunction(transitiveFunctions, f, type);
-        }
     }
 }

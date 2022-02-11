@@ -98,13 +98,14 @@ public class FunctionController {
 
     @GetMapping(value = "/{functionFragment}/childTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<URI> getChildTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
-        log.info("> getTransitiveClosure - {}", functionFragment);
+        log.info("> getChildTransitiveClosure - {}", functionFragment);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
         return functionRepositoryService.getTransitiveClosure(functionUri,"child");
     }
+
     @GetMapping(value = "/{functionFragment}/requiredTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<URI> getRequiredTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
-        log.info("> getTransitiveClosure - {}", functionFragment);
+        log.info("> getRequiredTransitiveClosure - {}", functionFragment);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
         return functionRepositoryService.getTransitiveClosure(functionUri, "required");
     }

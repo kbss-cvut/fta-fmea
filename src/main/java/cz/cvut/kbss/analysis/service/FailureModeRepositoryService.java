@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.FailureMode;
+import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -110,5 +113,18 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
         log.info("> removeChildBehavior - removed");
     }
 
+    @Transactional
+    public Set<URI> getTransitiveClosure(URI failureModeUri, String type) {
+        log.info("> get{}TransitiveClosure - {}", type, failureModeUri);
+        Set<URI> transitiveFunctions;
 
+        if (type.equals("child")) {
+            transitiveFunctions = failureModeDao.getIndirectBehaviorParts(failureModeUri);
+        }else if(type.equals("required")) {
+            transitiveFunctions = failureModeDao.getIndirectRequiredBehaviors(failureModeUri);
+        }else{
+            transitiveFunctions = failureModeDao.getIndirectImpairingBehaviors(failureModeUri);
+        }
+        return transitiveFunctions;
+    }
 }

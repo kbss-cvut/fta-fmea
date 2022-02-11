@@ -8,6 +8,11 @@ public class ResourceUtils {
     public static final String REQUIRED_BEHAVIORS = "required-behaviors";
     public static final String BEHAVIOR_PARTS = "behavior-parts";
     public static final String IMPAIRING_BEHAVIORS = "impairing-behaviors";
+    public static final String INDIRECT_REQUIRED_BEHAVIORS = "indirect-required-behaviors";
+    public static final String INDIRECT_BEHAVIOR_PARTS = "indirect-behavior-parts";
+    public static final String INDIRECT_IMPAIRING_BEHAVIORS = "indirect-impairing-behaviors";
+
+
 
     public static String loadQuery(String queryName) throws IOException {
         String resourcePath = String.format("/queries/%s.sparql", queryName);
