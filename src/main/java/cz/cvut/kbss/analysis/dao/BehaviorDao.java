@@ -34,6 +34,34 @@ public abstract class BehaviorDao<T extends Behavior> extends BaseDao<T>{
         return getTransitiveClosure(ResourceUtils.IMPAIRING_BEHAVIORS, URI.create(Vocabulary.s_p_impairs));
     }
 
+    /**
+     * Retrieves indirectly required behaviors
+     * @param behaviorURI
+     * @return
+     */
+    public Set<URI> getIndirectRequiredBehaviors(URI behaviorURI){
+        return getTransitiveClosure(ResourceUtils.INDIRECT_REQUIRED_BEHAVIORS, behaviorURI);
+    }
+
+    /**
+     * Retrieves indirect behavior parts
+     * @param behaviorURI
+     * @return
+     */
+    public Set<URI> getIndirectBehaviorParts(URI behaviorURI){
+        return getTransitiveClosure(ResourceUtils.INDIRECT_BEHAVIOR_PARTS, behaviorURI);
+    }
+
+
+    /**
+     * Retrieves indirect impairing behaviors
+     * @param behaviorURI
+     * @return
+     */
+    public Set<URI> getIndirectImpairingBehaviors(URI behaviorURI){
+        return getTransitiveClosure(ResourceUtils.INDIRECT_IMPAIRING_BEHAVIORS, URI.create(Vocabulary.s_p_impairs));
+    }
+
     public Set<URI> getTransitiveClosure(String queryName, URI behaviorURI) {
         try {
             String query = ResourceUtils.loadQuery(queryName);
