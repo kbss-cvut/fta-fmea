@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @Repository
-public class FunctionDao extends BaseDao<Function> {
+public class FunctionDao extends BehaviorDao<Function> {
 
     @Autowired
     protected FunctionDao(EntityManager em, PersistenceConf config) {
