@@ -34,7 +34,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepositoryService userRepositoryService;
 
-    @PreAuthorize("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> register(@RequestBody User user) {
