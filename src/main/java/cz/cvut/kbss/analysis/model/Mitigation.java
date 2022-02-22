@@ -15,10 +15,7 @@ import java.util.Objects;
 @OWLClass(iri = Vocabulary.s_c_Mitigation)
 @Getter
 @Setter
-public class Mitigation extends AbstractEntity {
-
-    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
-    private String description;
+public class Mitigation extends Behavior {
 
     @Override
     public String toString() {

@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.service.SystemRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/systems")
@@ -35,6 +37,13 @@ public class SystemController {
         log.info("> find - {}", systemFragment);
         URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
         return repositoryService.findRequired(systemUri);
+    }
+
+    @GetMapping(value = "/{systemFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<FailureMode> getFailureModes(@PathVariable(name = "systemFragment") String systemFragment) {
+        log.info("> getAllFailureModes - {}", systemFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        return repositoryService.getAllFailureModes(systemUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -13,6 +13,7 @@ public class XorProbabilityPropagationStrategy implements ProbabilityPropagation
 
     @Override
     public double propagate(List<Double> probabilities, FaultEvent event) {
+        checkArguments(probabilities, event);
         if (probabilities.size() == 1) {
             return probabilities.get(0);
         }

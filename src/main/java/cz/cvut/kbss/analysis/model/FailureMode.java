@@ -2,41 +2,15 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_FailureMode)
 @Getter
 @Setter
-public class FailureMode extends AbstractEntity {
-
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasEffect)
-    private Set<FaultEvent> effects = new HashSet<>();
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
-    private Component component;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_influences, fetch = FetchType.EAGER)
-    private Set<Function> functions;
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_isMitigatedBy, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Mitigation mitigation;
-
-    public void addEffect(FaultEvent faultEvent) {
-        faultEvent.setFailureMode(this);
-        getEffects().add(faultEvent);
-    }
+public class FailureMode extends Behavior {
 
     @Override
     public String toString() {

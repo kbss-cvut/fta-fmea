@@ -11,6 +11,7 @@ public class AndProbabilityPropagationStrategy implements ProbabilityPropagation
 
     @Override
     public double propagate(List<Double> probabilities, FaultEvent event) {
+        checkArguments(probabilities, event);
         return probabilities.stream().reduce((a, b) -> a * b).orElse(0.0);
     }
 

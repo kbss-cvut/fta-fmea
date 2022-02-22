@@ -4,24 +4,17 @@ import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.util.*;
 
 @OWLClass(iri = Vocabulary.s_c_FaultEvent)
 @Getter
 @Setter
-public class FaultEvent extends AbstractEntity {
+public class FaultEvent extends Event {
 
     @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
@@ -54,11 +47,19 @@ public class FaultEvent extends AbstractEntity {
     @Sequence
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildrenSequence, fetch = FetchType.EAGER)
     private List<URI> childrenSequence = new ArrayList<>();
+    public FailureMode getFailureMode(){
+        return (FailureMode)getBehavior();
+    }
+
+    public void setFailureMode(FailureMode failureMode){
+        setBehavior(failureMode);
+    }
+
 
     public void addChild(FaultEvent child) {
         getChildren().add(child);
     }
-
+    public void addChildren(Set<FaultEvent> children){getChildren().addAll(children);}
     public void addChildSequenceUri(URI childUri) {getChildrenSequence().add(childUri);}
 
     @Override

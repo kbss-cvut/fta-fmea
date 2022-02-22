@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
+import cz.cvut.kbss.analysis.exception.CalculationException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
@@ -70,8 +71,12 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             List<Double> childProbabilities = event.getChildren().stream()
                     .map(this::propagateProbability).collect(Collectors.toList());
 
-            double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities, event);
-            event.setProbability(eventProbability);
+            try {
+                double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities, event);
+                event.setProbability(eventProbability);
+            }catch (CalculationException ex){
+                log.info(ex.getMessage());
+            }
         }
 
         Double resultProbability = event.getProbability();
@@ -94,7 +99,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         log.info("> addFailureMode - {}, {}", faultEventUri, failureMode);
 
         FaultEvent event = findRequired(faultEventUri);
-        failureMode.addEffect(event);
+        event.setBehavior(failureMode);
 
         Component component = componentRepositoryService.findRequired(failureMode.getComponent().getUri());
         component.addFailureMode(failureMode);
@@ -111,7 +116,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
         FaultEvent event = findRequired(faultEventUri);
         event.getFailureMode()
-                .getEffects()
+                .getManifestations()
                 .removeIf(e -> e.getUri().equals(faultEventUri));
         event.setFailureMode(null);
 

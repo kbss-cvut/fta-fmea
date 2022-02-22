@@ -13,6 +13,7 @@ public class InhibitProbabilityPropagationStrategy implements ProbabilityPropaga
 
     @Override
     public double propagate(List<Double> probabilities, FaultEvent event) {
+        checkArguments(probabilities, event);
         return andStrategy.propagate(probabilities, event);
     }
 }
