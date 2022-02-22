@@ -47,11 +47,19 @@ public class FaultEvent extends Event {
     @Sequence
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildrenSequence, fetch = FetchType.EAGER)
     private List<URI> childrenSequence = new ArrayList<>();
+    public FailureMode getFailureMode(){
+        return (FailureMode)getBehavior();
+    }
+
+    public void setFailureMode(FailureMode failureMode){
+        setBehavior(failureMode);
+    }
+
 
     public void addChild(FaultEvent child) {
         getChildren().add(child);
     }
-
+    public void addChildren(Set<FaultEvent> children){getChildren().addAll(children);}
     public void addChildSequenceUri(URI childUri) {getChildrenSequence().add(childUri);}
 
     @Override

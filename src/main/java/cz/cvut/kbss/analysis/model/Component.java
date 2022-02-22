@@ -24,7 +24,7 @@ public class Component extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Function> functions = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FailureMode> failureModes = new HashSet<>();
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)

@@ -24,8 +24,13 @@ public class Event extends AbstractEntity {
     private Set<Situation> triggeredBySituations = new HashSet<>();
 
     public void setBehavior(Behavior behavior){
+        Behavior lastBehavior = this.behavior;
         this.behavior = behavior;
-        behavior.addManifestation(this);
+        if(behavior == null && lastBehavior != null){
+            lastBehavior.removeManifestation(this);
+        }else if(behavior != null){
+            behavior.addManifestation(this);
+        }
     }
 
     public void addBringsAboutSituation(Situation situation){

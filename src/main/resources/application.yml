@@ -2,9 +2,8 @@ server:
   port: 9999
 
 repository:
-  url: http://localhost:7200/repositories/fta-fmea-02
-  username: fta-fmea
-  password: pass
+  url: http://localhost:7200/repositories/fta-fmea
+
 
 persistence:
   driver: cz.cvut.kbss.ontodriver.sesame.SesameDataSource

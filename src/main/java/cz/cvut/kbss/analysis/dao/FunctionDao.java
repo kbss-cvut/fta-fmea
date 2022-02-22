@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
+import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
@@ -13,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @Repository
-public class FunctionDao extends BaseDao<Function> {
+public class FunctionDao extends BehaviorDao<Function> {
 
     @Autowired
     protected FunctionDao(EntityManager em, PersistenceConf config) {
@@ -28,9 +29,10 @@ public class FunctionDao extends BaseDao<Function> {
                 .getResultList().stream().findFirst().orElse(null);
     }
 
-    public List<FailureMode> getImpairedBehaviors(URI functionUri){
+    // This function gets the impairING behaviors. The input behavior is the one that is impairED.
+    public List<Behavior> getImpairingBehaviors(URI functionUri){
         return em
-                .createNativeQuery("SELECT ?failureMode WHERE { ?failureMode ?impairs ?function }", FailureMode.class)
+                .createNativeQuery("SELECT ?failureMode WHERE { ?failureMode ?impairs ?function }", Behavior.class)
                 .setParameter("impairs", URI.create(Vocabulary.s_p_impairs))
                 .setParameter("function", functionUri)
                 .getResultList();

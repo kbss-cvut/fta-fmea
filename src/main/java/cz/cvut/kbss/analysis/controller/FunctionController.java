@@ -57,11 +57,11 @@ public class FunctionController {
         log.info("< deleteRequiredFunction");
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE},produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
-    public void updateFunction(@RequestBody Function function){
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Function updateFunction(@RequestBody Function function){
         log.info("> update - {}", function);
-        functionRepositoryService.update(function);
+        return functionRepositoryService.update(function);
     }
 
     @GetMapping(value = "/{functionFragment}/getComponent", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
@@ -69,6 +69,45 @@ public class FunctionController {
         log.info("> getComponent - {}", function);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
         return functionRepositoryService.getComponent(functionUri);
+    }
+
+    @GetMapping(value = "/{functionFragment}/impairedBehaviors", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public List<Behavior> getImpairedBehaviors(@PathVariable(name = "functionFragment") String function) {
+        log.info("> getImpairedBehaviors - {}", function);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
+        return functionRepositoryService.getImpairingBehaviors(functionUri);
+    }
+
+    @PostMapping(value = "/{functionFragment}/childBehavior/{childBehaviorFragment}")
+    public void addChildBehavior(@PathVariable(name = "functionFragment") String functionFragment
+            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+        log.info("> addChildBehavior - {}, {}", functionFragment, childBehaviorFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, childBehaviorFragment);
+        functionRepositoryService.addChildBehavior(functionUri, childBehaviorUri);
+    }
+
+    @DeleteMapping(value = "/{functionFragment}/childBehavior/{childBehaviorFragment}")
+    public void removeChildBehavior(@PathVariable(name = "functionFragment") String failureModeFragment
+            ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
+        log.info("> removeChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, failureModeFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, childBehaviorFragment);
+        functionRepositoryService.removeChildBehavior(functionUri, childBehaviorUri);
+    }
+
+    @GetMapping(value = "/{functionFragment}/childTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<URI> getChildTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
+        log.info("> getChildTransitiveClosure - {}", functionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        return functionRepositoryService.getTransitiveClosure(functionUri,"child");
+    }
+
+    @GetMapping(value = "/{functionFragment}/requiredTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public Set<URI> getRequiredTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
+        log.info("> getRequiredTransitiveClosure - {}", functionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        return functionRepositoryService.getTransitiveClosure(functionUri, "required");
     }
 }
 

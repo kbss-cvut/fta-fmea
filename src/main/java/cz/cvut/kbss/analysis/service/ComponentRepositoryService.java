@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
+import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,16 @@ import java.util.Set;
 public class ComponentRepositoryService extends BaseRepositoryService<Component> {
 
     private final ComponentDao componentDao;
+    private final FailureModeRepositoryService failureModeRepositoryService;
+    private final FunctionRepositoryService functionService;
 
     @Autowired
-    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao) {
+    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao
+            , FailureModeRepositoryService failureModeRepositoryService, FunctionRepositoryService functionService) {
         super(validator);
         this.componentDao = componentDao;
+        this.failureModeRepositoryService = failureModeRepositoryService;
+        this.functionService = functionService;
     }
 
     @Override
@@ -58,11 +64,30 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         return function;
     }
 
+    @Transactional
+    public Function addFunctionByURI(URI componentUri, URI functionUri) {
+        log.info("> addFunction - {}, {}", componentUri, functionUri);
+
+        Component component = findRequired(componentUri);
+        Function function = functionService.findRequired(functionUri);
+        component.addFunction(function);
+        update(component);
+
+        log.info("< addFunction - {}", function);
+        return function;
+    }
+
     @Transactional(readOnly = true)
     public Set<Function> getFunctions(URI componentUri) {
         Component component = findRequired(componentUri);
 
         return component.getFunctions();
+    }
+
+    @Transactional
+    public Set<FailureMode> getFailureModes(URI componentUri) {
+        Component component = findRequired(componentUri);
+        return component.getFailureModes();
     }
 
     @Transactional
@@ -78,6 +103,44 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
 
         log.info("> deleteFunction - deleted");
     }
+
+
+    @Transactional
+    public FailureMode addFailureMode(URI componentUri, FailureMode failureMode) {
+        log.info("> addFailureMode - {}, {}", componentUri, failureMode);
+
+        Component component = findRequired(componentUri);
+        component.addFailureMode(failureMode);
+        update(component);
+        log.info("< addFailureMode - {}, {}", componentUri, failureMode);
+        return failureMode;
+    }
+
+    @Transactional
+    public void addFailureModeByUri(URI componentUri, URI failureModeUri) {
+        log.info("> addFailureModeByUri - {}, {}", componentUri, failureModeUri);
+        Component component = findRequired(componentUri);
+        FailureMode failureMode = failureModeRepositoryService.findRequired(failureModeUri);
+        component.addFailureMode(failureMode);
+        update(component);
+    }
+
+    @Transactional
+    public void deleteFailureMode(URI componentUri, URI failureModeUri) {
+        log.info("> deleteFailureMode - {}, {}", componentUri, failureModeUri);
+
+        Component component = findRequired(componentUri);
+        FailureMode failureMode = failureModeRepositoryService.findRequired(failureModeUri);
+        component
+                .getFailureModes()
+                .removeIf(function -> function.getUri().equals(failureModeUri));
+
+        update(component);
+        failureMode.setComponent(null);
+        failureModeRepositoryService.update(failureMode);
+        log.info("> deleteFailureMode - deleted");
+    }
+
 
     @Transactional
     public Component linkComponents(URI componentUri, URI linkComponentUri) {

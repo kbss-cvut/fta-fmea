@@ -1,0 +1,6 @@
+PREFIX ftafmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+
+SELECT ?otherBehavior WHERE {
+    ?behavior a ?behaviorType.
+    ?behavior ftafmea:hasChildBehavior/ftafmea:hasChildBehavior+ ?otherBehavior.
+}

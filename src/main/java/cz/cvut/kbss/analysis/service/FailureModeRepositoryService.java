@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.FailureMode;
+import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -29,6 +32,24 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
     @Override
     protected GenericDao<FailureMode> getPrimaryDao() {
         return failureModeDao;
+    }
+
+    @Transactional
+    public FailureMode createFailureMode(FailureMode failureMode){
+        persist(failureMode);
+        return failureMode;
+    }
+
+    @Transactional
+    public FailureMode updateFailureModeProperties(FailureMode failureModeProperties){
+        log.info("> updateFailureModeProperties - {}", failureModeProperties.getUri());
+
+        FailureMode failureMode = getPrimaryDao().find(failureModeProperties.getUri()).orElse(null);
+
+        failureMode.setName(failureModeProperties.getName());
+        failureMode.setBehaviorType(failureModeProperties.getBehaviorType());
+
+        return failureMode;
     }
 
     @Transactional
@@ -52,4 +73,58 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
         log.info("> removeImpairedBehavior - removed");
     }
 
+    @Transactional
+    public FailureMode addRequiredBehavior(URI failureModeUri, URI requiredBehaviorUri) {
+        log.info("> addRequiredBehavior - {}, {}", failureModeUri, requiredBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getRequiredBehaviors().add(findRequired(requiredBehaviorUri));
+
+        return update(failureMode);
+    }
+    @Transactional
+    public void removeRequiredBehavior(URI failureModeUri, URI requiredBehaviorUri) {
+        log.info("> removeRequiredBehavior - {}, {}", failureModeUri, requiredBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getRequiredBehaviors().removeIf(behavior -> behavior.getUri().equals(requiredBehaviorUri));
+
+        update(failureMode);
+        log.info("> removeRequiredBehavior - removed");
+    }
+
+    @Transactional
+    public FailureMode addChildBehavior(URI failureModeUri, URI childBehaviorUri) {
+        log.info("> addChildBehavior - {}, {}", failureModeUri, childBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getChildBehaviors().add(findRequired(childBehaviorUri));
+
+        return update(failureMode);
+    }
+    @Transactional
+    public void removeChildBehavior(URI failureModeUri, URI childBehaviorUri) {
+        log.info("> removeChildBehavior - {}, {}", failureModeUri, childBehaviorUri);
+
+        FailureMode failureMode = findRequired(failureModeUri);
+        failureMode.getChildBehaviors().removeIf(behavior -> behavior.getUri().equals(childBehaviorUri));
+
+        update(failureMode);
+        log.info("> removeChildBehavior - removed");
+    }
+
+    @Transactional
+    public Set<URI> getTransitiveClosure(URI failureModeUri, String type) {
+        log.info("> get{}TransitiveClosure - {}", type, failureModeUri);
+        Set<URI> transitiveFunctions;
+
+        if (type.equals("child")) {
+            transitiveFunctions = failureModeDao.getIndirectBehaviorParts(failureModeUri);
+        }else if(type.equals("required")) {
+            transitiveFunctions = failureModeDao.getIndirectRequiredBehaviors(failureModeUri);
+        }else{
+            transitiveFunctions = failureModeDao.getIndirectImpairingBehaviors(failureModeUri);
+        }
+        return transitiveFunctions;
+    }
 }

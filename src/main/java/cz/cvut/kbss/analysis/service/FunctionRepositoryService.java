@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -74,8 +76,44 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     }
 
     @Transactional
-    public List<FailureMode> getImpairedBehaviors(URI functionUri){
+    public List<Behavior> getImpairingBehaviors(URI functionUri){
         log.info("> getImpairedBehaviors - {}", functionUri);
-        return functionDao.getImpairedBehaviors(functionUri);
+        return functionDao.getImpairingBehaviors(functionUri);
+    }
+
+    @Transactional
+    public void addChildBehavior(URI functionUri, URI childFunctionUri) {
+        log.info("> addChildBehavior - {}, {}", functionUri, childFunctionUri);
+
+        Function function = findRequired(functionUri);
+        function.getChildBehaviors().add(findRequired(childFunctionUri));
+
+        update(function);
+    }
+
+    @Transactional
+    public void removeChildBehavior(URI functionUri, URI childFunctionUri) {
+        log.info("> removeChildBehavior - {}, {}", functionUri, childFunctionUri);
+
+        Function function = findRequired(functionUri);
+        function.getChildBehaviors().removeIf(behavior -> behavior.getUri().equals(childFunctionUri));
+
+        update(function);
+        log.info("> removeChildBehavior - removed");
+    }
+
+    @Transactional
+    public Set<URI> getTransitiveClosure(URI functionUri, String type) {
+        log.info("> get{}TransitiveClosure - {}", type, functionUri);
+        Set<URI> transitiveFunctions;
+
+        if (type.equals("child")) {
+            transitiveFunctions = functionDao.getIndirectBehaviorParts(functionUri);
+        }else if(type.equals("required")) {
+            transitiveFunctions = functionDao.getIndirectRequiredBehaviors(functionUri);
+        }else{
+            transitiveFunctions = functionDao.getIndirectImpairingBehaviors(functionUri);
+        }
+        return transitiveFunctions;
     }
 }
