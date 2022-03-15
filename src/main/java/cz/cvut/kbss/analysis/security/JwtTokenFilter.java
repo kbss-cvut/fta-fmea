@@ -39,7 +39,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         String path = ((HttpServletRequest) req).getRequestURI();
         String authHeader = ((HttpServletRequest) req).getHeader("Authorization");
 
-        if (path.equals(LOGIN_PATH) || (path.equals(REGISTER_PATH) && authHeader.startsWith("Bearer undefined"))) {
+        if (path.endsWith(LOGIN_PATH) || (path.endsWith(REGISTER_PATH) && authHeader.startsWith("Bearer undefined"))) {
             filterChain.doFilter(req, res);
             return;
         }
