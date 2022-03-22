@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
+import cz.cvut.kbss.jopa.model.annotations.CascadeType;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Setter
 public class Event extends AbstractEntity {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf)
+    @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf, cascade = CascadeType.ALL)
     private Behavior behavior;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_bringsAbout)
