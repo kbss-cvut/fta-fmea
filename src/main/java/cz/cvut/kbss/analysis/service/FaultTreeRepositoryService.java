@@ -30,6 +30,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private final FaultEventRepositoryService faultEventRepositoryService;
     private final FunctionRepositoryService functionRepositoryService;
     private final FailureModeRepositoryService failureModeRepositoryService;
+    private final ComponentRepositoryService componentRepositoryService;
     private final IdentifierService identifierService;
 
     @Autowired
@@ -38,6 +39,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                                       FaultEventRepositoryService faultEventRepositoryService,
                                       FunctionRepositoryService functionRepositoryService,
                                       FailureModeRepositoryService failureModeRepositoryService,
+                                      ComponentRepositoryService componentRepositoryService,
                                       IdentifierService identifierService
     ) {
         super(validator);
@@ -45,6 +47,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         this.faultEventRepositoryService = faultEventRepositoryService;
         this.functionRepositoryService = functionRepositoryService;
         this.failureModeRepositoryService = failureModeRepositoryService;
+        this.componentRepositoryService = componentRepositoryService;
         this.identifierService = identifierService;
     }
 
@@ -209,9 +212,11 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             if (behavior instanceof Function) {
                 FailureMode failureMode = new FailureMode();
                 failureMode.setName(behavior.getName() + "-fm");
-                failureMode.setComponent(functionRepositoryService.getComponent(behavior.getUri()));
                 failureMode.addImpairedBehavior(behavior);
-                failureModeRepositoryService.persist(failureMode);
+
+                Component component = functionRepositoryService.getComponent(behavior.getUri());
+                componentRepositoryService.addFailureMode(component.getUri(), failureMode);
+                componentRepositoryService.update(component);
 
                 FaultEvent faultEvent = transferBehaviorToFaultEvent(failureMode, behavior);
                 faultEvent.setFailureMode(failureMode);
