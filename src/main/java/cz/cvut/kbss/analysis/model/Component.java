@@ -31,6 +31,7 @@ public class Component extends AbstractEntity {
     private URI parentComponent;
 
     public void addFunction(Function function) {
+        function.setComponent(this);
         getFunctions().add(function);
     }
 
