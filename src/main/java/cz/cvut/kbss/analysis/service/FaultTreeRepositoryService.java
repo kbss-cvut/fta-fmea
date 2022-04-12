@@ -204,6 +204,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             for (Behavior impairingBehavior : impairingBehaviors) {
                 faultEvents.add(processImpairingBehavior(impairingBehavior,behavior));
             }
+            parentFaultEvent.setEventType(EventType.INTERMEDIATE);
+            parentFaultEvent.setGateType(GateType.AND);
         }
         parentFaultEvent.addChildren(faultEvents);
     }
@@ -223,19 +225,18 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             FaultEvent faultEvent = new FaultEvent();
             faultEvent.setUri(faultEventUri);
 
-            if(behavior.getChildBehaviors().isEmpty() && behavior.getImpairedBehaviors().isEmpty() && behavior.getRequiredBehaviors().isEmpty()){
-                faultEvent.setName(behavior.getName() + " fails");
-                faultEvent.setEventType(EventType.BASIC);
-                faultEvent.setGateType(GateType.UNUSED);
-                faultEvent.setProbability(1.);
-                faultEventRepositoryService.persist(faultEvent);
-                return faultEvent;
-            }
 
             if (behavior instanceof Function) {
                 faultEvent.setName(behavior.getName() + " fails");
-                faultEvent.setEventType(EventType.INTERMEDIATE);
-                faultEvent.setGateType(GateType.OR);
+
+                if(behavior.getChildBehaviors().isEmpty() && behavior.getRequiredBehaviors().isEmpty()) {
+                    faultEvent.setEventType(EventType.BASIC);
+                    faultEvent.setGateType(GateType.UNUSED);
+                    faultEvent.setProbability(1.);
+                }else{
+                    faultEvent.setEventType(EventType.INTERMEDIATE);
+                    faultEvent.setGateType(GateType.OR);
+                }
             } else if (behavior instanceof FailureMode) {
                 faultEvent.setName(parentBehavior.getName() + " fails as " + behavior.getName());
                 faultEvent.setBehavior(behavior);
