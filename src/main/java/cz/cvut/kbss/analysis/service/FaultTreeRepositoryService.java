@@ -29,8 +29,6 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private final FaultTreeDao faultTreeDao;
     private final FaultEventRepositoryService faultEventRepositoryService;
     private final FunctionRepositoryService functionRepositoryService;
-    private final FailureModeRepositoryService failureModeRepositoryService;
-    private final ComponentRepositoryService componentRepositoryService;
     private final IdentifierService identifierService;
 
     @Autowired
@@ -38,16 +36,12 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                                       FaultTreeDao faultTreeDao,
                                       FaultEventRepositoryService faultEventRepositoryService,
                                       FunctionRepositoryService functionRepositoryService,
-                                      FailureModeRepositoryService failureModeRepositoryService,
-                                      ComponentRepositoryService componentRepositoryService,
                                       IdentifierService identifierService
     ) {
         super(validator);
         this.faultTreeDao = faultTreeDao;
         this.faultEventRepositoryService = faultEventRepositoryService;
         this.functionRepositoryService = functionRepositoryService;
-        this.failureModeRepositoryService = failureModeRepositoryService;
-        this.componentRepositoryService = componentRepositoryService;
         this.identifierService = identifierService;
     }
 
@@ -184,8 +178,10 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         faultTree.setName(faultTreeName);
         faultTree.setManifestingEvent(faultEvent);
 
-        processBehavior(function, faultEvent);
-        faultEvent.setEventType(EventType.INTERMEDIATE);
+        if(!function.getChildBehaviors().isEmpty() || !function.getImpairedBehaviors().isEmpty() || !function.getRequiredBehaviors().isEmpty()) {
+            processBehavior(function, faultEvent);
+            faultEvent.setEventType(EventType.INTERMEDIATE);
+        }
         persist(faultTree);
         return faultTree;
     }
@@ -208,24 +204,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             for (Behavior impairingBehavior : impairingBehaviors) {
                 faultEvents.add(processImpairingBehavior(impairingBehavior,behavior));
             }
-        }else{
-            if (behavior instanceof Function) {
-                FailureMode failureMode = new FailureMode();
-                failureMode.setName(behavior.getName() + "-fm");
-                failureMode.addImpairedBehavior(behavior);
-
-                Component component = functionRepositoryService.getComponent(behavior.getUri());
-                componentRepositoryService.addFailureMode(component.getUri(), failureMode);
-                componentRepositoryService.update(component);
-
-                FaultEvent faultEvent = transferBehaviorToFaultEvent(failureMode, behavior);
-                faultEvent.setFailureMode(failureMode);
-                faultEvent.setEventType(EventType.BASIC);
-                faultEvent.setGateType(GateType.UNUSED);
-                faultEvent.setProbability(1.);
-                faultEvents.add(faultEvent);
-                faultEventRepositoryService.persist(faultEvent);
-            }
+            parentFaultEvent.setEventType(EventType.INTERMEDIATE);
+            parentFaultEvent.setGateType(GateType.OR);
         }
         parentFaultEvent.addChildren(faultEvents);
     }
@@ -244,13 +224,22 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         } else {
             FaultEvent faultEvent = new FaultEvent();
             faultEvent.setUri(faultEventUri);
-            faultEvent.setBehavior(behavior);
+
+
             if (behavior instanceof Function) {
                 faultEvent.setName(behavior.getName() + " fails");
-                faultEvent.setEventType(EventType.INTERMEDIATE);
-                faultEvent.setGateType(GateType.OR);
+
+                if(behavior.getChildBehaviors().isEmpty() && behavior.getRequiredBehaviors().isEmpty()) {
+                    faultEvent.setEventType(EventType.BASIC);
+                    faultEvent.setGateType(GateType.UNUSED);
+                    faultEvent.setProbability(1.);
+                }else{
+                    faultEvent.setEventType(EventType.INTERMEDIATE);
+                    faultEvent.setGateType(GateType.OR);
+                }
             } else if (behavior instanceof FailureMode) {
                 faultEvent.setName(parentBehavior.getName() + " fails as " + behavior.getName());
+                faultEvent.setBehavior(behavior);
                 faultEvent.setEventType(EventType.BASIC);
                 faultEvent.setGateType(GateType.UNUSED);
                 faultEvent.setProbability(1.);
