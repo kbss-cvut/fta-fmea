@@ -15,24 +15,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-@RestController
-@RequestMapping("/auth")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@Slf4j
-@Profile("!admin-registration-only")
+//@RestController
+//@RequestMapping("/auth")
+//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@Slf4j
+//@Profile("!admin-registration-only")
 public class FreeRegistrationController {
-
-    private final UserRepositoryService userRepositoryService;
-
-    @PreAuthorize("permitAll()")
-    @CrossOrigin
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> register(@RequestBody User user) {
-        log.info("> register - {}", user.getUsername());
-        URI uri = userRepositoryService.register(user);
-
-        log.info("< register - {}", uri);
-        return ResponseEntity.created(uri).build();
-    }
+//
+//    private final UserRepositoryService userRepositoryService;
+//
+//    @PreAuthorize("permitAll()")
+//    @CrossOrigin
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+//    public ResponseEntity<Void> register(@RequestBody User user) {
+//        log.info("> register - {}", user.getUsername());
+//        URI uri = userRepositoryService.register(user);
+//
+//        log.info("< register - {}", uri);
+//        return ResponseEntity.created(uri).build();
+//    }
 }
