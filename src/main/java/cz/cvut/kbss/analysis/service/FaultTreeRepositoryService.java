@@ -205,7 +205,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 faultEvents.add(processImpairingBehavior(impairingBehavior,behavior));
             }
             parentFaultEvent.setEventType(EventType.INTERMEDIATE);
-            parentFaultEvent.setGateType(GateType.AND);
+            parentFaultEvent.setGateType(GateType.OR);
         }
         parentFaultEvent.addChildren(faultEvents);
     }
