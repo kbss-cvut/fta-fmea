@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -31,6 +32,18 @@ public class JwtTokenFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
             throws IOException, ServletException {
+
+        String REGISTER_PATH = "/auth/register";
+        String LOGIN_PATH ="/auth/signin";
+
+        String path = ((HttpServletRequest) req).getRequestURI();
+        String authHeader = ((HttpServletRequest) req).getHeader("Authorization");
+
+        if (path.endsWith(LOGIN_PATH) || (path.endsWith(REGISTER_PATH) && authHeader.startsWith("Bearer undefined"))) {
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         try {
             String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
             if (token != null && jwtTokenProvider.validateToken(token)) {
