@@ -9,9 +9,9 @@ fta-fmea:System
     rdf:type   owl:Class ;
     rdfs:label "System" .
 
-fta-fmea:hasComponent
+fta-fmea:hasPartComponent
     rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has component" ;
+    rdfs:label  "has part component" ;
     rdfs:domain fta-fmea:System ;
     rdfs:range  fta-fmea:Component .
 
@@ -40,6 +40,12 @@ fta-fmea:isPartOf
 fta-fmea:Function
     rdf:type   owl:Class ;
     rdfs:label "Function" .
+
+fta-fmea:hasComponent
+    rdf:type    owl:ObjectProperty ;
+    rdfs:label  "has component" ;
+    rdfs:domain fta-fmea:Behavior ;
+    rdfs:range  fta-fmea:Component .
 
 fta-fmea:FailureMode
     rdf:type   owl:Class ;
