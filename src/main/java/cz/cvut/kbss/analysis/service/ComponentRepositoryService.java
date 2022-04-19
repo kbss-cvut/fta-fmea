@@ -95,9 +95,13 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         log.info("> deleteFunction - {}, {}", componentUri, functionUri);
 
         Component component = findRequired(componentUri);
-        component
-                .getFunctions()
-                .removeIf(function -> function.getUri().equals(functionUri));
+
+        component.getFunctions()
+                .stream()
+                .filter(function -> function.getUri().equals(functionUri)).findFirst().ifPresent(function -> {
+                    function.setComponent(null);
+                    component.getFunctions().remove(function);
+                });
 
         update(component);
 
