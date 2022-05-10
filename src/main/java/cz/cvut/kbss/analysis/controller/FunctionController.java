@@ -61,7 +61,7 @@ public class FunctionController {
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Function updateFunction(@RequestBody Function function){
         log.info("> update - {}", function);
-        return functionRepositoryService.update(function);
+        return functionRepositoryService.updateFunction(function);
     }
 
     @GetMapping(value = "/{functionFragment}/getComponent", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})

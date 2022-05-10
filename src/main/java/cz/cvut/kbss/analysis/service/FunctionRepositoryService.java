@@ -4,7 +4,6 @@ import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
-import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,6 +31,17 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     @Override
     protected GenericDao<Function> getPrimaryDao() {
         return functionDao;
+    }
+
+    @Transactional
+    public Function updateFunction(Function funcToUpdate){
+        Function function = findRequired(funcToUpdate.getUri());
+        function.setName(funcToUpdate.getName());
+        function.setRequiredBehaviors(funcToUpdate.getRequiredBehaviors());
+        function.setImpairedBehaviors(funcToUpdate.getImpairedBehaviors());
+        function.setChildBehaviors(funcToUpdate.getChildBehaviors());
+        function.setBehaviorType(funcToUpdate.getBehaviorType());
+        return update(function);
     }
 
     @Transactional(readOnly = true)
