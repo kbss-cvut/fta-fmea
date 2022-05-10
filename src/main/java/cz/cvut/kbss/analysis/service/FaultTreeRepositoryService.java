@@ -238,8 +238,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     faultEvent.setGateType(GateType.OR);
                 }
             } else if (behavior instanceof FailureMode) {
-                faultEvent.setName(parentBehavior.getName() + " fails as " + behavior.getName());
-                faultEvent.setBehavior(behavior);
+                faultEvent.setName(behavior.getName());
                 faultEvent.setEventType(EventType.BASIC);
                 faultEvent.setGateType(GateType.UNUSED);
                 faultEvent.setProbability(1.);
@@ -287,7 +286,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 }else{
                     faultEventUri = createUri(impairingBehavior, impairedBehavior, "");
                     faultEvent.setUri(faultEventUri);
-                    faultEvent.setName(impairedBehavior.getName() + " fails as " + impairingBehavior.getName());
+                    faultEvent.setName(impairingBehavior.getName());
                     faultEvent.setEventType(EventType.INTERMEDIATE);
                     faultEvent.setGateType(impairingBehavior.getBehaviorType() == BehaviorType.OrBehavior ? GateType.OR : GateType.AND);
 
