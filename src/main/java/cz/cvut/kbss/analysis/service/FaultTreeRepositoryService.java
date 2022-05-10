@@ -178,7 +178,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         faultTree.setName(faultTreeName);
         faultTree.setManifestingEvent(faultEvent);
 
-        if(!function.getChildBehaviors().isEmpty() || !function.getImpairedBehaviors().isEmpty() || !function.getRequiredBehaviors().isEmpty()) {
+        if(!function.getChildBehaviors().isEmpty() || !functionRepositoryService.getImpairingBehaviors(functionUri).isEmpty() || !function.getRequiredBehaviors().isEmpty()) {
             processBehavior(function, faultEvent);
             faultEvent.setEventType(EventType.INTERMEDIATE);
         }
