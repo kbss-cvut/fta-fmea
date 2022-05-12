@@ -48,7 +48,10 @@ public class FaultEvent extends Event {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildrenSequence, fetch = FetchType.EAGER)
     private List<URI> childrenSequence = new ArrayList<>();
     public FailureMode getFailureMode(){
-        return (FailureMode)getBehavior();
+        return getBehavior() instanceof FailureMode ? (FailureMode) getBehavior() : null;
+    }
+    public Function getFunction(){
+        return getBehavior() instanceof Function ? (Function) getBehavior() : null;
     }
 
     public void setFailureMode(FailureMode failureMode){

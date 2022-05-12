@@ -224,7 +224,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         } else {
             FaultEvent faultEvent = new FaultEvent();
             faultEvent.setUri(faultEventUri);
-
+            faultEvent.setBehavior(behavior);
 
             if (behavior instanceof Function) {
                 faultEvent.setName(behavior.getName() + " fails");
@@ -298,6 +298,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                         } else {
                             faultEventUri = createUri(behaviorChild, impairingBehavior, "e");
                             faultEventChild.setUri(faultEventUri);
+                            faultEventChild.setBehavior(behaviorChild);
                             faultEventChild.setName(behaviorChild.getName() + " event");
                             faultEventChild.setEventType(EventType.BASIC);
                             faultEventChild.setGateType(GateType.UNUSED);

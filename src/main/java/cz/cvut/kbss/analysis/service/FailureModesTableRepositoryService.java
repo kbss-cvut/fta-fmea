@@ -105,38 +105,19 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             // TODO be less strict due to deleted events??
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
-            row.put("localEffect", localEffect.getName());
-
-            List<FaultEvent> treePathList = FaultTreeTraversalUtils
-                    .rootToLeafPath(treeRoot, localEffect.getUri());
-
-            Collections.reverse(treePathList);
-
-            List<Pair<FaultEvent, Integer>> indexedNextEffects = IntStream.range(0, treePathList.size())
-                    .boxed()
-                    .map(index -> Pair.of(treePathList.get(index), index))
-                    .filter(pair -> !pair.getFirst().getUri().equals(treeRoot.getUri()))
-                    .filter(pair -> r.getEffects().contains(pair.getFirst().getUri()))
-                    .collect(Collectors.toList());
-
-            for (Pair<FaultEvent, Integer> pair : indexedNextEffects) {
-                row.put("nextEffect-" + (maxEffects - pair.getSecond() - 1), pair.getFirst().getName());
-            }
-
-            row.put("finalEffect", treeRoot.getName());
-
-            RiskPriorityNumber rpn = r.getRiskPriorityNumber();
-            row.put("severity", rpn.getSeverity());
-            row.put("occurrence", rpn.getOccurrence());
-            row.put("detection", rpn.getDetection());
-            if (rpn.getSeverity() != null && rpn.getOccurrence() != null && rpn.getDetection() != null) {
-                row.put("rpn", rpn.getSeverity() * rpn.getOccurrence() * rpn.getDetection());
-            }
 
             FailureMode failureMode = localEffect.getFailureMode();
             if (failureMode != null) {
                 row.put("failureMode", failureMode.getName());
-                row.put("component", failureMode.getComponent().getName());
+                if(failureMode.getComponent() != null) row.put("component", failureMode.getComponent().getName());
+
+                failureMode.getImpairedBehaviors()
+                        .stream()
+                        .findFirst()
+                        .ifPresent(behavior -> {
+                                if (!row.containsKey("function")) row.put("function", behavior.getName());
+                            }
+                        );
 
                 failureMode.getImpairedBehaviors()
                         .stream()
@@ -154,6 +135,35 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                             .collect(Collectors.toList());
                 }
 
+            }
+
+            row.put("localEffect", localEffect.getName());
+
+            List<FaultEvent> treePathList = FaultTreeTraversalUtils
+                    .rootToLeafPath(treeRoot, localEffect.getUri());
+
+            Collections.reverse(treePathList);
+
+            List<Pair<FaultEvent, Integer>> indexedNextEffects = IntStream.range(0, treePathList.size())
+                    .boxed()
+                    .map(index -> Pair.of(treePathList.get(index), index))
+                    .filter(pair -> !pair.getFirst().getUri().equals(treeRoot.getUri()))
+                    .filter(pair -> r.getEffects().contains(pair.getFirst().getUri()))
+                    .collect(Collectors.toList());
+
+            for (Pair<FaultEvent, Integer> pair : indexedNextEffects) {
+                row.put("nextEffect-" + (maxEffects - pair.getSecond() - 1), pair.getFirst().getName());
+                if (!row.containsKey("function") && localEffect.getFunction() != null) row.put("function", localEffect.getBehavior().getName());
+            }
+
+            row.put("finalEffect", treeRoot.getName());
+
+            RiskPriorityNumber rpn = r.getRiskPriorityNumber();
+            row.put("severity", rpn.getSeverity());
+            row.put("occurrence", rpn.getOccurrence());
+            row.put("detection", rpn.getDetection());
+            if (rpn.getSeverity() != null && rpn.getOccurrence() != null && rpn.getDetection() != null) {
+                row.put("rpn", rpn.getSeverity() * rpn.getOccurrence() * rpn.getDetection());
             }
 
             List<Map<String, Object>> resultList = new ArrayList<>();
