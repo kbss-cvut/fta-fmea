@@ -221,6 +221,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         } else {
             FaultEvent faultEvent = new FaultEvent();
             faultEvent.setUri(faultEventUri);
+            faultEvent.setBehavior(behavior);
 
 
             if (behavior instanceof Function) {
@@ -289,6 +290,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
                     for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
                         FaultEvent faultEventChild = new FaultEvent();
+                        faultEventChild.setBehavior(behaviorChild);
                         faultEventUri = createUri(behaviorChild, impairingBehavior, "e");
                         if (faultEventRepositoryService.existsInContext(faultEventUri)) {
                             faultEventChild = faultEventRepositoryService.findRequired(faultEventUri);
