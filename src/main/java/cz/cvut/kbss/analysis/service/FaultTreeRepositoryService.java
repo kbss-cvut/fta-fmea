@@ -28,6 +28,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private final FunctionRepositoryService functionRepositoryService;
     private final IdentifierService identifierService;
 
+    private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
+
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
                                       FaultTreeDao faultTreeDao,
@@ -167,6 +169,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     @Transactional
     public FaultTree generateFunctionDependencyTree(URI functionUri, String faultTreeName) throws URISyntaxException {
+        initTreeGeneration();
         Function function = functionRepositoryService.findRequired(functionUri);
         FaultEvent faultEvent;
 
@@ -179,11 +182,14 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             processBehavior(function, faultEvent);
             faultEvent.setEventType(EventType.INTERMEDIATE);
         }
+        cleanTreeGeneration();
         persist(faultTree);
         return faultTree;
     }
 
     private void processBehavior(Behavior behavior, FaultEvent parentFaultEvent) throws URISyntaxException {
+        if(!addVisited(behavior))
+            return;
         Set<FaultEvent> faultEvents = new LinkedHashSet<>();
         List<Behavior> impairingBehaviors = functionRepositoryService.getImpairingBehaviors(behavior.getUri());
 
@@ -192,6 +198,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         }
 
         for (Behavior requiredBehavior : behavior.getRequiredBehaviors()) {
+            if(isVisited(requiredBehavior))
+                continue;
             FaultEvent tmp = transferBehaviorToFaultEvent(requiredBehavior, parentFaultEvent);
             faultEvents.add(tmp);
             processBehavior(requiredBehavior, tmp);
@@ -199,11 +207,14 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         if (!impairingBehaviors.isEmpty()) {
             for (Behavior impairingBehavior : impairingBehaviors) {
+                if(isVisited(impairingBehavior))
+                    continue;
                 faultEvents.add(processImpairingBehavior(impairingBehavior, parentFaultEvent));
             }
             parentFaultEvent.setEventType(EventType.INTERMEDIATE);
             parentFaultEvent.setGateType(GateType.OR);
         }
+        removeVisited(behavior);
         parentFaultEvent.addChildren(faultEvents);
     }
 
@@ -330,6 +341,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             parentFaultEvent.addChild(faultEvent);
 
             for (Behavior behaviorChild : behavior.getChildBehaviors()) {
+                if(isVisited(behavior))
+                    continue;
                 FaultEvent fEvent = new FaultEvent();
                 faultEventUri = createUri(behaviorChild, faultEvent, "");
                 if (faultEventRepositoryService.existsInContext(faultEventUri)) {
@@ -346,6 +359,27 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 processBehavior(behaviorChild, fEvent);
             }
         }
+    }
 
+    protected void initTreeGeneration(){
+        visitedBehaviors.set(new HashSet<>());
+    }
+    protected void cleanTreeGeneration(){
+        visitedBehaviors.set(null);
+    }
+
+    protected boolean isVisited(Behavior b){
+        Set<Behavior> visited = visitedBehaviors.get();
+        return visited.contains(b);
+    }
+
+    protected boolean addVisited(Behavior b){
+        Set<Behavior> visited = visitedBehaviors.get();
+        return visited.add(b);
+    }
+
+    protected boolean removeVisited(Behavior b){
+        Set<Behavior> visited = visitedBehaviors.get();
+        return visited.remove(b);
     }
 }
