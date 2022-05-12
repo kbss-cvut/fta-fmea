@@ -16,10 +16,7 @@ import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -215,11 +212,11 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         URI faultEventUri1 = createUri(behavior, parentBehavior, "e");
         URI faultEventUri2 = createUri(behavior, parentBehavior, "f");
 
-        if (faultEventRepositoryService.exists(faultEventUri)) {
+        if (faultEventRepositoryService.existsInContext(faultEventUri)) {
             return faultEventRepositoryService.findRequired(faultEventUri);
-        } else if(faultEventRepositoryService.exists(faultEventUri1)){
+        } else if(faultEventRepositoryService.existsInContext(faultEventUri1)){
             return faultEventRepositoryService.findRequired(faultEventUri1);
-        } else if(faultEventRepositoryService.exists(faultEventUri2)){
+        } else if(faultEventRepositoryService.existsInContext(faultEventUri2)){
             return faultEventRepositoryService.findRequired(faultEventUri2);
         } else {
             FaultEvent faultEvent = new FaultEvent();
@@ -268,9 +265,9 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             URI faultEventUri = createUri(impairingBehavior, impairedBehavior, "");
             URI faultEventUriTypeEvent = createUri(impairingBehavior, impairedBehavior, "e");
 
-            if(faultEventRepositoryService.exists(faultEventUri)) {
+            if(faultEventRepositoryService.existsInContext(faultEventUri)) {
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
-            }else if(faultEventRepositoryService.exists(faultEventUriTypeEvent)){
+            }else if(faultEventRepositoryService.existsInContext(faultEventUriTypeEvent)){
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUriTypeEvent);
             }else {
                 faultEvent = new FaultEvent();
@@ -293,7 +290,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
                         FaultEvent faultEventChild = new FaultEvent();
                         faultEventUri = createUri(behaviorChild, impairingBehavior, "e");
-                        if (faultEventRepositoryService.exists(faultEventUri)) {
+                        if (faultEventRepositoryService.existsInContext(faultEventUri)) {
                             faultEventChild = faultEventRepositoryService.findRequired(faultEventUri);
                         } else {
                             faultEventUri = createUri(behaviorChild, impairingBehavior, "e");
@@ -318,7 +315,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         FaultEvent faultEvent;
         if(behavior instanceof Function){
             URI faultEventUri = createUri(behavior, null, "f");
-            if (faultEventRepositoryService.exists(faultEventUri)) {
+            if (faultEventRepositoryService.existsInContext(faultEventUri)) {
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
             } else {
                 faultEvent = new FaultEvent();
@@ -334,7 +331,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             for (Behavior behaviorChild : behavior.getChildBehaviors()) {
                 FaultEvent fEvent = new FaultEvent();
                 faultEventUri = createUri(behaviorChild, behavior, "");
-                if (faultEventRepositoryService.exists(faultEventUri)) {
+                if (faultEventRepositoryService.existsInContext(faultEventUri)) {
                     fEvent = faultEventRepositoryService.findRequired(faultEventUri);
                 } else {
                     fEvent.setBehavior(behaviorChild);

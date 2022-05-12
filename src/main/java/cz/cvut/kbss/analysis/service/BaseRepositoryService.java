@@ -243,6 +243,16 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
     }
 
     /**
+     * Checks whether an instance with the specified identifier exists in the current context and or the repository.
+     *
+     * @param id ID to check
+     * @return {@code true} if the instance exists, {@code false} otherwise
+     */
+    public boolean existsInContext(URI id) {
+        return getPrimaryDao().existsInContext(id);
+    }
+
+    /**
      * Validates the specified instance.
      *
      * @param instance The instance to validate
