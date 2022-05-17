@@ -12,6 +12,9 @@ import java.util.Objects;
 @Setter
 public class FailureMode extends Behavior {
 
+    @OWLDataProperty(iri = Vocabulary.s_p_hasFailureModeType)
+    private FailureModeType failureModeType = FailureModeType.FailureMode;
+
     @Override
     public String toString() {
         return "FailureMode <" + getUri() + "/>";
