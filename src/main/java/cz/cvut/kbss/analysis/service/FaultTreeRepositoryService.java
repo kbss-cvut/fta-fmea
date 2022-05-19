@@ -16,10 +16,7 @@ import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -210,10 +207,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         if (!impairingBehaviors.isEmpty()) {
             for (Behavior impairingBehavior : impairingBehaviors) {
-                if(isFailureModeCause(impairingBehavior)) continue;
-                faultEvents.add(processImpairingBehavior(impairingBehavior,behavior));
-                if(isVisited(impairingBehavior))
-                    continue;
+                if(isVisited(impairingBehavior) || isFailureModeCause(impairingBehavior)) continue;
                 faultEvents.add(processImpairingBehavior(impairingBehavior, parentFaultEvent));
             }
         }
