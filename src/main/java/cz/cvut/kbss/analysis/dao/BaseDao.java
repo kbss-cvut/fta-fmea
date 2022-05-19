@@ -127,6 +127,12 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     }
 
     @Override
+    public boolean existsInContext(URI id) {
+        Objects.requireNonNull(id);
+        return em.find(type, id) != null;
+    }
+
+    @Override
     public boolean existsWithPredicate(String predicate, String value) {
         Objects.requireNonNull(value);
         return em
