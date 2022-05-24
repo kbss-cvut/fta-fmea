@@ -207,18 +207,12 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         if (!impairingBehaviors.isEmpty()) {
             for (Behavior impairingBehavior : impairingBehaviors) {
-                if(isVisited(impairingBehavior) || isFailureModeCause(impairingBehavior)) continue;
+                if(isVisited(impairingBehavior) || impairingBehavior.isFailureModeCause()) continue;
                 faultEvents.add(processImpairingBehavior(impairingBehavior, parentFaultEvent));
             }
         }
-        if(faultEvents.size() > 0) {
-            parentFaultEvent.setEventType(EventType.INTERMEDIATE);
-            parentFaultEvent.setGateType(GateType.OR);
-        }else{
-            parentFaultEvent.setEventType(EventType.BASIC);
-            parentFaultEvent.setGateType(GateType.UNUSED);
-            parentFaultEvent.setProbability(1.);
-        }
+
+        setFaultEventTypes(faultEvents.size() == 0, parentFaultEvent);
         removeVisited(behavior);
         parentFaultEvent.addChildren(faultEvents);
     }
@@ -245,9 +239,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 setFaultEventTypes(behavior, faultEvent);
             } else if (behavior instanceof FailureMode) {
                 faultEvent.setName(behavior.getName());
-                faultEvent.setEventType(EventType.BASIC);
-                faultEvent.setGateType(GateType.UNUSED);
-                faultEvent.setProbability(1.);
+                setFaultEventTypes(true, faultEvent);
             }
             faultEventRepositoryService.persist(faultEvent);
             return faultEvent;
@@ -286,9 +278,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "e");
                     faultEvent.setUri(faultEventUri);
                     faultEvent.setName(impairingBehavior.getName() + " event");
-                    faultEvent.setEventType(EventType.BASIC);
-                    faultEvent.setGateType(GateType.UNUSED);
-                    faultEvent.setProbability(1.);
+                    setFaultEventTypes(true, faultEvent);
                 }else{
                     faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "");
                     faultEvent.setUri(faultEventUri);
@@ -297,7 +287,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     faultEvent.setGateType(impairingBehavior.getBehaviorType() == BehaviorType.OrBehavior ? GateType.OR : GateType.AND);
 
                     for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
-                        if(isFailureModeCause(behaviorChild)) continue;
+                        if(behaviorChild.isFailureModeCause()) continue;
 
                         FaultEvent faultEventChild = new FaultEvent();
                         faultEventChild.setBehavior(behaviorChild);
@@ -384,21 +374,21 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     }
 
     private void setFaultEventTypes(Behavior behaviorChild, FaultEvent fEvent) {
-        if (behaviorChild.getChildBehaviors().isEmpty()
+        boolean isBasic = behaviorChild.getChildBehaviors().isEmpty()
                 && behaviorChild.getRequiredBehaviors().isEmpty()
-                && functionRepositoryService.getImpairingBehaviors(behaviorChild.getUri()).isEmpty())
-        {
+                && functionRepositoryService.getImpairingBehaviors(behaviorChild.getUri()).isEmpty();
+
+        setFaultEventTypes(isBasic, fEvent);
+    }
+
+    private void setFaultEventTypes(boolean isBasic, FaultEvent fEvent){
+        if(isBasic){
             fEvent.setEventType(EventType.BASIC);
             fEvent.setGateType(GateType.UNUSED);
             fEvent.setProbability(1.);
-        } else {
+        }else{
             fEvent.setEventType(EventType.INTERMEDIATE);
             fEvent.setGateType(GateType.OR);
         }
-    }
-
-    private boolean isFailureModeCause(Behavior behavior) {
-        return behavior instanceof FailureMode
-                && ((FailureMode) behavior).getFailureModeType() == FailureModeType.FailureModeCause;
     }
 }
