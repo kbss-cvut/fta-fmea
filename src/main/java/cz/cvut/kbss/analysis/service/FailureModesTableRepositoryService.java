@@ -86,15 +86,6 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
     private List<Map<String, Object>> computeTableRows(FailureModesTable table, List<FailureModesTableField> columns) {
         log.info("> computeTableRows");
 
-        int maxEffects = table.getRows().stream()
-                .mapToInt(row -> row.getEffects().size())
-                .max()
-                .orElse(1); // one for root
-
-        for (int i = 0; i < (maxEffects - 1); i++) {
-            columns.add(new FailureModesTableField("nextEffect-" + i, "Next Effect"));
-        }
-
         List<List<Map<String, Object>>> rowLists = table.getRows().stream().map(r -> {
             FaultEvent treeRoot = faultEventRepositoryService.findRequired(r.getFinalEffect());
 
@@ -103,24 +94,61 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             row.put("id", r.getUri().toString());
             row.put("rowId", r.getUri().toString());
 
-            // TODO be less strict due to deleted events??
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
-            row.put("localEffect", localEffect.getName());
 
             List<FaultEvent> treePathList = FaultTreeTraversalUtils
                     .rootToLeafPath(treeRoot, localEffect.getUri());
 
-            Collections.reverse(treePathList);
+            int treeIndex = getFEIndexWithFunction(treePathList);
+            FaultEvent functionFailure = treePathList.get(treeIndex);
 
+            Function function = functionFailure.getFunction();
+            row.put("function", function.getName());
+
+            Component component = function.getComponent();
+            if(component != null) row.put("component", component.getName());
+
+            // TODO be less strict due to deleted events??
+            FailureMode failureMode = localEffect.getFailureMode();
+            if (failureMode != null) {
+                row.put("failureMode", failureMode.getName());
+
+                failureMode.getImpairedBehaviors()
+                        .stream()
+                        .filter(Mitigation.class::isInstance)
+                        .forEach(mitigation -> row.put("mitigation", mitigation.getDescription()));
+            }
+
+            String localEffectUri = "" ;
+            if(treeIndex + 1  < treePathList.size()){
+                localEffect = treePathList.get(treeIndex + 1);
+
+                if (localEffect.getBehavior() != null
+                        && !treeRoot.getName().equals(localEffect.getName())
+                        && localEffect.getBehavior().getComponent() == function.getComponent()) {
+                    row.put("localEffect", localEffect.getName());
+                }
+                localEffectUri = localEffect.getUri().toString();
+
+            }
+
+            Collections.reverse(treePathList);
+            String localEffectUriCopy = localEffectUri;
             List<Pair<FaultEvent, Integer>> indexedNextEffects = IntStream.range(0, treePathList.size())
                     .boxed()
                     .map(index -> Pair.of(treePathList.get(index), index))
                     .filter(pair -> !pair.getFirst().getUri().equals(treeRoot.getUri()))
                     .filter(pair -> r.getEffects().contains(pair.getFirst().getUri()))
+                    .filter(pair -> !pair.getFirst().getUri().equals(functionFailure.getUri()))
+                    .filter(pair -> !pair.getFirst().getUri().toString().equals(localEffectUriCopy))
                     .collect(Collectors.toList());
 
             for (Pair<FaultEvent, Integer> pair : indexedNextEffects) {
-                row.put("nextEffect-" + (maxEffects - pair.getSecond() - 1), pair.getFirst().getName());
+                if (columns.stream().map(FailureModesTableField::getField)
+                        .noneMatch(s -> s.equals("intermediateEffect-" + pair.getSecond()))) {
+                    columns.add(new FailureModesTableField("intermediateEffect-" + pair.getSecond(), "Intermediate effect"));
+                }
+                row.put("intermediateEffect-" + pair.getSecond(), pair.getFirst().getName());
             }
 
             row.put("finalEffect", treeRoot.getName());
@@ -133,36 +161,22 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                 row.put("rpn", rpn.getSeverity() * rpn.getOccurrence() * rpn.getDetection());
             }
 
-            FailureMode failureMode = localEffect.getFailureMode();
-            if (failureMode != null) {
-                row.put("failureMode", failureMode.getName());
-                row.put("component", failureMode.getComponent().getName());
-
-                failureMode.getImpairedBehaviors()
-                        .stream()
-                        .filter(Mitigation.class::isInstance)
-                        .forEach(mitigation -> row.put("mitigation", mitigation.getDescription()));
-
-                if (!failureMode.getRequiredBehaviors().isEmpty()) {
-                    return failureMode.getRequiredBehaviors().stream()
-                            .map(behavior -> {
-                                Map<String, Object> functionRow = new HashMap<>(row);
-                                functionRow.put("id", functionRow.get("id") + behavior.getUri().toString());
-                                functionRow.put("function", behavior.getName());
-                                return functionRow;
-                            })
-                            .collect(Collectors.toList());
-                }
-
-            }
-
             List<Map<String, Object>> resultList = new ArrayList<>();
             resultList.add(row);
             return resultList;
         }).collect(Collectors.toList());
 
         return rowLists.stream().flatMap(List::stream)
-                .collect(Collectors.toList());
+                .distinct().collect(Collectors.toList());
+    }
+
+    private int getFEIndexWithFunction(List<FaultEvent> faultEventList) {
+        for (int i = 0; i < faultEventList.size(); i++) {
+            if (faultEventList.get(i).getFunction() != null) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Transactional(readOnly = true)

@@ -58,6 +58,7 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         Component component = findRequired(componentUri);
 
         component.addFunction(function);
+        function.setComponent(component);
         update(component);
 
         log.info("< addFunction - {}", function);

@@ -306,6 +306,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                             faultEventChild = faultEventRepositoryService.findRequired(faultEventUri);
                         } else {
                             faultEventChild.setUri(faultEventUri);
+                            faultEventChild.setBehavior(behaviorChild);
                             faultEventChild.setName(behaviorChild.getName() + " event");
                             faultEventChild.setEventType(EventType.BASIC);
                             faultEventChild.setGateType(GateType.UNUSED);
