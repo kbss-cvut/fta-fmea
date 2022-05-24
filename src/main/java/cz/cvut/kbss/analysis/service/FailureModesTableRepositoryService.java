@@ -28,12 +28,17 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
     private final FailureModesTableDao failureModesTableDao;
     private final FaultEventRepositoryService faultEventRepositoryService;
+    private final FunctionRepositoryService functionRepositoryService;
 
     @Autowired
-    public FailureModesTableRepositoryService(@Qualifier("defaultValidator") Validator validator, FailureModesTableDao failureModesTableDao, FaultEventRepositoryService faultEventRepositoryService) {
+    public FailureModesTableRepositoryService(@Qualifier("defaultValidator") Validator validator,
+                                              FailureModesTableDao failureModesTableDao,
+                                              FaultEventRepositoryService faultEventRepositoryService,
+                                              FunctionRepositoryService functionRepositoryService) {
         super(validator);
         this.failureModesTableDao = failureModesTableDao;
         this.faultEventRepositoryService = faultEventRepositoryService;
+        this.functionRepositoryService = functionRepositoryService;
     }
 
     @Override
@@ -64,6 +69,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
         columns.add(new FailureModesTableField("component", "Component"));
         columns.add(new FailureModesTableField("function", "Function"));
+        columns.add(new FailureModesTableField("cause", "Cause"));
         columns.add(new FailureModesTableField("failureMode", "Failure Mode"));
         columns.add(new FailureModesTableField("localEffect", "Local Effect"));
 
@@ -90,6 +96,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             FaultEvent treeRoot = faultEventRepositoryService.findRequired(r.getFinalEffect());
 
             Map<String, Object> row = new HashMap<>();
+            List<String> causes = new ArrayList<>();
 
             row.put("id", r.getUri().toString());
             row.put("rowId", r.getUri().toString());
@@ -110,9 +117,19 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             // TODO be less strict due to deleted events??
             FailureMode failureMode = localEffect.getFailureMode();
-            if (failureMode != null) {
-                row.put("failureMode", failureMode.getName());
 
+            functionRepositoryService.getImpairingBehaviors(function.getUri())
+                    .stream()
+                    .filter(Behavior::isFailureModeCause)
+                    .forEach(cause -> causes.add(cause.getName()));
+
+            if (failureMode != null) {
+                failureMode.getRequiredBehaviors()
+                        .stream()
+                        .filter(Behavior::isFailureModeCause)
+                        .forEach(cause -> causes.add(cause.getName()));
+
+                row.put("failureMode", failureMode.getName());
                 failureMode.getImpairedBehaviors()
                         .stream()
                         .filter(Mitigation.class::isInstance)
@@ -162,7 +179,16 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             }
 
             List<Map<String, Object>> resultList = new ArrayList<>();
-            resultList.add(row);
+
+            if (causes.isEmpty()) {
+                resultList.add(row);
+            }else {
+                causes.forEach(cause -> {
+                    row.put("cause", cause);
+                    resultList.add(row);
+                });
+            }
+
             return resultList;
         }).collect(Collectors.toList());
 
