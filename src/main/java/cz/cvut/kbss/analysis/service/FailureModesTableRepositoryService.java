@@ -10,6 +10,7 @@ import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.validation.Validator;
 
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -91,6 +93,9 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
     private List<Map<String, Object>> computeTableRows(FailureModesTable table, List<FailureModesTableField> columns) {
         log.info("> computeTableRows");
+
+        List<FailureModesRow> FMRowToAdd = new ArrayList<>();
+        Set<FailureModesRow> FMRowToDelete = new HashSet<>();
 
         List<List<Map<String, Object>>> rowLists = table.getRows().stream().map(r -> {
             FaultEvent treeRoot = faultEventRepositoryService.findRequired(r.getFinalEffect());
@@ -183,14 +188,32 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             if (causes.isEmpty()) {
                 resultList.add(row);
             }else {
-                causes.forEach(cause -> {
-                    row.put("cause", cause);
-                    resultList.add(row);
-                });
+                for (int i = 0; i < causes.size(); i++) {
+                    FailureModesRow newFMRow;
+                    try {
+                        newFMRow = new FailureModesRow(r);
+                        newFMRow.setUri(new URI(r.getUri().toString() + i));
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    FMRowToAdd.add(newFMRow);
+                    FMRowToDelete.add(r);
+
+                    Map<String, Object> rowCopy = SerializationUtils.clone(new HashMap<>(row));
+                    rowCopy.put("id", row.get("id").toString() + i);
+                    rowCopy.put("rowId", row.get("rowId").toString() + i);
+                    rowCopy.put("cause", causes.get(i));
+                    resultList.add(rowCopy);
+                }
             }
 
             return resultList;
         }).collect(Collectors.toList());
+
+        FMRowToDelete.forEach(table.getRows()::remove);
+        FMRowToAdd.forEach(table.getRows()::add);
+        update(table);
 
         return rowLists.stream().flatMap(List::stream)
                 .distinct().collect(Collectors.toList());
