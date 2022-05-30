@@ -96,12 +96,13 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
         List<FailureModesRow> FMRowToAdd = new ArrayList<>();
         Set<FailureModesRow> FMRowToDelete = new HashSet<>();
+        List<Pair<String,Map<String, Object>>> causes = new ArrayList<>();
 
         List<List<Map<String, Object>>> rowLists = table.getRows().stream().map(r -> {
             FaultEvent treeRoot = faultEventRepositoryService.findRequired(r.getFinalEffect());
 
             Map<String, Object> row = new HashMap<>();
-            List<String> causes = new ArrayList<>();
+            List<Pair<String, String>> requiredCauses = new ArrayList<>();
 
             row.put("id", r.getUri().toString());
             row.put("rowId", r.getUri().toString());
@@ -126,15 +127,14 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             functionRepositoryService.getImpairingBehaviors(function.getUri())
                     .stream()
                     .filter(Behavior::isFailureModeCause)
-                    .forEach(cause -> causes.add(cause.getName()));
+                    .forEach(cause -> causes.add(Pair.of(cause.getName(), row)));
 
             if (failureMode != null) {
-                failureMode.getRequiredBehaviors()
-                        .stream()
-                        .filter(Behavior::isFailureModeCause)
-                        .forEach(cause -> causes.add(cause.getName()));
-
                 row.put("failureMode", failureMode.getName());
+                failureMode.getRequiredBehaviors()
+                        .stream().filter(Behavior::isFailureModeCause)
+                        .forEach(b -> requiredCauses.add(Pair.of(b.getName(), failureMode.getName())));
+
                 failureMode.getImpairedBehaviors()
                         .stream()
                         .filter(Mitigation.class::isInstance)
@@ -165,7 +165,8 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                     .filter(pair -> !pair.getFirst().getUri().toString().equals(localEffectUriCopy))
                     .collect(Collectors.toList());
 
-            for (Pair<FaultEvent, Integer> pair : indexedNextEffects) {
+            for (int i = indexedNextEffects.size() - 1; i >= 0; i--) {
+                Pair<FaultEvent, Integer> pair = indexedNextEffects.get(i);
                 if (columns.stream().map(FailureModesTableField::getField)
                         .noneMatch(s -> s.equals("intermediateEffect-" + pair.getSecond()))) {
                     columns.add(new FailureModesTableField("intermediateEffect-" + pair.getSecond(), "Intermediate effect"));
@@ -185,10 +186,11 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             List<Map<String, Object>> resultList = new ArrayList<>();
 
-            if (causes.isEmpty()) {
+            if (requiredCauses.isEmpty()) {
                 resultList.add(row);
             }else {
-                for (int i = 0; i < causes.size(); i++) {
+                FMRowToDelete.add(r);
+                for (int i = 0; i < requiredCauses.size(); i++) {
                     FailureModesRow newFMRow;
                     try {
                         newFMRow = new FailureModesRow(r);
@@ -198,12 +200,11 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                     }
 
                     FMRowToAdd.add(newFMRow);
-                    FMRowToDelete.add(r);
-
                     Map<String, Object> rowCopy = SerializationUtils.clone(new HashMap<>(row));
                     rowCopy.put("id", row.get("id").toString() + i);
                     rowCopy.put("rowId", row.get("rowId").toString() + i);
-                    rowCopy.put("cause", causes.get(i));
+                    rowCopy.put("cause", requiredCauses.get(i).getFirst());
+                    rowCopy.put("failureMode", requiredCauses.get(i).getSecond());
                     resultList.add(rowCopy);
                 }
             }
@@ -215,8 +216,36 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         FMRowToAdd.forEach(table.getRows()::add);
         update(table);
 
-        return rowLists.stream().flatMap(List::stream)
-                .distinct().collect(Collectors.toList());
+        List<Map<String,Object>> resultList = rowLists.stream().flatMap(List::stream).collect(Collectors.toList());
+        resultList.addAll(processCauses(causes));
+        return resultList.stream().distinct().collect(Collectors.toList());
+    }
+
+    private List<Map<String, Object>> processCauses(List<Pair<String,Map<String, Object>>> causes) {
+        List<Map<String, Object>> causesToAdd = new ArrayList<>();
+
+        for(Pair<String, Map<String, Object>> pair: causes){
+            String cause = pair.getFirst();
+            Map<String, Object> row = pair.getSecond();
+            boolean duplicateRow = false;
+
+            for (Map<String, Object> row2: causesToAdd){
+                if(cause.equals(row2.get("cause"))
+                        && row.get("function").toString().equals(row2.get("function").toString())){
+                    duplicateRow = true;
+                    break;
+                }
+            }
+
+            if(duplicateRow || cause.isEmpty()) continue;
+            Map<String, Object> rowCopy = SerializationUtils.clone(new HashMap<>(row));
+            rowCopy.put("id", row.get("id") + pair.getFirst());
+            rowCopy.put("rowId", row.get("id") + pair.getFirst());
+            rowCopy.put("cause",cause);
+            rowCopy.remove("failureMode");
+            causesToAdd.add(rowCopy);
+        }
+        return causesToAdd;
     }
 
     private int getFEIndexWithFunction(List<FaultEvent> faultEventList) {
