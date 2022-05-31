@@ -207,13 +207,12 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         if (!impairingBehaviors.isEmpty()) {
             for (Behavior impairingBehavior : impairingBehaviors) {
-                if(isVisited(impairingBehavior))
-                    continue;
+                if(isVisited(impairingBehavior) || impairingBehavior.isFailureModeCause()) continue;
                 faultEvents.add(processImpairingBehavior(impairingBehavior, parentFaultEvent));
             }
-            parentFaultEvent.setEventType(EventType.INTERMEDIATE);
-            parentFaultEvent.setGateType(GateType.OR);
         }
+
+        setFaultEventTypes(faultEvents.size() == 0, parentFaultEvent);
         removeVisited(behavior);
         parentFaultEvent.addChildren(faultEvents);
     }
@@ -237,20 +236,10 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
             if (behavior instanceof Function) {
                 faultEvent.setName(behavior.getName() + " fails");
-
-                if(behavior.getChildBehaviors().isEmpty() && behavior.getRequiredBehaviors().isEmpty()) {
-                    faultEvent.setEventType(EventType.BASIC);
-                    faultEvent.setGateType(GateType.UNUSED);
-                    faultEvent.setProbability(1.);
-                }else{
-                    faultEvent.setEventType(EventType.INTERMEDIATE);
-                    faultEvent.setGateType(GateType.OR);
-                }
+                setFaultEventTypes(behavior, faultEvent);
             } else if (behavior instanceof FailureMode) {
                 faultEvent.setName(behavior.getName());
-                faultEvent.setEventType(EventType.BASIC);
-                faultEvent.setGateType(GateType.UNUSED);
-                faultEvent.setProbability(1.);
+                setFaultEventTypes(true, faultEvent);
             }
             faultEventRepositoryService.persist(faultEvent);
             return faultEvent;
@@ -289,9 +278,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "e");
                     faultEvent.setUri(faultEventUri);
                     faultEvent.setName(impairingBehavior.getName() + " event");
-                    faultEvent.setEventType(EventType.BASIC);
-                    faultEvent.setGateType(GateType.UNUSED);
-                    faultEvent.setProbability(1.);
+                    setFaultEventTypes(true, faultEvent);
                 }else{
                     faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "");
                     faultEvent.setUri(faultEventUri);
@@ -300,6 +287,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     faultEvent.setGateType(impairingBehavior.getBehaviorType() == BehaviorType.OrBehavior ? GateType.OR : GateType.AND);
 
                     for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
+                        if(behaviorChild.isFailureModeCause()) continue;
+
                         FaultEvent faultEventChild = new FaultEvent();
                         faultEventChild.setBehavior(behaviorChild);
                         faultEventUri = createUri(behaviorChild, faultEvent, "e");
@@ -307,6 +296,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                             faultEventChild = faultEventRepositoryService.findRequired(faultEventUri);
                         } else {
                             faultEventChild.setUri(faultEventUri);
+                            faultEventChild.setBehavior(behaviorChild);
                             faultEventChild.setName(behaviorChild.getName() + " event");
                             faultEventChild.setEventType(EventType.BASIC);
                             faultEventChild.setGateType(GateType.UNUSED);
@@ -381,5 +371,24 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     protected boolean removeVisited(Behavior b){
         Set<Behavior> visited = visitedBehaviors.get();
         return visited.remove(b);
+    }
+
+    private void setFaultEventTypes(Behavior behaviorChild, FaultEvent fEvent) {
+        boolean isBasic = behaviorChild.getChildBehaviors().isEmpty()
+                && behaviorChild.getRequiredBehaviors().isEmpty()
+                && functionRepositoryService.getImpairingBehaviors(behaviorChild.getUri()).isEmpty();
+
+        setFaultEventTypes(isBasic, fEvent);
+    }
+
+    private void setFaultEventTypes(boolean isBasic, FaultEvent fEvent){
+        if(isBasic){
+            fEvent.setEventType(EventType.BASIC);
+            fEvent.setGateType(GateType.UNUSED);
+            fEvent.setProbability(1.);
+        }else{
+            fEvent.setEventType(EventType.INTERMEDIATE);
+            fEvent.setGateType(GateType.OR);
+        }
     }
 }

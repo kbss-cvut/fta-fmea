@@ -16,6 +16,16 @@ import java.util.Set;
 @Setter
 public class FailureModesRow extends AbstractEntity {
 
+    public FailureModesRow() {
+    }
+
+    public FailureModesRow(FailureModesRow failureModesRow) {
+        this.setEffects(failureModesRow.getEffects());
+        this.setLocalEffect(failureModesRow.getLocalEffect());
+        this.setFinalEffect(failureModesRow.getFinalEffect());
+        this.setRiskPriorityNumber(failureModesRow.getRiskPriorityNumber());
+    }
+
     @NotNull(message = "Final Effect must be chosen")
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFinalEffect, fetch = FetchType.EAGER)

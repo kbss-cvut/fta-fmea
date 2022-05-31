@@ -47,6 +47,11 @@ public abstract class Behavior extends AbstractEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_activatedBy)
     private Set<Situation> activatedBySituations = new HashSet<>();
 
+    public boolean isFailureModeCause() {
+        return this instanceof FailureMode
+                && ((FailureMode) this).getFailureModeType() == FailureModeType.FailureModeCause;
+    }
+
     public void addSituation(Situation situation){
         situation.getBehaviors().add(this);
         getActivatedBySituations().add(situation);

@@ -48,6 +48,7 @@ public class FailureModeRepositoryService extends BaseRepositoryService<FailureM
 
         failureMode.setName(failureModeProperties.getName());
         failureMode.setBehaviorType(failureModeProperties.getBehaviorType());
+        failureMode.setFailureModeType(failureModeProperties.getFailureModeType());
 
         return failureMode;
     }
