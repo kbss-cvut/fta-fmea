@@ -1,6 +1,13 @@
-FROM tomcat:8-jdk11
+FROM maven:3.6.1-jdk-11
+COPY ./ontology-generator ./ontology-generator
+WORKDIR ./ontology-generator
+RUN mvn clean install
 
-RUN rm -rf /usr/local/tomcat/webapps/*
-COPY ./build/libs/* /usr/local/tomcat/webapps/fta-fmea.war
+FROM gradle:6.4-jdk11
+WORKDIR ./
+COPY . .
 
-CMD ["catalina.sh","run"]
+RUN ./gradlew clean build
+
+
+# TODO: ADD runtime dependencies
