@@ -194,7 +194,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                     FailureModesRow newFMRow;
                     try {
                         newFMRow = new FailureModesRow(r);
-                        newFMRow.setUri(new URI(r.getUri().toString() + i));
+                        newFMRow.setUri(new URI(r.getUri().toString()));
                     } catch (URISyntaxException e) {
                         throw new RuntimeException(e);
                     }
