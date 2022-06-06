@@ -14,5 +14,8 @@ COPY --from=MAVEN /fta-fmea/src/main/generated/cz/cvut/kbss/analysis/util/Vocabu
 
 RUN ./gradlew clean build
 
+FROM tomcat:8-jdk11
+COPY ./build/libs/fta-fmea-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/fta-fmea.war
 
-# TODO: ADD runtime dependencies
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
