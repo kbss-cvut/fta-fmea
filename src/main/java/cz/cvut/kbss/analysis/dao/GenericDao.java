@@ -90,6 +90,15 @@ public interface GenericDao<T extends HasIdentifier> {
     boolean exists(URI id);
 
     /**
+     * Checks whether an entity with the specified id exists in the current context including the repository (and has
+     * the type managed by this DAO).
+     *
+     * @param id Entity identifier
+     * @return {@literal true} if entity exists, {@literal false} otherwise
+     */
+    boolean existsInContext(URI id);
+
+    /**
      * Checks whether an entity with the specified predicate and its value exists (and has the type managed by this
      * DAO).
      *

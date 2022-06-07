@@ -51,6 +51,12 @@ fta-fmea:FailureMode
     rdf:type   owl:Class ;
     rdfs:label "Failure mode" .
 
+fta-fmea:hasFailureModeType
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "has failure mode type" ;
+    rdfs:domain fta-fmea:Behavior ;
+    rdfs:range  xsd:string .
+
 fta-fmea:requires
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "requires" ;
