@@ -15,7 +15,7 @@ RUN ./gradlew clean war
 
 FROM tomcat:8-jdk11
 
-COPY --from=GRADLE /fta-fmea/build/libs/fta-fmea-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/fta-fmea.war
+COPY --from=GRADLE /fta-fmea/build/libs/fta-fmea-*.war /usr/local/tomcat/webapps/fta-fmea.war
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
