@@ -28,4 +28,4 @@ jobs:
           context: .
           file: ./deploy/Dockerfile
           push: true
-          tags: ${{ github.repository }}:latest
+          tags: fta-fmea:latest
