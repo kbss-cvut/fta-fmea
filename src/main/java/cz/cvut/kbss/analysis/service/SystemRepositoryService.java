@@ -1,5 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.model.Component;
@@ -14,6 +16,7 @@ import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -22,12 +25,14 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
 
     private final SystemDao systemDao;
     private final ComponentRepositoryService componentRepositoryService;
+    private final ComponentDao componentDao;
 
     @Autowired
-    public SystemRepositoryService(@Qualifier("defaultValidator") Validator validator, SystemDao systemDao, ComponentRepositoryService componentRepositoryService) {
+    public SystemRepositoryService(@Qualifier("defaultValidator") Validator validator, SystemDao systemDao, ComponentRepositoryService componentRepositoryService, ComponentDao componentDao) {
         super(validator);
         this.systemDao = systemDao;
         this.componentRepositoryService = componentRepositoryService;
+        this.componentDao = componentDao;
     }
 
     @Override
@@ -81,4 +86,13 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
         }
         return failureModes;
     }
+
+    @Transactional
+    public void importDocument(URI systemURI, URI contextIRI) {
+        log.info("importing components from context <{}> into the system <{}>", contextIRI, systemURI);
+        List<Component> components = componentDao.findAll(contextIRI);
+        System system = systemDao.find(systemURI).get();
+        components.forEach(system::addComponent);
+    }
+
 }
