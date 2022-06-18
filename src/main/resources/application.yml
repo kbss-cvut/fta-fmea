@@ -21,3 +21,7 @@ logging:
     root: INFO
     cz.cvut.kbss: INFO
     org.springframework.web: INFO
+
+annotator:
+  list-documents-api: ${LIST_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=list-documents}
+  convert-document-api: ${CONVERT_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=convert-document}

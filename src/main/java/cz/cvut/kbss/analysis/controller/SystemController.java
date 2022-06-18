@@ -1,10 +1,10 @@
 package cz.cvut.kbss.analysis.controller;
 
-import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.System;
-import cz.cvut.kbss.analysis.service.SystemRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
+import cz.cvut.kbss.analysis.service.SystemRepositoryService;
+import cz.cvut.kbss.analysis.service.external.AnnotatorService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,7 @@ public class SystemController {
 
     private final SystemRepositoryService repositoryService;
     private final IdentifierService identifierService;
+    private final AnnotatorService annotatorService;
 
     @GetMapping
     public List<System> findAll() {
@@ -91,6 +92,15 @@ public class SystemController {
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
 
         repositoryService.removeComponent(systemUri, componentUri);
+    }
+
+
+    @PostMapping(value = "/{systemFragment}/documents")
+    public void importDocument(@PathVariable(name = "systemFragment") String systemFragment, @RequestParam URI documentId){
+        URI systemURI = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        log.info("> importing annotations from document <{}> into system <{}>", documentId, systemURI);
+        annotatorService.convertDocument(documentId.toString());
+        repositoryService.importDocument(systemURI, documentId);
     }
 
 }
