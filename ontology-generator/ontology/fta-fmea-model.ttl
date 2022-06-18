@@ -4,10 +4,25 @@
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
 @prefix fta-fmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc-terms: <http://purl.org/dc/terms/> .
+
+fta-fmea:Document
+    rdf:type owl:Class ;
+    rdfs:label "Document".
+
+fta-fmea:documented-in
+    rdf:type owl:ObjectProperty;
+    rdfs:label "Documented in";
+    rdfs:domain fta-fmea:System ;
+    rdfs:range  fta-fmea:Document .
 
 fta-fmea:System
     rdf:type   owl:Class ;
     rdfs:label "System" .
+
+dc-terms:source
+    rdf:type    owl:DatatypeProperty ;
+    rdfs:label  "annotation source" .
 
 fta-fmea:hasPartComponent
     rdf:type    owl:ObjectProperty ;

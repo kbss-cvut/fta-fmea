@@ -22,6 +22,13 @@ public interface GenericDao<T extends HasIdentifier> {
     List<T> findAll();
 
     /**
+     * Finds all instances of the class managed by this DAO stored in a particular context.
+     *
+     * @return All known instances
+     */
+    List<T> findAll(URI context);
+
+    /**
      * Finds entity instance with the specified identifier.
      *
      * @param id Identifier

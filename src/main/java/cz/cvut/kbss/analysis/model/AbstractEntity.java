@@ -1,8 +1,10 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.model.util.HasIdentifier;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.MappedSuperclass;
+import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,6 +17,9 @@ public abstract class AbstractEntity implements HasIdentifier, Serializable {
 
     @Id(generated = true)
     private URI uri;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_source)
+    private URI annotationSource;
 
     @Override
     public boolean equals(Object o) {

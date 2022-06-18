@@ -44,6 +44,18 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     }
 
     @Override
+    public List<T> findAll(URI contenxt) {
+        try {
+            return em.createNativeQuery("SELECT ?x WHERE { GRAPH ?context{ ?x a ?type .} }", type)
+                    .setParameter("type", typeUri)
+                    .setParameter("context", contenxt)
+                    .getResultList();
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
+
+    @Override
     public Optional<T> find(URI id) {
         Objects.requireNonNull(id);
         try {
