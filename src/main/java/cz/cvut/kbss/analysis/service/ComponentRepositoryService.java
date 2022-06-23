@@ -6,7 +6,6 @@ import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
-import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
@@ -173,4 +173,18 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         log.info("< unlinkComponents");
     }
 
+    @Transactional
+    public void mergeComponents(URI sourceComponentUri, URI targetComponentUri){
+        Component source = findRequired(sourceComponentUri);
+        Component target = findRequired(targetComponentUri);
+
+        source.getFunctions().forEach(target::addFunction);
+        source.getFailureModes().forEach(target::addFailureMode);
+
+        source.setFunctions(new HashSet<>());
+        source.setFailureModes(new HashSet<>());
+
+        update(target);
+        remove(source);
+    }
 }
