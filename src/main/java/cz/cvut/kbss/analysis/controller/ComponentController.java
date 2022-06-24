@@ -148,4 +148,14 @@ public class ComponentController {
         log.info("< unlinkComponents");
     }
 
+    @PostMapping(value = "/mergeComponents/{sourceFragment}/{targetFragment}")
+    public void mergeComponents(@PathVariable(name = "sourceFragment") String sourceFragment
+            ,@PathVariable(name = "targetFragment") String targetFragment){
+        log.info("> mergeComponents - {} {}", sourceFragment, targetFragment);
+
+        URI sourceUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, sourceFragment);
+        URI targetUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, targetFragment);
+
+        repositoryService.mergeComponents(sourceUri, targetUri);
+    }
 }
