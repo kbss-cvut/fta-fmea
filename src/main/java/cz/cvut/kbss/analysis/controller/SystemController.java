@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -96,7 +97,7 @@ public class SystemController {
 
 
     @PostMapping(value = "/{systemFragment}/documents")
-    public void importDocument(@PathVariable(name = "systemFragment") String systemFragment, @RequestParam URI documentId){
+    public void importDocument(@PathVariable(name = "systemFragment") String systemFragment, @RequestParam URI documentId) throws UnsupportedEncodingException {
         URI systemURI = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
         log.info("> importing annotations from document <{}> into system <{}>", documentId, systemURI);
         annotatorService.convertDocument(documentId.toString());
