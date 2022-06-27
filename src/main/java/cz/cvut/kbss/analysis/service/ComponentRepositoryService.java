@@ -184,6 +184,15 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         source.setFunctions(new HashSet<>());
         source.setFailureModes(new HashSet<>());
 
+        findAll().stream()
+                .filter(component -> component.getParentComponent() != null
+                        && component.getParentComponent().equals(sourceComponentUri)
+                )
+                .forEach(component -> {
+                    component.setParentComponent(targetComponentUri);
+                    update(component);
+                });
+
         update(target);
         remove(source);
     }
