@@ -38,7 +38,7 @@ public class AnnotatorService {
         log.info("calling external annotation conversion service <{}> and store result in <{}>", conf.getConvertDocumentAPI(), context);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response
-                = restTemplate.getForEntity(conf.getConvertDocumentAPI(), String.class);
+                = restTemplate.getForEntity(conf.getConvertDocumentAPI() + "&documentIri=" + context, String.class);
 
         String body = response.getBody();
         StringReader reader = new StringReader(body);
