@@ -65,6 +65,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         log.info("> computeTableDate - {}", tableUri);
 
         FailureModesTable table = findRequired(tableUri);
+        ArrayList<FailureMode> failureModes = new ArrayList<>();
 
         FailureModesTableDataDTO tableData = new FailureModesTableDataDTO(table.getName());
         List<FailureModesTableField> columns = new ArrayList<>();
@@ -75,7 +76,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         columns.add(new FailureModesTableField("failureMode", "Failure Mode"));
         columns.add(new FailureModesTableField("localEffect", "Local Effect"));
 
-        List<Map<String, Object>> rows = computeTableRows(table, columns);
+        List<Map<String, Object>> rows = computeTableRows(table, columns, failureModes);
 
         columns.add(new FailureModesTableField("finalEffect", "Final Effect"));
         columns.add(new FailureModesTableField("severity", "S"));
@@ -83,15 +84,17 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         columns.add(new FailureModesTableField("detection", "D"));
         columns.add(new FailureModesTableField("rpn", "RPN"));
         columns.add(new FailureModesTableField("mitigation", "Mitigation"));
+        columns.add(new FailureModesTableField("mitigationDescription", "Mitigation description"));
 
         tableData.setColumns(columns);
         tableData.setRows(rows);
-
+        tableData.setFailureModes(failureModes);
         log.info("< computeTableDate - {}", tableData);
         return tableData;
     }
 
-    private List<Map<String, Object>> computeTableRows(FailureModesTable table, List<FailureModesTableField> columns) {
+    private List<Map<String, Object>> computeTableRows(FailureModesTable table, List<FailureModesTableField> columns,
+                                                       ArrayList<FailureMode> failureModes) {
         log.info("> computeTableRows");
 
         List<FailureModesRow> FMRowToAdd = new ArrayList<>();
@@ -106,6 +109,10 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
             row.put("id", r.getUri().toString());
             row.put("rowId", r.getUri().toString());
+            if(r.getMitigation() != null ) {
+                row.put("mitigation", r.getMitigation().getName());
+                row.put("mitigationDescription", r.getMitigation().getDescription());
+            }
 
             FaultEvent localEffect = faultEventRepositoryService.findRequired(r.getLocalEffect());
 
@@ -127,18 +134,26 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             functionRepositoryService.getImpairingBehaviors(function.getUri())
                     .stream()
                     .filter(Behavior::isFailureModeCause)
-                    .forEach(cause -> causes.add(Pair.of(cause.getName(), row)));
+                    .forEach(cause -> {
+                        causes.add(Pair.of(cause.getName(), row));
+                        failureModes.add((FailureMode) cause);
+                    });
 
             if (failureMode != null) {
                 row.put("failureMode", failureMode.getName());
+                failureModes.add(failureMode);
+
                 failureMode.getRequiredBehaviors()
                         .stream().filter(Behavior::isFailureModeCause)
-                        .forEach(b -> requiredCauses.add(Pair.of(b.getName(), failureMode.getName())));
+                        .forEach(b -> {
+                            requiredCauses.add(Pair.of(b.getName(), failureMode.getName()));
+                            failureModes.add((FailureMode) b);
+                        });
 
                 failureMode.getImpairedBehaviors()
                         .stream()
                         .filter(Mitigation.class::isInstance)
-                        .forEach(mitigation -> row.put("mitigation", mitigation.getDescription()));
+                        .forEach(mitigation -> row.put("mitigation", mitigation.getName()));
             }
 
             String localEffectUri = "" ;

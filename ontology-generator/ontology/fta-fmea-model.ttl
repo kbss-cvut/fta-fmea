@@ -84,6 +84,12 @@ fta-fmea:isMitigatedBy
     rdfs:domain fta-fmea:FailureMode ;
     rdfs:range  fta-fmea:Mitigation .
 
+fta-fmea:hasMitigation
+    rdf:type owl:ObjectProperty ;
+    rdfs:label "hasMitigation" ;
+    rdfs:domain fta-fmea:FailureModesRow ;
+    rdfs:range fta-fmea:Mitigation.
+
 fta-fmea:hasEffect
     rdf:type    owl:ObjectProperty ;
     rdfs:label  "has effects" .
