@@ -11,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Service
 @Slf4j
@@ -53,11 +51,14 @@ public class AnnotatorService {
     }
 
     public  void processAnnotations(){
-        log.info("calling external annotation processing service {}", conf.getProcessAnnotationAPI());
-        RestTemplate restTemplate = new RestTemplate();
-        String url = conf.getProcessAnnotationAPI();
-        ResponseEntity<String> response
-                = restTemplate.getForEntity(url, String.class);
+        try {
+            log.info("calling external annotation processing service {}", conf.getProcessAnnotationAPI());
+            RestTemplate restTemplate = new RestTemplate();
+            String url = conf.getProcessAnnotationAPI();
+            ResponseEntity<String> response
+                    = restTemplate.getForEntity(url, String.class);
+        }catch (Exception e){
+            log.warn("Failed executing external process annotation service at <{}>. Error message - {}", e.getMessage());
+        }
     }
-
 }
