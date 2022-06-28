@@ -51,4 +51,13 @@ public class AnnotatorService {
         // use document iri as the context in which to store converted annotations
         rdfDao.persist(reader, docuementIri);
     }
+
+    public  void processAnnotations(){
+        log.info("calling external annotation processing service {}", conf.getProcessAnnotationAPI());
+        RestTemplate restTemplate = new RestTemplate();
+        String url = conf.getProcessAnnotationAPI();
+        ResponseEntity<String> response
+                = restTemplate.getForEntity(url, String.class);
+    }
+
 }

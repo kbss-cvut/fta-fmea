@@ -14,4 +14,5 @@ import org.springframework.context.annotation.Configuration;
 public class AnnotatorConf {
     private String listDocumentsAPI;
     private String convertDocumentAPI;
+    private String processAnnotationAPI;
 }

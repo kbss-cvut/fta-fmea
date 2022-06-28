@@ -100,6 +100,7 @@ public class SystemController {
     public void importDocument(@PathVariable(name = "systemFragment") String systemFragment, @RequestParam URI documentId) throws UnsupportedEncodingException {
         URI systemURI = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
         log.info("> importing annotations from document <{}> into system <{}>", documentId, systemURI);
+        annotatorService.processAnnotations();
         annotatorService.convertDocument(documentId.toString());
         repositoryService.importDocument(systemURI, documentId);
     }
