@@ -37,14 +37,18 @@ public class AnnotatorService {
         return response.getBody();
     }
 
-    public void convertDocument(String context) throws UnsupportedEncodingException {
-        log.info("calling external annotation conversion service <{}> and store result in <{}>", conf.getConvertDocumentAPI(), context);
+    public void convertDocument(String docuementIri) throws UnsupportedEncodingException {
+        log.info("calling external annotation conversion service <{}> and store result in <{}>", conf.getConvertDocumentAPI(), docuementIri);
         RestTemplate restTemplate = new RestTemplate();
+        String url = conf.getConvertDocumentAPI() + "&documentIri={documentIri}";
+
         ResponseEntity<String> response
-                = restTemplate.getForEntity(conf.getConvertDocumentAPI() + "&documentIri=" + URLEncoder.encode(context, StandardCharsets.UTF_8.toString()), String.class);
+                = restTemplate.getForEntity(url, String.class, docuementIri);
 
         String body = response.getBody();
+
         StringReader reader = new StringReader(body);
-        rdfDao.persist(reader, context);
+        // use document iri as the context in which to store converted annotations
+        rdfDao.persist(reader, docuementIri);
     }
 }
