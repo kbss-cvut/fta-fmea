@@ -1,4 +1,4 @@
-# fta-fmea
+# FTA-FMEA tool backend
 
 ## Ontology Vocabulary
 
