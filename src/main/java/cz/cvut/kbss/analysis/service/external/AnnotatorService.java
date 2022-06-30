@@ -11,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Service
 @Slf4j
@@ -50,5 +48,17 @@ public class AnnotatorService {
         StringReader reader = new StringReader(body);
         // use document iri as the context in which to store converted annotations
         rdfDao.persist(reader, docuementIri);
+    }
+
+    public  void processAnnotations(){
+        try {
+            log.info("calling external annotation processing service {}", conf.getProcessAnnotationAPI());
+            RestTemplate restTemplate = new RestTemplate();
+            String url = conf.getProcessAnnotationAPI();
+            ResponseEntity<String> response
+                    = restTemplate.getForEntity(url, String.class);
+        }catch (Exception e){
+            log.warn("Failed executing external process annotation service at <{}>. Error message - {}", e.getMessage());
+        }
     }
 }
