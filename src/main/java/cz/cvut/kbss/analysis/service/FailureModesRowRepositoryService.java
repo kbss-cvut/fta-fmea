@@ -42,7 +42,7 @@ public class FailureModesRowRepositoryService extends BaseRepositoryService<Fail
         rowRpnUpdateDTO.copyToEntity(failureModesRow);
 
 
-        if(rowRpnUpdateDTO.getMitigationUri().equals("")){
+        if(rowRpnUpdateDTO.getMitigationUri() == null || rowRpnUpdateDTO.getMitigationUri().equals("")){
             failureModesRow.setMitigation(null);
         }else {
             Mitigation mitigation = mitigationRepositoryService.findRequired(URI.create(rowRpnUpdateDTO.getMitigationUri()));
