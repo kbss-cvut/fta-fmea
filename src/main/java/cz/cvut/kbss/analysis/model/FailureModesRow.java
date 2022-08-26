@@ -24,6 +24,7 @@ public class FailureModesRow extends AbstractEntity {
         this.setLocalEffect(failureModesRow.getLocalEffect());
         this.setFinalEffect(failureModesRow.getFinalEffect());
         this.setRiskPriorityNumber(failureModesRow.getRiskPriorityNumber());
+        this.setMitigation(failureModesRow.getMitigation());
     }
 
     @NotNull(message = "Final Effect must be chosen")
@@ -41,6 +42,9 @@ public class FailureModesRow extends AbstractEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasRPN, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RiskPriorityNumber riskPriorityNumber;
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasMitigation, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Mitigation mitigation;
 
     @Override
     public String toString() {

@@ -20,6 +20,9 @@ public class System extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_documented_in)
+    private Set<Document> documents;
+
     @OWLObjectProperty(iri = Vocabulary.s_p_hasPartComponent, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Component> components = new HashSet<>();
 

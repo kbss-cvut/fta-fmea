@@ -12,6 +12,8 @@ public class FailureModesRowRpnUpdateDTO extends AbstractUpdateDTO<FailureModesR
     private Integer severity;
     private Integer occurrence;
     private Integer detection;
+    private String mitigationUri;
+    private String failureModeUri;
 
     @Override
     public void copyToEntity(FailureModesRow entity) {
