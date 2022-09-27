@@ -34,17 +34,6 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepositoryService userRepositoryService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> register(@RequestBody User user) {
-        log.info("> register - {}", user.getUsername());
-        URI uri = userRepositoryService.register(user);
-
-        log.info("< register - {}", uri);
-        return ResponseEntity.created(uri).build();
-    }
-
     @PostMapping("/signin")
     public AuthenticationResponse signIn(@RequestBody AuthenticationRequest data) {
         log.info("> signIn - {}", data.getUsername());
