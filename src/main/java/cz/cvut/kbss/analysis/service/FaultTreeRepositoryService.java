@@ -331,7 +331,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             parentFaultEvent.addChild(faultEvent);
 
             for (Behavior behaviorChild : behavior.getChildBehaviors()) {
-                if(isVisited(behavior))
+                if(isVisited(behaviorChild))
                     continue;
                 FaultEvent fEvent = new FaultEvent();
                 faultEventUri = createUri(behaviorChild, faultEvent, "");
