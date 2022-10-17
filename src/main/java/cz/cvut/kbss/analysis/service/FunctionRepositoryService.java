@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.Behavior;
@@ -13,19 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
 public class FunctionRepositoryService extends BaseRepositoryService<Function> {
 
     private final FunctionDao functionDao;
+    private final FailureModeDao failureModeDao;
 
     @Autowired
-    public FunctionRepositoryService(@Qualifier("functionValidator") Validator validator, FunctionDao functionDao) {
+    public FunctionRepositoryService(@Qualifier("functionValidator") Validator validator, FunctionDao functionDao, FailureModeDao failureModeDao) {
         super(validator);
         this.functionDao = functionDao;
+        this.failureModeDao = failureModeDao;
     }
 
     @Override
@@ -37,11 +39,30 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     public Function updateFunction(Function funcToUpdate){
         Function function = findRequired(funcToUpdate.getUri());
         function.setName(funcToUpdate.getName());
-        function.setRequiredBehaviors(funcToUpdate.getRequiredBehaviors());
-        function.setImpairedBehaviors(funcToUpdate.getImpairedBehaviors());
-        function.setChildBehaviors(funcToUpdate.getChildBehaviors());
+        function.setRequiredBehaviors(loadFunctions(funcToUpdate.getRequiredBehaviors()));
+        function.setImpairedBehaviors(loadFailureModes(funcToUpdate.getImpairedBehaviors()));
+        function.setChildBehaviors(loadFunctions(funcToUpdate.getChildBehaviors()));
         function.setBehaviorType(funcToUpdate.getBehaviorType());
         return update(function);
+    }
+
+    protected Set<Behavior> loadFunctions(Collection<Behavior> behaviors){
+        return load(behaviors, b -> functionDao.find(b.getUri()).get());
+    }
+
+    protected Set<Behavior> loadFailureModes(Collection<Behavior> behaviors){
+        return load(behaviors, b -> failureModeDao.find(b.getUri()).get());
+    }
+
+    protected Set<Behavior> load(Collection<Behavior> behaviors, java.util.function.Function<Behavior, Behavior> loader){
+        Set<Behavior> ret = new HashSet<>();
+        for(Behavior b : behaviors){
+            Behavior loaded = loader.apply(b);
+            if(loaded != null){
+                ret.add(loaded);
+            }
+        }
+        return ret;
     }
 
     @Transactional(readOnly = true)
