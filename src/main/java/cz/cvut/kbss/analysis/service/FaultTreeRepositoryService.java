@@ -217,45 +217,19 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         parentFaultEvent.addChildren(faultEvents);
     }
 
-    private FaultEvent transferBehaviorToFaultEvent(Behavior behavior, FaultEvent parentEvent) throws URISyntaxException {
-        URI faultEventUri = createUri(behavior, parentEvent, "");
-        URI faultEventUri1 = createUri(behavior, parentEvent, "e");
-        URI faultEventUri2 = createUri(behavior, parentEvent, "f");
+    private FaultEvent transferBehaviorToFaultEvent(Behavior behavior, FaultEvent parentEvent){
+        FaultEvent faultEvent = new FaultEvent();
+        faultEvent.setBehavior(behavior);
 
-        if (faultEventRepositoryService.existsInContext(faultEventUri)) {
-            return faultEventRepositoryService.findRequired(faultEventUri);
-        } else if(faultEventRepositoryService.existsInContext(faultEventUri1)){
-            return faultEventRepositoryService.findRequired(faultEventUri1);
-        } else if(faultEventRepositoryService.existsInContext(faultEventUri2)){
-            return faultEventRepositoryService.findRequired(faultEventUri2);
-        } else {
-            FaultEvent faultEvent = new FaultEvent();
-            faultEvent.setUri(faultEventUri);
-            faultEvent.setBehavior(behavior);
-
-
-            if (behavior instanceof Function) {
-                faultEvent.setName(behavior.getName() + " fails");
-                setFaultEventTypes(behavior, faultEvent);
-            } else if (behavior instanceof FailureMode) {
-                faultEvent.setName(behavior.getName());
-                setFaultEventTypes(true, faultEvent);
-            }
-            faultEventRepositoryService.persist(faultEvent);
-            return faultEvent;
+        if (behavior instanceof Function) {
+            faultEvent.setName(behavior.getName() + " fails");
+            setFaultEventTypes(behavior, faultEvent);
+        } else if (behavior instanceof FailureMode) {
+            faultEvent.setName(behavior.getName());
+            setFaultEventTypes(true, faultEvent);
         }
-    }
-
-    private URI createUri(Behavior behavior, FaultEvent parentEvent, String type) throws URISyntaxException {
-        String behaviorUri = behavior.getUri().toString();
-        if(parentEvent == null){
-            return new URI(identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent
-                    , behaviorUri.substring(behaviorUri.lastIndexOf("/") + 1)) + type);
-        }else{
-            String parentBehaviorUri = parentEvent.getUri().toString();
-            return new URI(identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent
-                    , behaviorUri.substring(behaviorUri.lastIndexOf("/") + 1)) + parentBehaviorUri.split("instance")[1] + type);
-        }
+        faultEventRepositoryService.persist(faultEvent);
+        return faultEvent;
     }
 
     private FaultEvent processImpairingBehavior(Behavior impairingBehavior, FaultEvent impairedBehaviorEvent) throws URISyntaxException {
@@ -263,52 +237,33 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         if(impairingBehavior.getBehaviorType() == BehaviorType.AtomicBehavior && impairedBehaviorEvent.getBehavior() instanceof Function) {
             faultEvent = transferBehaviorToFaultEvent(impairingBehavior, impairedBehaviorEvent);
         }else{
-            URI faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "");
-            URI faultEventUriTypeEvent = createUri(impairingBehavior, impairedBehaviorEvent, "e");
+            faultEvent = new FaultEvent();
+            faultEvent.setBehavior(impairingBehavior);
+            if(impairingBehavior.getBehaviorType() == BehaviorType.AtomicBehavior){
+                faultEvent.setName(impairingBehavior.getName() + " event");
+                setFaultEventTypes(true, faultEvent);
+            }else{
+                faultEvent.setName(impairingBehavior.getName());
+                faultEvent.setEventType(EventType.INTERMEDIATE);
+                faultEvent.setGateType(impairingBehavior.getBehaviorType() == BehaviorType.OrBehavior ? GateType.OR : GateType.AND);
 
-            if(faultEventRepositoryService.existsInContext(faultEventUri)) {
-                faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
-            }else if(faultEventRepositoryService.existsInContext(faultEventUriTypeEvent)){
-                faultEvent = faultEventRepositoryService.findRequired(faultEventUriTypeEvent);
-            }else {
-                faultEvent = new FaultEvent();
-                faultEvent.setUri(faultEventUri);
-                faultEvent.setBehavior(impairingBehavior);
-                if(impairingBehavior.getBehaviorType() == BehaviorType.AtomicBehavior){
-                    faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "e");
-                    faultEvent.setUri(faultEventUri);
-                    faultEvent.setName(impairingBehavior.getName() + " event");
-                    setFaultEventTypes(true, faultEvent);
-                }else{
-                    faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "");
-                    faultEvent.setUri(faultEventUri);
-                    faultEvent.setName(impairingBehavior.getName());
-                    faultEvent.setEventType(EventType.INTERMEDIATE);
-                    faultEvent.setGateType(impairingBehavior.getBehaviorType() == BehaviorType.OrBehavior ? GateType.OR : GateType.AND);
+                for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
+                    if(behaviorChild.isFailureModeCause()) continue;
 
-                    for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
-                        if(behaviorChild.isFailureModeCause()) continue;
-
-                        FaultEvent faultEventChild = new FaultEvent();
-                        faultEventChild.setBehavior(behaviorChild);
-                        faultEventUri = createUri(behaviorChild, faultEvent, "e");
-                        if (faultEventRepositoryService.existsInContext(faultEventUri)) {
-                            faultEventChild = faultEventRepositoryService.findRequired(faultEventUri);
-                        } else {
-                            faultEventChild.setUri(faultEventUri);
-                            faultEventChild.setBehavior(behaviorChild);
-                            faultEventChild.setName(behaviorChild.getName() + " event");
-                            faultEventChild.setEventType(EventType.BASIC);
-                            faultEventChild.setGateType(GateType.UNUSED);
-                            faultEventChild.setProbability(1.);
-                            faultEventRepositoryService.persist(faultEventChild);
-                        }
-                        faultEvent.addChild(faultEventChild);
-                        processBehavior(behaviorChild, faultEventChild);
-                    }
+                    FaultEvent faultEventChild = new FaultEvent();
+                    faultEventChild.setBehavior(behaviorChild);
+                    faultEventChild.setBehavior(behaviorChild);
+                    faultEventChild.setName(behaviorChild.getName() + " event");
+                    faultEventChild.setEventType(EventType.BASIC);
+                    faultEventChild.setGateType(GateType.UNUSED);
+                    faultEventChild.setProbability(1.);
+                    faultEventRepositoryService.persist(faultEventChild);
+                    faultEvent.addChild(faultEventChild);
+                    processBehavior(behaviorChild, faultEventChild);
                 }
-                faultEventRepositoryService.persist(faultEvent);
             }
+            faultEventRepositoryService.persist(faultEvent);
+
         }
         return faultEvent;
     }
@@ -316,35 +271,24 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private void processChildBehaviors(Behavior behavior,FaultEvent parentFaultEvent) throws URISyntaxException {
         FaultEvent faultEvent;
         if(behavior instanceof Function){
-            URI faultEventUri = createUri(behavior, null, "f");
-            if (faultEventRepositoryService.existsInContext(faultEventUri)) {
-                faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
-            } else {
-                faultEvent = new FaultEvent();
-                faultEvent.setBehavior(behavior);
-                faultEvent.setName(behavior.getName() + " fails b/c its parts fail");
-                faultEvent.setEventType(EventType.INTERMEDIATE);
-                faultEvent.setGateType(behavior.getBehaviorType() == BehaviorType.AndBehavior ? GateType.OR : GateType.AND);
-                faultEvent.setUri(faultEventUri);
-                faultEventRepositoryService.persist(faultEvent);
-            }
+            faultEvent = new FaultEvent();
+            faultEvent.setBehavior(behavior);
+            faultEvent.setName(behavior.getName() + " fails b/c its parts fail");
+            faultEvent.setEventType(EventType.INTERMEDIATE);
+            faultEvent.setGateType(behavior.getBehaviorType() == BehaviorType.AndBehavior ? GateType.OR : GateType.AND);
+            faultEventRepositoryService.persist(faultEvent);
+
             parentFaultEvent.addChild(faultEvent);
 
             for (Behavior behaviorChild : behavior.getChildBehaviors()) {
                 if(isVisited(behaviorChild))
                     continue;
                 FaultEvent fEvent = new FaultEvent();
-                faultEventUri = createUri(behaviorChild, faultEvent, "");
-                if (faultEventRepositoryService.existsInContext(faultEventUri)) {
-                    fEvent = faultEventRepositoryService.findRequired(faultEventUri);
-                } else {
-                    fEvent.setBehavior(behaviorChild);
-                    fEvent.setName(behavior.getName() + " fails b/c " + behaviorChild.getName() + " fails");
-                    fEvent.setEventType(EventType.INTERMEDIATE);
-                    fEvent.setGateType(GateType.OR);
-                    fEvent.setUri(faultEventUri);
-                    faultEventRepositoryService.persist(fEvent);
-                }
+                fEvent.setBehavior(behaviorChild);
+                fEvent.setName(behavior.getName() + " fails b/c " + behaviorChild.getName() + " fails");
+                fEvent.setEventType(EventType.INTERMEDIATE);
+                fEvent.setGateType(GateType.OR);
+                faultEventRepositoryService.persist(fEvent);
                 faultEvent.addChild(fEvent);
                 processBehavior(behaviorChild, fEvent);
             }

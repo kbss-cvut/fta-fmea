@@ -34,10 +34,10 @@ public class FaultEventValidator implements Validator {
 
         FaultEvent instance = (FaultEvent) target;
 
-        boolean duplicate = faultEventDao.existsWithPredicate(Vocabulary.s_p_hasName, instance.getName());
-        if(instance.getUri() == null && duplicate) {
-            errors.rejectValue("name", "name.duplicate");
-        }
+//        boolean duplicate = faultEventDao.existsWithPredicate(Vocabulary.s_p_hasName, instance.getName());
+//        if(instance.getUri() == null && duplicate) {
+//            errors.rejectValue("name", "name.duplicate");
+//        }
 
         if (instance.getEventType() == EventType.INTERMEDIATE && (instance.getGateType() == null || instance.getGateType() == GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
