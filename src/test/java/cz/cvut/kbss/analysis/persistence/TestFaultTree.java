@@ -6,13 +6,11 @@ import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.jopa.Persistence;
 import cz.cvut.kbss.jopa.model.*;
 import cz.cvut.kbss.ontodriver.sesame.config.SesameOntoDriverProperties;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -20,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import java.lang.System;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestFaultTree {
 
@@ -28,7 +26,7 @@ public class TestFaultTree {
     protected static EntityManagerFactory emf;
     protected EntityManager em;
 
-    @BeforeClass
+    @BeforeAll
     public static void initForAll(){
 
         Map<String, String> conf = new HashMap<>();
@@ -64,7 +62,7 @@ public class TestFaultTree {
         SecurityContextHolder.setContext(context);
     }
 
-    @Before
+    @BeforeEach
     public void init(){
         if(em != null && em.isOpen()) {
             em.close();

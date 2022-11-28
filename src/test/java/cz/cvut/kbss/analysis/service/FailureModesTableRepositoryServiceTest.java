@@ -4,7 +4,7 @@ import cz.cvut.kbss.analysis.dao.FailureModesTableDao;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,7 +50,7 @@ class FailureModesTableRepositoryServiceTest {
         repositoryService.updateByDTO(updateDTO);
 
         Mockito.verify(failureModesTableDao).update(table);
-        Assert.assertEquals(updateDTO.getName(), table.getName());
+       assertEquals(updateDTO.getName(), table.getName());
     }
 
 }

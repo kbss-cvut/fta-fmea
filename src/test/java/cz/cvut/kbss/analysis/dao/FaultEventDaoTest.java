@@ -5,7 +5,7 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.jopa.model.EntityManager;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,7 +40,7 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
 
         boolean result = faultEventDao.isChild(child.getUri());
 
-        Assert.assertTrue(result);
+       assertTrue(result);
     }
 
     @Test
@@ -55,7 +55,7 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
 
         boolean result = faultEventDao.isChild(notChild.getUri());
 
-        Assert.assertFalse(result);
+       assertFalse(result);
     }
 
 }

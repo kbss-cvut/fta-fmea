@@ -7,7 +7,7 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapdb.Fun;
@@ -64,8 +64,8 @@ class ComponentRepositoryServiceTest {
         Component result = repositoryService.updateByDTO(updateDTO);
 
         Mockito.verify(componentDao).update(component);
-        Assert.assertEquals(component.getUri(), result.getUri());
-        Assert.assertEquals(updateDTO.getName(), result.getName());
+       assertEquals(component.getUri(), result.getUri());
+       assertEquals(updateDTO.getName(), result.getName());
     }
 
     @Test
@@ -86,7 +86,7 @@ class ComponentRepositoryServiceTest {
         Mockito.verify(componentDao).update(componentCaptor.capture());
 
         Component componentToUpdate = componentCaptor.getValue();
-        Assert.assertTrue(componentToUpdate.getFunctions().contains(function));
+       assertTrue(componentToUpdate.getFunctions().contains(function));
     }
 
     @Test
@@ -106,7 +106,7 @@ class ComponentRepositoryServiceTest {
         repositoryService.deleteFunction(component.getUri(), function.getUri());
 
         Mockito.verify(componentDao).update(component);
-        Assert.assertFalse(component.getFunctions().contains(function));
+       assertFalse(component.getFunctions().contains(function));
     }
 
     @Test
@@ -127,7 +127,7 @@ class ComponentRepositoryServiceTest {
         repositoryService.linkComponents(component.getUri(), linkComponent.getUri());
 
         Mockito.verify(componentDao).update(component);
-        Assert.assertEquals(linkComponent.getUri(), component.getParentComponent());
+       assertEquals(linkComponent.getUri(), component.getParentComponent());
     }
 
     @Test
@@ -145,7 +145,7 @@ class ComponentRepositoryServiceTest {
         repositoryService.unlinkComponents(component.getUri());
 
         Mockito.verify(componentDao).update(component);
-        Assert.assertNull(component.getParentComponent());
+       assertNull(component.getParentComponent());
     }
 
 }

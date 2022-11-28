@@ -4,7 +4,7 @@ import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.validation.FunctionValidator;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -63,7 +63,7 @@ public class FunctionRepositoryServiceTest {
         Mockito.verify(functionDao).update(functionCaptor.capture());
 
         Function functionToUpdate = functionCaptor.getValue();
-        Assertions.assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction));
+       assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction));
     }
 
     @Test
@@ -95,10 +95,10 @@ public class FunctionRepositoryServiceTest {
         Mockito.verify(functionDao,times(3)).update(functionCaptor.capture());
 
         Function functionToUpdate = functionCaptor.getValue();
-        Assertions.assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction));
-        Assertions.assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction2));
-        Assertions.assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction3));
-        Assertions.assertEquals(3,functionToUpdate.getRequiredBehaviors().size());
+       assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction));
+       assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction2));
+       assertTrue(functionToUpdate.getRequiredBehaviors().contains(dependentFunction3));
+       assertEquals(3,functionToUpdate.getRequiredBehaviors().size());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FunctionRepositoryServiceTest {
         functionRepositoryService.deleteRequiredBehavior(function.getUri(), dependentFunction.getUri());
 
         Mockito.verify(functionDao).update(function);
-        Assertions.assertFalse(function.getRequiredBehaviors().contains(function));
+       assertFalse(function.getRequiredBehaviors().contains(function));
     }
 
     @Test
@@ -153,10 +153,10 @@ public class FunctionRepositoryServiceTest {
         functionRepositoryService.deleteRequiredBehavior(function.getUri(), dependentFunction2.getUri());
 
         Mockito.verify(functionDao,times(5)).update(function);
-        Assertions.assertFalse(function.getRequiredBehaviors().contains(dependentFunction));
-        Assertions.assertFalse(function.getRequiredBehaviors().contains(dependentFunction2));
-        Assertions.assertTrue(function.getRequiredBehaviors().contains(dependentFunction3));
-        Assertions.assertEquals(1,function.getRequiredBehaviors().size());
+       assertFalse(function.getRequiredBehaviors().contains(dependentFunction));
+       assertFalse(function.getRequiredBehaviors().contains(dependentFunction2));
+       assertTrue(function.getRequiredBehaviors().contains(dependentFunction3));
+       assertEquals(1,function.getRequiredBehaviors().size());
     }
 
 

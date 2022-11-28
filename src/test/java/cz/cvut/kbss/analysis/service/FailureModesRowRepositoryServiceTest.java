@@ -4,7 +4,7 @@ import cz.cvut.kbss.analysis.dao.FailureModesRowDao;
 import cz.cvut.kbss.analysis.dto.update.FailureModesRowRpnUpdateDTO;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FailureModesRow;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,9 +50,9 @@ class FailureModesRowRepositoryServiceTest {
         repositoryService.updateByDTO(updateDTO);
 
         Mockito.verify(failureModesRowDao).update(row);
-        Assert.assertEquals(updateDTO.getSeverity(), row.getRiskPriorityNumber().getSeverity());
-        Assert.assertEquals(updateDTO.getOccurrence(), row.getRiskPriorityNumber().getOccurrence());
-        Assert.assertEquals(updateDTO.getDetection(), row.getRiskPriorityNumber().getDetection());
+       assertEquals(updateDTO.getSeverity(), row.getRiskPriorityNumber().getSeverity());
+       assertEquals(updateDTO.getOccurrence(), row.getRiskPriorityNumber().getOccurrence());
+       assertEquals(updateDTO.getDetection(), row.getRiskPriorityNumber().getDetection());
     }
 
 }
