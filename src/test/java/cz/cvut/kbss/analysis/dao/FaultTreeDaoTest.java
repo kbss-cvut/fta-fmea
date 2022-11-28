@@ -6,7 +6,7 @@ import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.jopa.model.EntityManager;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,7 +45,7 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
 
         boolean result = faultTreeDao.isRootEvent(rootEvent.getUri());
 
-        Assertions.assertTrue(result);
+       assertTrue(result);
     }
 
     @Test
@@ -74,7 +74,7 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
 
         boolean result = faultTreeDao.isRootEvent(child.getUri());
 
-        Assertions.assertFalse(result);
+       assertFalse(result);
     }
 
     @Test // simulation of symmetric branches not queried in the application
@@ -116,26 +116,26 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
         transactional(() -> faultTreeDao.update(tree)); // probabilities propagation update (simulation)
 
         Optional<FaultTree> optionalTree = faultTreeDao.find(tree.getUri());
-        if(optionalTree.isEmpty()) Assertions.fail("Tree was not queried");
+        if(optionalTree.isEmpty())fail("Tree was not queried");
 
         FaultTree queriedTree = optionalTree.get();
         FaultEvent manifestingEvent = queriedTree.getManifestingEvent();
-        Assertions.assertNotNull(manifestingEvent);
+       assertNotNull(manifestingEvent);
 
         Set<FaultEvent> rootChildren = manifestingEvent.getChildren();
-        Assertions.assertFalse(rootChildren.isEmpty());
+       assertFalse(rootChildren.isEmpty());
 
         rootChildren.forEach(child -> {
-            Assertions.assertEquals(1, child.getChildren().size());
+           assertEquals(1, child.getChildren().size());
             FaultEvent childX = child.getChildren().iterator().next();
-            Assertions.assertEquals("X", childX.getName());
+           assertEquals("X", childX.getName());
 
             Set<FaultEvent> xChildren = childX.getChildren();
-            Assertions.assertFalse(xChildren.isEmpty());
+           assertFalse(xChildren.isEmpty());
 
             Set<String> xChildrenNames = xChildren.stream().map(FaultEvent::getName).collect(Collectors.toSet());
-            Assertions.assertTrue(xChildrenNames.contains("Y"));
-            Assertions.assertTrue(xChildrenNames.contains("Z"));
+           assertTrue(xChildrenNames.contains("Y"));
+           assertTrue(xChildrenNames.contains("Z"));
         });
     }
 

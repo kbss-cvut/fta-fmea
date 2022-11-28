@@ -6,7 +6,6 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
 import cz.cvut.kbss.analysis.model.System;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -55,7 +54,7 @@ class SystemRepositoryServiceTest {
         repositoryService.rename(systemRename);
 
         Mockito.verify(systemDao).update(system);
-        Assertions.assertEquals(systemRename.getName(), system.getName());
+       assertEquals(systemRename.getName(), system.getName());
     }
 
     @Test
@@ -75,7 +74,7 @@ class SystemRepositoryServiceTest {
         repositoryService.addComponent(system.getUri(), component.getUri());
 
         Mockito.verify(systemDao).update(system);
-        Assertions.assertTrue(system.getComponents().contains(component));
+       assertTrue(system.getComponents().contains(component));
     }
 
     @Test
@@ -96,7 +95,7 @@ class SystemRepositoryServiceTest {
         repositoryService.removeComponent(system.getUri(), component.getUri());
 
         Mockito.verify(systemDao).update(system);
-        Assertions.assertFalse(system.getComponents().contains(component));
+       assertFalse(system.getComponents().contains(component));
     }
 
 }

@@ -4,7 +4,7 @@ import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -114,8 +114,8 @@ class FaultTreeRepositoryServiceTest {
         List<FaultEvent> result = repositoryService.getReusableEvents(tree.getUri());
 
         Mockito.verify(faultEventRepositoryService).findAll();
-        Assertions.assertEquals(1, result.size());
-        Assertions.assertTrue(result.contains(nonTreeEvent));
+       assertEquals(1, result.size());
+       assertTrue(result.contains(nonTreeEvent));
     }
 
 }

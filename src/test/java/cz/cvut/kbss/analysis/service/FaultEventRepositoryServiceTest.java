@@ -8,7 +8,7 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -105,7 +105,7 @@ public class FaultEventRepositoryServiceTest {
 
         Double result = repositoryService.propagateProbability(event);
 
-        Assertions.assertEquals(event.getProbability(), result);
+       assertEquals(event.getProbability(), result);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class FaultEventRepositoryServiceTest {
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
 
         FailureMode result = repositoryService.getFailureMode(event.getUri());
-        Assertions.assertEquals(event.getFailureMode(), result);
+       assertEquals(event.getFailureMode(), result);
     }
 
     @Test
@@ -143,9 +143,9 @@ public class FaultEventRepositoryServiceTest {
 
         Mockito.verify(faultEventDao, times(1)).update(event);
 
-        Assertions.assertEquals(failureMode, result);
-        Assertions.assertTrue(component.getFailureModes().contains(failureMode));
-        Assertions.assertTrue(failureMode.getManifestations().contains(event));
+       assertEquals(failureMode, result);
+       assertTrue(component.getFailureModes().contains(failureMode));
+       assertTrue(failureMode.getManifestations().contains(event));
     }
 
     @Test

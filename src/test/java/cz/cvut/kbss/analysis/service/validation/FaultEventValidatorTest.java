@@ -7,7 +7,7 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.model.util.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -45,8 +45,8 @@ class FaultEventValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
 
-        Assertions.assertTrue(bindingResult.hasErrors());
-        Assertions.assertNotNull(bindingResult.getFieldError("name"));
+       assertTrue(bindingResult.hasErrors());
+       assertNotNull(bindingResult.getFieldError("name"));
     }
 
     @Test
@@ -61,7 +61,7 @@ class FaultEventValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
 
-        Assertions.assertFalse(bindingResult.hasErrors());
+       assertFalse(bindingResult.hasErrors());
     }
 
     @Test
@@ -73,8 +73,8 @@ class FaultEventValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
 
-        Assertions.assertTrue(bindingResult.hasErrors());
-        Assertions.assertNotNull(bindingResult.getFieldError("gateType"));
+       assertTrue(bindingResult.hasErrors());
+       assertNotNull(bindingResult.getFieldError("gateType"));
     }
 
     @Test
@@ -87,8 +87,8 @@ class FaultEventValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
 
-        Assertions.assertTrue(bindingResult.hasErrors());
-        Assertions.assertNotNull(bindingResult.getFieldError("gateType"));
+       assertTrue(bindingResult.hasErrors());
+       assertNotNull(bindingResult.getFieldError("gateType"));
     }
 
     @Test
@@ -101,8 +101,8 @@ class FaultEventValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
 
-        Assertions.assertTrue(bindingResult.hasErrors());
-        Assertions.assertNotNull(bindingResult.getFieldError("gateType"));
+       assertTrue(bindingResult.hasErrors());
+       assertNotNull(bindingResult.getFieldError("gateType"));
     }
 
 }
