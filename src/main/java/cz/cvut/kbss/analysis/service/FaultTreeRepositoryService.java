@@ -198,7 +198,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         }
 
         for (Behavior requiredBehavior : behavior.getRequiredBehaviors()) {
-            if(isVisited(requiredBehavior))
+            if(isVisited(requiredBehavior) || requiredBehavior.isFailureModeCause())
                 continue;
             FaultEvent tmp = transferBehaviorToFaultEvent(requiredBehavior, parentFaultEvent);
             faultEvents.add(tmp);
@@ -281,7 +281,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             parentFaultEvent.addChild(faultEvent);
 
             for (Behavior behaviorChild : behavior.getChildBehaviors()) {
-                if(isVisited(behaviorChild))
+                if(isVisited(behaviorChild) || behaviorChild.isFailureModeCause())
                     continue;
                 FaultEvent fEvent = new FaultEvent();
                 fEvent.setBehavior(behaviorChild);
