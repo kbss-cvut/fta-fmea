@@ -154,39 +154,37 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
                         .stream()
                         .filter(Mitigation.class::isInstance)
                         .forEach(mitigation -> row.put("mitigation", mitigation.getName()));
-            }
 
-            String localEffectUri = "" ;
-            if(treeIndex + 1  < treePathList.size()){
-                localEffect = treePathList.get(treeIndex + 1);
-
-                if (localEffect.getBehavior() != null
-                        && !treeRoot.getName().equals(localEffect.getName())
-                        && localEffect.getBehavior().getComponent() == function.getComponent()) {
-                    row.put("localEffect", localEffect.getName());
+                for (FaultEvent faultEvent : treePathList) {
+                    localEffect = faultEvent;
+                    if (!localEffect.getName().equals(failureMode.getName())) {
+                        break;
+                    }
                 }
-                localEffectUri = localEffect.getUri().toString();
-
             }
+
+            String localEffectUri = localEffect.getUri().toString();
+            row.put("localEffect", localEffect.getName());
 
             Collections.reverse(treePathList);
-            String localEffectUriCopy = localEffectUri;
-            List<Pair<FaultEvent, Integer>> indexedNextEffects = IntStream.range(0, treePathList.size())
+            List<FaultEvent> indexedNextEffects = IntStream.range(0, treePathList.size())
                     .boxed()
-                    .map(index -> Pair.of(treePathList.get(index), index))
-                    .filter(pair -> !pair.getFirst().getUri().equals(treeRoot.getUri()))
-                    .filter(pair -> r.getEffects().contains(pair.getFirst().getUri()))
-                    .filter(pair -> !pair.getFirst().getUri().equals(functionFailure.getUri()))
-                    .filter(pair -> !pair.getFirst().getUri().toString().equals(localEffectUriCopy))
+                    .map(treePathList::get)
+                    .filter(faultE -> !faultE.getUri().equals(treeRoot.getUri()))
+                    .filter(faultE -> r.getEffects().contains(faultE.getUri()))
+                    .filter(faultE -> !faultE.getUri().equals(functionFailure.getUri()))
+                    .filter(faultE -> !faultE.getUri().toString().equals(localEffectUri))
                     .collect(Collectors.toList());
 
-            for (int i = indexedNextEffects.size() - 1; i >= 0; i--) {
-                Pair<FaultEvent, Integer> pair = indexedNextEffects.get(i);
+            for (int i = 0 ; i < indexedNextEffects.size(); i++) {
+                FaultEvent faultE = indexedNextEffects.get(i);
+                String intermediateEffect = "intermediateEffect-" + i;
+
                 if (columns.stream().map(FailureModesTableField::getField)
-                        .noneMatch(s -> s.equals("intermediateEffect-" + pair.getSecond()))) {
-                    columns.add(new FailureModesTableField("intermediateEffect-" + pair.getSecond(), "Intermediate effect"));
+                        .noneMatch(s -> s.equals(intermediateEffect))) {
+                    columns.add(new FailureModesTableField(intermediateEffect, "Intermediate effect"));
                 }
-                row.put("intermediateEffect-" + pair.getSecond(), pair.getFirst().getName());
+                row.put(intermediateEffect, faultE.getName());
             }
 
             row.put("finalEffect", treeRoot.getName());
