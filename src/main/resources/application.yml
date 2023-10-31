@@ -6,7 +6,7 @@ repository:
 
 
 persistence:
-  driver: cz.cvut.kbss.ontodriver.sesame.SesameDataSource
+  driver: cz.cvut.kbss.ontodriver.rdf4j.Rdf4jDataSource
   language: cs
 
 security:
