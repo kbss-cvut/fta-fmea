@@ -5,7 +5,7 @@ import cz.cvut.kbss.analysis.config.conf.RepositoryConf;
 import cz.cvut.kbss.jopa.Persistence;
 import cz.cvut.kbss.jopa.model.EntityManagerFactory;
 import cz.cvut.kbss.jopa.model.JOPAPersistenceProvider;
-import cz.cvut.kbss.ontodriver.sesame.config.SesameOntoDriverProperties;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +19,7 @@ import java.util.Map;
 import static cz.cvut.kbss.jopa.model.JOPAPersistenceProperties.*;
 import static cz.cvut.kbss.jopa.model.PersistenceProperties.JPA_PERSISTENCE_PROVIDER;
 import static cz.cvut.kbss.ontodriver.config.OntoDriverProperties.*;
+import static cz.cvut.kbss.ontodriver.rdf4j.config.Rdf4jOntoDriverProperties.*;
 
 /**
  * Sets up persistence and provides {@link EntityManagerFactory} as Spring bean.
@@ -73,7 +74,7 @@ public class MainPersistenceFactory {
         }
         // OPTIMIZATION: Always use statement retrieval with unbound property. Should spare
         // repository queries
-        properties.put(SesameOntoDriverProperties.SESAME_LOAD_ALL_THRESHOLD, "1");
+        properties.put(LOAD_ALL_THRESHOLD, "1");
         this.emf = Persistence.createEntityManagerFactory("fta-fmea", properties);
     }
 

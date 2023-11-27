@@ -3,14 +3,14 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "io.freefair.gradle:aspectj-plugin:3.8.4"
+        classpath "io.freefair.gradle:aspectj-plugin:6.4.3"
     }
 }
 
 plugins {
-    id 'org.springframework.boot' version '2.3.4.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id "io.freefair.aspectj.post-compile-weaving" version "4.1.4"
+    id 'org.springframework.boot' version '2.7.17'
+    id 'io.spring.dependency-management' version '1.1.3'
+    id 'io.freefair.aspectj.post-compile-weaving' version '8.4'
     id 'java'
     id 'war'
 }
@@ -19,8 +19,8 @@ group = 'cz.cvut.kbss.analysis'
 version = '0.0.1-SNAPSHOT'
 
 compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
 }
 
 repositories {
@@ -34,11 +34,11 @@ war {
 sourceSets.main.java.srcDirs += "src/main/generated"
 
 dependencies {
-    def jopaVersion = '0.14.7'
+    def jopaVersion = '1.1.4'
     implementation "cz.cvut.kbss.jopa:jopa-impl:$jopaVersion"
-    implementation "cz.cvut.kbss.jopa:ontodriver-sesame:$jopaVersion"
-    implementation 'cz.cvut.kbss.jsonld:jb4jsonld-jackson:0.5.1'
-    implementation 'com.github.ledsoft:jopa-spring-transaction:0.0.7'
+    implementation "cz.cvut.kbss.jopa:ontodriver-rdf4j:$jopaVersion"
+    implementation 'cz.cvut.kbss.jsonld:jb4jsonld-jackson:0.13.2'
+    implementation 'com.github.ledsoft:jopa-spring-transaction:0.2.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -53,7 +53,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
-    aspect 'cz.cvut.kbss.jopa:jopa-impl:0.14.4'
+    aspect 'cz.cvut.kbss.jopa:jopa-impl:1.1.4'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

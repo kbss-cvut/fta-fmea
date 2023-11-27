@@ -5,7 +5,7 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.exception.ValidationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,8 +42,8 @@ class ComponentValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(component, componentValidator);
         componentValidator.validate(component, bindingResult);
 
-        Assert.assertTrue(bindingResult.hasErrors());
-        Assert.assertNotNull(bindingResult.getFieldError("name"));
+        Assertions.assertTrue(bindingResult.hasErrors());
+        Assertions.assertNotNull(bindingResult.getFieldError("name"));
     }
 
     @Test
@@ -56,7 +56,7 @@ class ComponentValidatorTest {
         BindingResult bindingResult = ValidationTestUtils.createBinding(component, componentValidator);
         componentValidator.validate(component, bindingResult);
 
-        Assert.assertFalse(bindingResult.hasErrors());
+        Assertions.assertFalse(bindingResult.hasErrors());
     }
 
 }
