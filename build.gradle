@@ -53,6 +53,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
+    implementation 'javax.xml.bind:jaxb-api:2.3.1' // needed for java 17
+
     aspect 'cz.cvut.kbss.jopa:jopa-impl:1.1.4'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
