@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -21,10 +21,10 @@ public class FailureModesTable extends AbstractEntity {
     @OWLDataProperty(iri = Vocabulary.s_p_hasName)
     private String name;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.LAZY)
     private FaultTree faultTree;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasRow, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_hasRow, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<FailureModesRow> rows = new HashSet<>();
 
     @Override
