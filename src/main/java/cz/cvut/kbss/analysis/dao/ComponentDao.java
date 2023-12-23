@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.net.URI;
 
 @Repository
-public class ComponentDao extends BaseDao<Component> {
+public class ComponentDao extends NamedEntityDao<Component> {
 
     @Autowired
     public ComponentDao(EntityManager em, PersistenceConf config) {

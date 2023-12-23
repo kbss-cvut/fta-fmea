@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.net.URI;
 
 @Repository
-public class FaultTreeDao extends BaseDao<FaultTree> {
+public class FaultTreeDao extends NamedEntityDao<FaultTree> {
 
     @Autowired
     protected FaultTreeDao(EntityManager em, PersistenceConf config) {
