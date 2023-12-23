@@ -34,6 +34,11 @@ public class SystemController {
         return repositoryService.findAll();
     }
 
+    @GetMapping("/summaries")
+    public List<System> summaries() {
+        return repositoryService.findAllSummaries();
+    }
+
     @GetMapping(value = "/{systemFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public System find(@PathVariable(name = "systemFragment") String systemFragment) {
         log.info("> find - {}", systemFragment);

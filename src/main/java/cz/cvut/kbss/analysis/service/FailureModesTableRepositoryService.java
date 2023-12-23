@@ -299,4 +299,8 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
         return stringWriter.toString();
     }
 
+    @Transactional(readOnly = true)
+    public List<FailureModesTable> findAllSummaries(){
+        return ((FailureModesTableDao)getPrimaryDao()).findAllSummaries();
+    }
 }
