@@ -15,15 +15,7 @@ import java.util.Set;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class Behavior extends AbstractEntity {
-
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
-
-    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
-    private String description;
+public abstract class Behavior extends NamedEntity {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasBehaviorType)
     private BehaviorType behaviorType = BehaviorType.AtomicBehavior;

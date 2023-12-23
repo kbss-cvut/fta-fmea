@@ -14,12 +14,7 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_Component)
 @Getter
 @Setter
-public class Component extends AbstractEntity {
-
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
+public class Component extends NamedEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Function> functions = new HashSet<>();

@@ -14,12 +14,8 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_FailureModesTable)
 @Getter
 @Setter
-public class FailureModesTable extends AbstractEntity {
+public class FailureModesTable extends NamedEntity {
 
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.LAZY)
     private FaultTree faultTree;

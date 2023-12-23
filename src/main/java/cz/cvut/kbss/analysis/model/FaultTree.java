@@ -15,12 +15,7 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_FaultTree)
 @Getter
 @Setter
-public class FaultTree extends AbstractEntity {
-
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
+public class FaultTree extends NamedEntity {
 
     @NotNull(message = "Manifesting event must be chosen")
     @ParticipationConstraints(nonEmpty = true)

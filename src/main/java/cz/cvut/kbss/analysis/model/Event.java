@@ -13,7 +13,7 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_Event)
 @Getter
 @Setter
-public class Event extends AbstractEntity {
+public class Event extends NamedEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf, cascade = CascadeType.ALL)
     private Behavior behavior;
