@@ -78,4 +78,16 @@ public class User extends AbstractEntity implements UserDetails {
         return Objects.hash(getUri());
     }
 
+    /**
+     * @return A copy of this user.
+     */
+    public User copy() {
+        final User copy = new User();
+        copy.setUri(getUri());
+        copy.setUsername(getUsername());
+        copy.setPassword(getPassword());
+        copy.setRoles(getRoles());
+        return copy;
+    }
+
 }

@@ -1,6 +1,6 @@
 package cz.cvut.kbss.analysis.exception;
 
-public class EntityNotFoundException extends RuntimeException {
+public class EntityNotFoundException extends FtaFmeaException {
 
     public EntityNotFoundException(String message) {
         super(message);

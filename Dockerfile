@@ -1,10 +1,10 @@
-FROM maven:3.6.1-jdk-11 as MAVEN
+FROM maven:3.6.1-jdk-11 AS MAVEN
 
 COPY . /fta-fmea
 WORKDIR /fta-fmea/ontology-generator
 RUN mvn clean install
 
-FROM gradle:6.4-jdk11 as GRADLE
+FROM gradle:6.4-jdk11 AS GRADLE
 COPY . /fta-fmea
 WORKDIR /fta-fmea
 

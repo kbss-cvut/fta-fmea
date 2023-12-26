@@ -1,0 +1,102 @@
+version: '3.9'
+
+services:
+  fta-fmea:
+    image: 'ghcr.io/kbss-cvut/kbss-cvut/fta-fmea-ui:latest'
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      - fta-fmea-server
+    environment:
+      APP_TITLE: "FTA FMEA"
+      BASENAME: "./"
+      LANGUAGE: "cs"
+      NAVIGATOR_LANGUAGE: "true"
+      API_URL: "http://localhost:8080/fta-fmea-server"
+      APP_INFO: "<a href=\"https://github.com/kbss-cvut\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"KBSS CVUT v Praze\">© KBSS CVUT v Praze, 2023</a>"
+      AUTHENTICATION: "oidc"
+      AUTH_SERVER_URL: "http://localhost:8088/realms/fta-fmea"
+      AUTH_CLIENT_ID: "fta-fmea-ui"
+      FORCE_BASENAME: "true"
+  fta-fmea-server:
+    build: .
+    image: fta-fmea-server
+    container_name: fta-fmea-server
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - s-pipes-engine
+      - db-server
+      - auth-server
+    environment:
+      REPOSITORYURL: "http://db-server:7200/repositories/fta-fmea-app"
+      FORMGENREPOSITORYURL: "http://db-server:7200/repositories/fta-fmea-formgen"
+      FORMGENSERVICEURL: "http://s-pipes-engine:8080/s-pipes/service?_pId=clone&sgovRepositoryUrl=https%3A%2F%2Fgraphdb.onto.fel.cvut.cz%2Frepositories%2Fkodi-slovnik-gov-cz"
+      SECURITY_PROVIDER: "oidc"
+      SERVER_SERVLET_CONTEXTPATH: "/fta-fmea-server"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://localhost:8088/realms/fta-fmea"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: "http://auth-server:8080/realms/fta-fmea/protocol/openid-connect/certs"
+
+  s-pipes-engine:
+    image: "ghcr.io/kbss-cvut/s-pipes/s-pipes-engine:latest"
+    ports:
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      - db-server
+  db-server:
+    build:
+      context: db-server
+    environment:
+      GDB_JAVA_OPTS: "-Ddefault.min.distinct.threshold=67108864"
+    ports:
+      - "127.0.0.1:7200:7200"
+    volumes:
+      - data:/opt/graphdb/home
+  auth-server-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - auth-server-db:/var/lib/postgresql/data
+  auth-server:
+    image: "ghcr.io/kbss-cvut/keycloak-graphdb-user-replicator/keycloak-graphdb:latest"
+    command:
+      - start --import-realm --features="token-exchange,admin-fine-grained-authz"
+    environment:
+      KC_IMPORT: realm-export.json
+      KC_HOSTNAME_URL: "http://localhost:8088"
+      KC_HOSTNAME_ADMIN_URL: "http://localhost:8088"
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KEYCLOAK_ADMIN: ${KC_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+      DB_VENDOR: POSTGRES
+      DB_ADDR: auth-server-db
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+      DB_SCHEMA: "public"
+      DB_SERVER_URL: "http://db-server:7200"
+      DB_SERVER_REPOSITORY_ID: "fta-fmea-app"
+      REPOSITORY_LANGUAGE: "en"
+      VOCABULARY_USER_TYPE: "http://onto.fel.cvut.cz/ontologies/fta-fmea/user"
+      VOCABULARY_USER_FIRST_NAME: "http://xmlns.com/foaf/0.1/firstName"
+      VOCABULARY_USER_LAST_NAME: "http://xmlns.com/foaf/0.1/lastName"
+      VOCABULARY_USER_USERNAME: "http://xmlns.com/foaf/0.1/accountName"
+      VOCABULARY_USER_EMAIL: "http://xmlns.com/foaf/0.1/mbox"
+      ADD_ACCOUNTS: false
+      REALM_ID: "fta-fmea"
+    ports:
+      - "127.0.0.1:8088:8080"
+    volumes:
+      - auth-server:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import
+    depends_on:
+      - auth-server-db
+
+volumes:
+  data:
+  auth-server:
+  auth-server-db:
