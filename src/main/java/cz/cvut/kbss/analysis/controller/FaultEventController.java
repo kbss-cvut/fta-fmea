@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.FaultEventRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -45,6 +46,14 @@ public class FaultEventController {
     public void update(@RequestBody FaultEvent faultEvent) {
         log.info("> update - updating event - {}", faultEvent);
         repositoryService.update(faultEvent);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(value = "/{faultEventFragment}/rectangle", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public void updateRectangle(@PathVariable(name = "faultEventFragment") String faultEventFragment, @RequestBody Rectangle rectangle) {
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        log.trace("> update - updating rectangle - {} for event <{}>", rectangle, faultEventUri);
+        repositoryService.update(rectangle);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

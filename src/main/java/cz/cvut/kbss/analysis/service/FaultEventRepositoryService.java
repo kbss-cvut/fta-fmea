@@ -9,6 +9,7 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -134,6 +135,12 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         update(faultEvent);
 
         log.info("< updateChildrenSequence");
+    }
+
+    @Transactional
+    public void update(Rectangle rect){
+        faultEventDao.update(rect);
+        log.trace("< updateRectangle");
     }
 
     @Transactional(readOnly = true)
