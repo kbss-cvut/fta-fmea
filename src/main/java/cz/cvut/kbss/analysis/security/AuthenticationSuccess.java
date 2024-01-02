@@ -6,16 +6,15 @@ import cz.cvut.kbss.analysis.exception.FtaFmeaException;
 import cz.cvut.kbss.analysis.security.model.LoginStatus;
 import cz.cvut.kbss.analysis.service.ConfigReader;
 import cz.cvut.kbss.analysis.util.ConfigParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,9 +24,8 @@ import java.util.Optional;
  * Writes basic login/logout information into the response.
  */
 @Service
+@Slf4j
 public class AuthenticationSuccess implements AuthenticationSuccessHandler, LogoutSuccessHandler {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationSuccess.class);
 
     private final ObjectMapper mapper;
 
@@ -42,9 +40,7 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
         final String username = getUsername(authentication);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Successfully authenticated user {}", username);
-        }
+        log.atTrace().log("Successfully authenticated user {}", username);
         addSameSiteCookieAttribute(httpServletResponse);
         final LoginStatus loginStatus = new LoginStatus(true, authentication.isAuthenticated(), username, null);
         mapper.writeValue(httpServletResponse.getOutputStream(), loginStatus);
@@ -60,9 +56,7 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
     @Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                 Authentication authentication) throws IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Successfully logged out user {}", getUsername(authentication));
-        }
+        log.atTrace().log("Successfully logged out user {}", getUsername(authentication));
         final LoginStatus loginStatus = new LoginStatus(false, true, null, null);
         mapper.writeValue(httpServletResponse.getOutputStream(), loginStatus);
     }
@@ -93,10 +87,7 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
     private void addSameSiteCookieAttribute(HttpServletResponse response) {
         String configValue = config.getConfig(ConfigParam.SECURITY_SAME_SITE, "");
 
-        if (configValue.equals("")) {
-            LOG.debug("SameSite attribute for set-cookie header not configured.");
-            return;
-        }
+        log.debug("SameSite attribute for set-cookie header configured to {}.", configValue);
 
         SameSiteValue sameSiteValue = SameSiteValue.getValue(configValue)
                 .orElseThrow(

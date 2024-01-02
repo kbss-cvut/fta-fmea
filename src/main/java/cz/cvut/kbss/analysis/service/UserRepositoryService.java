@@ -60,7 +60,7 @@ public class UserRepositoryService extends BaseRepositoryService<User> {
     public void updateCurrent(UserUpdateDTO userUpdate) {
         log.info("> updateCurrent - {}", userUpdate.getUsername());
 
-        User currentUser = SecurityUtils.currentUser();
+        User currentUser = getCurrentUser();
         if (!currentUser.getUri().equals(userUpdate.getUri())) {
             log.warn("< updateCurrent - URIs do not match! {} != {}", currentUser.getUri(), userUpdate.getUri());
             throw new LogicViolationException("User update uri does not match current user!");

@@ -13,7 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("security")
 public class SecurityConf {
         private String allowedOrigins;
+
         private String appContext;
+
         private String issuerUri;
 
         private String secretKey;

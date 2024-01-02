@@ -4,8 +4,7 @@ package cz.cvut.kbss.analysis.security;
 import cz.cvut.kbss.analysis.config.SecurityConfig;
 import cz.cvut.kbss.analysis.config.conf.SecurityConf;
 import cz.cvut.kbss.analysis.util.OidcGrantedAuthoritiesExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +34,8 @@ import java.util.Set;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@Slf4j
 public class OAuth2SecurityConfig {
-    private static final Logger LOG = LoggerFactory.getLogger(OAuth2SecurityConfig.class);
 
     private final AuthenticationSuccess authenticationSuccess;
 
@@ -55,7 +54,7 @@ public class OAuth2SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        LOG.debug("Using OAuth2/OIDC security.");
+        log.debug("Using OAuth2/OIDC security.");
         http.oauth2ResourceServer(
                         auth -> auth.jwt(jwt -> jwt.jwtAuthenticationConverter(grantedAuthoritiesExtractor())))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
@@ -67,7 +66,7 @@ public class OAuth2SecurityConfig {
         return http.build();
     }
 
-    private CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource() {
         return SecurityConfig.createCorsConfiguration(config);
     }
 
