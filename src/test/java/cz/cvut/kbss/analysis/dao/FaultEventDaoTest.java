@@ -4,6 +4,8 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,13 +25,13 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
     public void isChild_isChild_shouldReturnTrue() {
         FaultEvent parent = new FaultEvent();
         parent.setName("parentEvent");
-        parent.setEventType(EventType.INTERMEDIATE);
+        parent.setEventType(FtaEventType.INTERMEDIATE);
         parent.setGateType(GateType.AND);
         parent.setUri(Generator.generateUri());
 
         FaultEvent child = new FaultEvent();
         child.setName("childEvent");
-        child.setEventType(EventType.BASIC);
+        child.setEventType(FtaEventType.BASIC);
         child.setGateType(GateType.UNUSED);
         child.setUri(Generator.generateUri());
 
@@ -47,7 +49,7 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
     public void isChild_isNot_shouldReturnFalse() {
         FaultEvent notChild = new FaultEvent();
         notChild.setName("event");
-        notChild.setEventType(EventType.BASIC);
+        notChild.setEventType(FtaEventType.BASIC);
         notChild.setGateType(GateType.UNUSED);
         notChild.setUri(Generator.generateUri());
 

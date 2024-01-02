@@ -1,6 +1,6 @@
 package cz.cvut.kbss.analysis.service.strategy;
 
-import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.service.strategy.probability.ProbabilityPropagationStrategy;
 
 import java.util.HashMap;
