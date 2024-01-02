@@ -27,7 +27,7 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
 
     public void update(Rectangle rect){
         try{
-            em.persist(rect);
+            em.merge(rect);
         }catch (RuntimeException e){
             throw new PersistenceException(e);
         }
