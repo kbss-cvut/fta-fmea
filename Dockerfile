@@ -1,21 +1,21 @@
-FROM maven:3.6.1-jdk-11 AS MAVEN
+FROM maven:3.9.6-eclipse-temurin-17-alpine as MAVEN
 
 COPY . /fta-fmea
 WORKDIR /fta-fmea/ontology-generator
 RUN mvn clean install
 
-FROM gradle:6.4-jdk11 AS GRADLE
+FROM gradle:8.4-jdk17-alpine as GRADLE
 COPY . /fta-fmea
 WORKDIR /fta-fmea
 
 COPY --from=MAVEN /fta-fmea/src/main/generated/cz/cvut/kbss/analysis/util/Vocabulary.java \
                    ./src/main/generated/cz/cvut/kbss/analysis/util/Vocabulary.java
 
-RUN ./gradlew clean war
+RUN ./gradlew clean bootJar
 
-FROM tomcat:8-jdk11
+FROM eclipse-temurin:17-jdk-alpine as runtime
 
-COPY --from=GRADLE /fta-fmea/build/libs/fta-fmea-*.war /usr/local/tomcat/webapps/fta-fmea.war
+COPY --from=GRADLE /fta-fmea/build/libs/fta-fmea-*.jar /fta-fmea.jar
 
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+CMD ["java", "-jar", "/fta-fmea.jar"]
