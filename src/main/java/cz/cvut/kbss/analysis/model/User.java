@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -76,6 +76,18 @@ public class User extends AbstractEntity implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(getUri());
+    }
+
+    /**
+     * @return A copy of this user.
+     */
+    public User copy() {
+        final User copy = new User();
+        copy.setUri(getUri());
+        copy.setUsername(getUsername());
+        copy.setPassword(getPassword());
+        copy.setRoles(getRoles());
+        return copy;
     }
 
 }

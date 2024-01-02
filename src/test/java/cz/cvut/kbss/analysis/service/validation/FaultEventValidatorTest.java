@@ -17,9 +17,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
-import javax.xml.validation.Validator;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FaultEventValidatorTest {
 

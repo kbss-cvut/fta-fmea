@@ -20,7 +20,7 @@
                 <!-- Generate entity classes from OWL integrity constraints -->
                 <groupId>cz.cvut.kbss.jopa</groupId>
                 <artifactId>jopa-maven-plugin</artifactId>
-                <version>0.14.7</version>
+                <version>1.1.4</version>
                 <configuration>
                     <package>cz.cvut.kbss.analysis.util</package>
                     <!--Generate Vocabulary into Gradle project dirs-->

@@ -10,6 +10,11 @@ persistence:
   language: cs
 
 security:
+  provider: oidc
+  oidcRoleClaim: realm_access.roles
+  appContext: http://localhost:3000/fta-fmea
+  cors:
+    allowedOrigins:
   jwt:
     secretKey: lwrUj5PmCE6X8ekbLd9wDTRlBkEJA0HB
     expiryMs: 28800000 # 8 hours
@@ -25,3 +30,12 @@ logging:
 annotator:
   list-documents-api: ${LIST_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=list-documents}
   convert-document-api: ${CONVERT_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=convert-document}
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/realms/fta-fmea
+          jwk-set-uri: http://localhost:8088/realms/fta-fmea
+
