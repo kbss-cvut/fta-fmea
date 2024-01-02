@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.model.util.EventType;
 import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
@@ -23,6 +24,10 @@ public class FaultEvent extends Event {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
+
+    @ParticipationConstraints(nonEmpty = true)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_rectangle, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Rectangle rectangle = new Rectangle();
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
