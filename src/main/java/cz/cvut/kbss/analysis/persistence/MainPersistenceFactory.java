@@ -4,7 +4,6 @@ import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.config.conf.RepositoryConf;
 import cz.cvut.kbss.jopa.Persistence;
 import cz.cvut.kbss.jopa.model.EntityManagerFactory;
-import cz.cvut.kbss.jopa.model.JOPAPersistenceProperties;
 import cz.cvut.kbss.jopa.model.JOPAPersistenceProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
