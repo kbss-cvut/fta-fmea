@@ -59,9 +59,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.debug("Using internal security mechanisms.");
-        final AuthenticationManager authManager = buildAuthenticationManager(http);
         http
-//                .requestMatcher(r -> false)
                 .cors(auth -> auth.configurationSource(corsConfigurationSource()))
                 .httpBasic(basic -> basic.disable())
                 .csrf(csrf -> csrf.disable())
