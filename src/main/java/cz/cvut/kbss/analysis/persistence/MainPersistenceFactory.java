@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +66,7 @@ public class MainPersistenceFactory {
         properties.put(ONTOLOGY_PHYSICAL_URI_KEY, repositoryConf.getUrl());
         properties.put(DATA_SOURCE_CLASS, persistenceConf.getDriver());
         properties.put(LANG, persistenceConf.getLanguage());
-        properties.put(CACHE_ENABLED, "false");
+        properties.put(CACHE_ENABLED, Boolean.FALSE.toString());
 
         if(repositoryConf.getUsername() != null && repositoryConf.getPassword() != null) {
             properties.put(DATA_SOURCE_USERNAME, repositoryConf.getUsername());
