@@ -9,7 +9,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 @ComponentScan(basePackages = "cz.cvut.kbss.analysis.persistence")
 @Import({TestPersistenceFactory.class})
 @EnableTransactionManagement
