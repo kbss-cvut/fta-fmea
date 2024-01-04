@@ -20,14 +20,14 @@ public class Rectangle {
     private URI uri;
 
     @OWLDataProperty(iri = Vocabulary.s_p_x)
-    private Double x = -1.;
+    private Double x;
     @OWLDataProperty(iri = Vocabulary.s_p_y)
-    private Double y = -1.;
+    private Double y;
 
     @OWLDataProperty(iri = Vocabulary.s_p_width)
-    private Double width = -1.;
+    private Double width;
     @OWLDataProperty(iri = Vocabulary.s_p_height)
-    private Double height = -1.;
+    private Double height;
 
     public Rectangle() {
     }
