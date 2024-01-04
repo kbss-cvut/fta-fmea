@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.model;
 
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.EntityResult;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.SparqlResultSetMapping;
@@ -10,7 +11,7 @@ import cz.cvut.kbss.jopa.model.annotations.SparqlResultSetMappings;
                 @EntityResult(entityClass=Summary.class)
         })
 )
-@OWLClass(iri = "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/summary")
+@OWLClass(iri = Vocabulary.s_c_summary)
 public class Summary extends NamedEntity {
         public <T extends NamedEntity> T asEntity(Class<T> cls){
                 T entity = null;
