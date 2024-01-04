@@ -7,10 +7,7 @@ import cz.cvut.kbss.analysis.model.util.HasIdentifier;
 import cz.cvut.kbss.jopa.model.EntityManager;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Base implementation of the generic DAO API.

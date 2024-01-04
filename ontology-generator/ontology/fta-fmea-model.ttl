@@ -6,6 +6,11 @@
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc-terms: <http://purl.org/dc/terms/> .
 
+
+fta-fmea:summary
+    rdf:type owl:Class ;
+    rdfs:label "Summary".
+
 fta-fmea:Document
     rdf:type owl:Class ;
     rdfs:label "Document".

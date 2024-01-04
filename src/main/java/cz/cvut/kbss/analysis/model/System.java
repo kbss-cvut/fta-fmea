@@ -13,12 +13,7 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_System)
 @Getter
 @Setter
-public class System extends AbstractEntity {
-
-    @NotEmpty(message = "Name must not be empty")
-    @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
-    private String name;
+public class System extends NamedEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_documented_in)
     private Set<Document> documents;

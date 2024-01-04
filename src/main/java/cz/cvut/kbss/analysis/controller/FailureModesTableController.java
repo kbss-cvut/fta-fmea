@@ -32,6 +32,11 @@ public class FailureModesTableController {
         return repositoryService.findAll();
     }
 
+    @GetMapping("/summaries")
+    public List<FailureModesTable> summaries() {
+        return repositoryService.findAllSummaries();
+    }
+
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureModesTable update(@RequestBody FailureModesTableUpdateDTO tableUpdateDTO) {
         log.info("> update - {}", tableUpdateDTO);

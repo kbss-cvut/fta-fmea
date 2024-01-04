@@ -391,4 +391,9 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             fEvent.setGateType(GateType.OR);
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<FaultTree> findAllSummaries(){
+        return ((FaultTreeDao)getPrimaryDao()).findAllSummaries();
+    }
 }

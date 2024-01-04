@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.net.URI;
 
 @Repository
-public class FaultEventDao extends BaseDao<FaultEvent> {
+public class FaultEventDao extends NamedEntityDao<FaultEvent> {
     protected FaultEventDao(EntityManager em, PersistenceConf config) {
         super(FaultEvent.class, em, config);
     }

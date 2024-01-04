@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SystemDao extends BaseDao<System> {
+public class SystemDao extends NamedEntityDao<System> {
 
     @Autowired
     protected SystemDao(EntityManager em, PersistenceConf config) {

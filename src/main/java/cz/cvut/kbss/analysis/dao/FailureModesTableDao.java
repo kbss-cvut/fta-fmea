@@ -6,7 +6,7 @@ import cz.cvut.kbss.jopa.model.EntityManager;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FailureModesTableDao extends BaseDao<FailureModesTable> {
+public class FailureModesTableDao extends NamedEntityDao<FailureModesTable> {
     protected FailureModesTableDao(EntityManager em, PersistenceConf config) {
         super(FailureModesTable.class, em, config);
     }

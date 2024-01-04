@@ -30,6 +30,11 @@ public class FaultTreeController {
         return repositoryService.findAll();
     }
 
+    @GetMapping("/summaries")
+    public List<FaultTree> summaries() {
+        return repositoryService.findAllSummaries();
+    }
+
     @GetMapping(value = "/{faultTreeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public FaultTree find(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> find - {}", faultTreeFragment);

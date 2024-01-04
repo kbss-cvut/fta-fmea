@@ -95,4 +95,8 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
         components.forEach(system::addComponent);
     }
 
+    @Transactional(readOnly = true)
+    public List<System> findAllSummaries(){
+        return ((SystemDao)getPrimaryDao()).findAllSummaries();
+    }
 }

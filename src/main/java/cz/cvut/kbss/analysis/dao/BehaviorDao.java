@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public abstract class BehaviorDao<T extends Behavior> extends BaseDao<T>{
+public abstract class BehaviorDao<T extends Behavior> extends NamedEntityDao<T>{
     public BehaviorDao(Class<T> type, EntityManager em, PersistenceConf config) {
         super(type, em, config);
     }
