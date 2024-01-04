@@ -2,8 +2,7 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.jopa.model.EntityManager;
@@ -58,6 +57,28 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
         boolean result = faultEventDao.isChild(notChild.getUri());
 
         Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testUpdateRectangle(){
+        Rectangle r = new Rectangle(1.,1.,2.,2.);
+
+        transactional(() -> em.persist(r));
+
+        double newVal = 10.;
+
+        transactional(() -> {
+            Rectangle r1 = new Rectangle();
+            r1.setUri(r.getUri());
+            r1.setX(newVal);
+            r1.setY(r.getY());
+            r1.setWidth(r.getWidth());
+            r1.setHeight(r.getHeight());
+            faultEventDao.update(r1);
+        });
+
+        Rectangle r1 = em.find(Rectangle.class, r.getUri());
+        Assertions.assertEquals(r1.getX(), newVal);
     }
 
 }
