@@ -3,8 +3,8 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
 
         FaultEvent rootEvent = new FaultEvent();
         rootEvent.setName("rootEvent");
-        rootEvent.setEventType(EventType.INTERMEDIATE);
+        rootEvent.setEventType(FtaEventType.INTERMEDIATE);
         rootEvent.setGateType(GateType.AND);
         rootEvent.setUri(Generator.generateUri());
 
@@ -56,13 +56,13 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
 
         FaultEvent rootEvent = new FaultEvent();
         rootEvent.setName("rootEvent");
-        rootEvent.setEventType(EventType.INTERMEDIATE);
+        rootEvent.setEventType(FtaEventType.INTERMEDIATE);
         rootEvent.setGateType(GateType.AND);
         rootEvent.setUri(Generator.generateUri());
 
         FaultEvent child = new FaultEvent();
         child.setName("child");
-        child.setEventType(EventType.BASIC);
+        child.setEventType(FtaEventType.BASIC);
         child.setGateType(GateType.UNUSED);
         child.setUri(Generator.generateUri());
 
@@ -142,7 +142,7 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
     private FaultEvent createEvent(String name) {
         FaultEvent event = new FaultEvent();
         event.setName(name);
-        event.setEventType(EventType.INTERMEDIATE);
+        event.setEventType(FtaEventType.INTERMEDIATE);
         event.setGateType(GateType.AND);
         event.setUri(Generator.generateUri());
         return event;

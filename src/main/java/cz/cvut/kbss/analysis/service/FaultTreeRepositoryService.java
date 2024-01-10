@@ -3,8 +3,8 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.*;
-import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
@@ -180,7 +180,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         if(!function.getChildBehaviors().isEmpty() || !functionRepositoryService.getImpairingBehaviors(functionUri).isEmpty() || !function.getRequiredBehaviors().isEmpty()) {
             processBehavior(function, faultEvent);
-            faultEvent.setEventType(EventType.INTERMEDIATE);
+            faultEvent.setEventType(FtaEventType.INTERMEDIATE);
         }
         cleanTreeGeneration();
         persist(faultTree);
@@ -283,7 +283,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "");
                     faultEvent.setUri(faultEventUri);
                     faultEvent.setName(impairingBehavior.getName());
-                    faultEvent.setEventType(EventType.INTERMEDIATE);
+                    faultEvent.setEventType(FtaEventType.INTERMEDIATE);
                     faultEvent.setGateType(impairingBehavior.getBehaviorType() == BehaviorType.OrBehavior ? GateType.OR : GateType.AND);
 
                     for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
@@ -298,7 +298,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                             faultEventChild.setUri(faultEventUri);
                             faultEventChild.setBehavior(behaviorChild);
                             faultEventChild.setName(behaviorChild.getName() + " event");
-                            faultEventChild.setEventType(EventType.BASIC);
+                            faultEventChild.setEventType(FtaEventType.BASIC);
                             faultEventChild.setGateType(GateType.UNUSED);
                             faultEventChild.setProbability(1.);
                             faultEventRepositoryService.persist(faultEventChild);
@@ -323,7 +323,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 faultEvent = new FaultEvent();
                 faultEvent.setBehavior(behavior);
                 faultEvent.setName(behavior.getName() + " fails b/c its parts fail");
-                faultEvent.setEventType(EventType.INTERMEDIATE);
+                faultEvent.setEventType(FtaEventType.INTERMEDIATE);
                 faultEvent.setGateType(behavior.getBehaviorType() == BehaviorType.AndBehavior ? GateType.OR : GateType.AND);
                 faultEvent.setUri(faultEventUri);
                 faultEventRepositoryService.persist(faultEvent);
@@ -340,7 +340,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 } else {
                     fEvent.setBehavior(behaviorChild);
                     fEvent.setName(behavior.getName() + " fails b/c " + behaviorChild.getName() + " fails");
-                    fEvent.setEventType(EventType.INTERMEDIATE);
+                    fEvent.setEventType(FtaEventType.INTERMEDIATE);
                     fEvent.setGateType(GateType.OR);
                     fEvent.setUri(faultEventUri);
                     faultEventRepositoryService.persist(fEvent);
@@ -383,11 +383,11 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
     private void setFaultEventTypes(boolean isBasic, FaultEvent fEvent){
         if(isBasic){
-            fEvent.setEventType(EventType.BASIC);
+            fEvent.setEventType(FtaEventType.BASIC);
             fEvent.setGateType(GateType.UNUSED);
             fEvent.setProbability(1.);
         }else{
-            fEvent.setEventType(EventType.INTERMEDIATE);
+            fEvent.setEventType(FtaEventType.INTERMEDIATE);
             fEvent.setGateType(GateType.OR);
         }
     }

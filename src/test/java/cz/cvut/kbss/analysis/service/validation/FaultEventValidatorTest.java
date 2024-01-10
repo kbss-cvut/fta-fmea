@@ -2,10 +2,9 @@ package cz.cvut.kbss.analysis.service.validation;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.environment.Generator;
-import cz.cvut.kbss.analysis.exception.ValidationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +48,7 @@ class FaultEventValidatorTest {
     @Test
     void validateDuplicates_noDuplicate_shouldJustRun() {
         FaultEvent event = new FaultEvent();
-        event.setEventType(EventType.BASIC);
+        event.setEventType(FtaEventType.BASIC);
         event.setGateType(GateType.UNUSED);
         event.setName("Valid Name");
 
@@ -65,7 +64,7 @@ class FaultEventValidatorTest {
     void validateTypes_intermediate_nullGate_shouldReturnError() {
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
-        event.setEventType(EventType.INTERMEDIATE);
+        event.setEventType(FtaEventType.INTERMEDIATE);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
@@ -78,7 +77,7 @@ class FaultEventValidatorTest {
     void validateTypes_intermediate_unusedGate_shouldReturnError() {
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
-        event.setEventType(EventType.INTERMEDIATE);
+        event.setEventType(FtaEventType.INTERMEDIATE);
         event.setGateType(GateType.UNUSED);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
@@ -92,7 +91,7 @@ class FaultEventValidatorTest {
     void validateTypes_nonIntermediate_gateNotUnused_shouldReturnError() {
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
-        event.setEventType(EventType.BASIC);
+        event.setEventType(FtaEventType.BASIC);
         event.setGateType(GateType.AND);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);

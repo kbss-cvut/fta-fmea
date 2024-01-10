@@ -8,9 +8,9 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
-import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,7 +67,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     public Double propagateProbability(FaultEvent event) {
         log.info("> propagateProbability - {}", event);
 
-        if (event.getEventType() == EventType.INTERMEDIATE) {
+        if (event.getEventType() == FtaEventType.INTERMEDIATE) {
             List<Double> childProbabilities = event.getChildren().stream()
                     .map(this::propagateProbability).collect(Collectors.toList());
 
@@ -134,6 +134,12 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         update(faultEvent);
 
         log.info("< updateChildrenSequence");
+    }
+
+    @Transactional
+    public void update(Rectangle rect){
+        faultEventDao.update(rect);
+        log.trace("< updateRectangle");
     }
 
     @Transactional(readOnly = true)

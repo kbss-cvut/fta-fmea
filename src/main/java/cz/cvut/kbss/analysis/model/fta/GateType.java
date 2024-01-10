@@ -1,4 +1,4 @@
-package cz.cvut.kbss.analysis.model.util;
+package cz.cvut.kbss.analysis.model.fta;
 
 public enum GateType {
     AND,

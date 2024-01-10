@@ -2,8 +2,8 @@ package cz.cvut.kbss.analysis.service.validation;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.util.EventType;
-import cz.cvut.kbss.analysis.model.util.GateType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +39,11 @@ public class FaultTreeValidator implements Validator {
             errors.rejectValue("name", "name.duplicate");
         }
 
-        if (instance.getEventType() == EventType.INTERMEDIATE && (instance.getGateType() == null || instance.getGateType() == GateType.UNUSED)) {
+        if (instance.getEventType() == FtaEventType.INTERMEDIATE && (instance.getGateType() == null || instance.getGateType() == GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
         }
 
-        if (instance.getEventType() != EventType.INTERMEDIATE && instance.getGateType() != GateType.UNUSED) {
+        if (instance.getEventType() != FtaEventType.INTERMEDIATE && instance.getGateType() != GateType.UNUSED) {
             errors.rejectValue("gateType", "gateType.invalid");
         }
     }

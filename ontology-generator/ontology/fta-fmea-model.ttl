@@ -1,4 +1,3 @@
-@prefix termit:   <http://onto.fel.cvut.cz/ontologies/application/termit/> .
 @prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl:      <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
@@ -6,6 +5,9 @@
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc-terms: <http://purl.org/dc/terms/> .
 
+
+<http://onto.fel.cvut.cz/ontologies/reliability-analysis-application> rdf:type owl:Ontology ;
+                                                                       owl:imports <http://onto.fel.cvut.cz/ontologies/diagram> .
 
 fta-fmea:summary
     rdf:type owl:Class ;

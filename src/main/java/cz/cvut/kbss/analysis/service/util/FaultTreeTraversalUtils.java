@@ -2,8 +2,7 @@ package cz.cvut.kbss.analysis.service.util;
 
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.util.EventType;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -44,7 +43,7 @@ public class FaultTreeTraversalUtils {
 
             for (FaultEvent child : currentEvent.getChildren()) {
                 if (child.getUri().equals(leafEventUri)) {
-                    if (child.getEventType() == EventType.INTERMEDIATE) {
+                    if (child.getEventType() == FtaEventType.INTERMEDIATE) {
                         String message = "Intermediate event must not be the end of the path!";
                         log.warn(message);
                         throw new LogicViolationException(message);
