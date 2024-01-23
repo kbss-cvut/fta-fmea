@@ -46,7 +46,7 @@ public class FaultTreeController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FaultTree create(@RequestBody FaultTree faultTree) {
         log.info("> create - {}", faultTree);
-        repositoryService.persist(faultTree);
+        repositoryService.createTree(faultTree);
         return faultTree;
     }
 
