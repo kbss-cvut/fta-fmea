@@ -53,6 +53,9 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
         FaultEvent currentEvent = findRequired(eventUri);
 
+        if(inputEvent.getUri() == null && inputEvent.getRectangle() == null)
+            inputEvent.setRectangle(new Rectangle());
+
         currentEvent.addChild(inputEvent);
         update(currentEvent);
 

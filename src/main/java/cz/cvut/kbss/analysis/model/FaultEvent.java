@@ -18,7 +18,7 @@ public class FaultEvent extends Event {
 
     /**
      * Use this factory method to create a FaultEvent with a rectangle. Rectangle cannot be initialized because it will cause
-     * @return
+     * @return returns a new FaultEvent instance with initialized FaultEvent.rectangle field containing a new Rectangle instance.
      */
     public static FaultEvent create(){
         FaultEvent faultEvent = new FaultEvent();
