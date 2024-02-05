@@ -309,7 +309,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                             faultEventChild.setBehavior(behaviorChild);
                             faultEventChild.setName(behaviorChild.getName() + " event");
                             faultEventChild.setEventType(FtaEventType.BASIC);
-                            faultEventChild.setGateType(GateType.UNUSED);
+                            faultEventChild.setGateType(null);
                             faultEventChild.setProbability(1.);
                             faultEventRepositoryService.persist(faultEventChild);
                         }
@@ -394,7 +394,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private void setFaultEventTypes(boolean isBasic, FaultEvent fEvent){
         if(isBasic){
             fEvent.setEventType(FtaEventType.BASIC);
-            fEvent.setGateType(GateType.UNUSED);
+            fEvent.setGateType(null);
             fEvent.setProbability(1.);
         }else{
             fEvent.setEventType(FtaEventType.INTERMEDIATE);
