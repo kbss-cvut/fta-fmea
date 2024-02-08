@@ -49,7 +49,6 @@ class FaultEventValidatorTest {
     void validateDuplicates_noDuplicate_shouldJustRun() {
         FaultEvent event = new FaultEvent();
         event.setEventType(FtaEventType.BASIC);
-        event.setGateType(GateType.UNUSED);
         event.setName("Valid Name");
 
         Mockito.when(faultEventDao.existsWithPredicate(Vocabulary.s_p_hasName, event.getName())).thenReturn(false);
@@ -78,7 +77,7 @@ class FaultEventValidatorTest {
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
         event.setEventType(FtaEventType.INTERMEDIATE);
-        event.setGateType(GateType.UNUSED);
+        event.setGateType(null);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);

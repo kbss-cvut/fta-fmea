@@ -16,6 +16,19 @@ import java.util.*;
 @Setter
 public class FaultEvent extends Event {
 
+    /**
+     * Use this factory method to create a FaultEvent with a rectangle.
+     *
+     * NOTE: Rectangle cannot be initialized in constructor due to issue with parsing fault event with a value for
+     * rectangle from JSON-LD.
+     * @return returns a new FaultEvent instance with initialized FaultEvent.rectangle field containing a new Rectangle instance.
+     */
+    public static FaultEvent create(){
+        FaultEvent faultEvent = new FaultEvent();
+        faultEvent.setRectangle(new Rectangle());
+        return faultEvent;
+    }
+
     @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
@@ -24,9 +37,8 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
 
-    @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_has_rectangle, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Rectangle rectangle = new Rectangle();
+    private Rectangle rectangle;
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;

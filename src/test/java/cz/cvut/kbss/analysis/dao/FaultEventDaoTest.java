@@ -31,7 +31,6 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
         FaultEvent child = new FaultEvent();
         child.setName("childEvent");
         child.setEventType(FtaEventType.BASIC);
-        child.setGateType(GateType.UNUSED);
         child.setUri(Generator.generateUri());
 
         parent.addChild(child);
@@ -49,7 +48,6 @@ class FaultEventDaoTest extends BaseDaoTestRunner{
         FaultEvent notChild = new FaultEvent();
         notChild.setName("event");
         notChild.setEventType(FtaEventType.BASIC);
-        notChild.setGateType(GateType.UNUSED);
         notChild.setUri(Generator.generateUri());
 
         transactional(() -> em.persist(notChild));

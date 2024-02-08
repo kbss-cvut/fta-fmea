@@ -63,7 +63,6 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
         FaultEvent child = new FaultEvent();
         child.setName("child");
         child.setEventType(FtaEventType.BASIC);
-        child.setGateType(GateType.UNUSED);
         child.setUri(Generator.generateUri());
 
         rootEvent.addChild(child);

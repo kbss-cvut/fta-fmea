@@ -43,7 +43,7 @@ public class FaultEventValidator implements Validator {
             errors.rejectValue("gateType", "gateType.invalid");
         }
 
-        if (instance.getEventType() != FtaEventType.INTERMEDIATE && instance.getGateType() != GateType.UNUSED) {
+        if (instance.getEventType() != FtaEventType.INTERMEDIATE && (instance.getGateType() != null && instance.getGateType() != GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
         }
     }

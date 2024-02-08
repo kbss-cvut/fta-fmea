@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
@@ -47,6 +48,14 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     @Override
     protected GenericDao<FaultTree> getPrimaryDao() {
         return faultTreeDao;
+    }
+
+    @Transactional
+    public void createTree(FaultTree faultTree){
+        if(faultTree.getManifestingEvent() != null){
+            faultTree.getManifestingEvent().setRectangle(new Rectangle());
+        }
+        persist(faultTree);
     }
 
     @Transactional
@@ -183,7 +192,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             faultEvent.setEventType(FtaEventType.INTERMEDIATE);
         }
         cleanTreeGeneration();
-        persist(faultTree);
+        createTree(faultTree);
         return faultTree;
     }
 
@@ -229,7 +238,8 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         } else if(faultEventRepositoryService.existsInContext(faultEventUri2)){
             return faultEventRepositoryService.findRequired(faultEventUri2);
         } else {
-            FaultEvent faultEvent = new FaultEvent();
+            FaultEvent faultEvent = FaultEvent.create();
+
             faultEvent.setUri(faultEventUri);
             faultEvent.setBehavior(behavior);
 
@@ -271,7 +281,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             }else if(faultEventRepositoryService.existsInContext(faultEventUriTypeEvent)){
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUriTypeEvent);
             }else {
-                faultEvent = new FaultEvent();
+                faultEvent = FaultEvent.create();
                 faultEvent.setUri(faultEventUri);
                 faultEvent.setBehavior(impairingBehavior);
                 if(impairingBehavior.getBehaviorType() == BehaviorType.AtomicBehavior){
@@ -289,7 +299,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     for (Behavior behaviorChild : impairingBehavior.getChildBehaviors()) {
                         if(behaviorChild.isFailureModeCause()) continue;
 
-                        FaultEvent faultEventChild = new FaultEvent();
+                        FaultEvent faultEventChild = FaultEvent.create();
                         faultEventChild.setBehavior(behaviorChild);
                         faultEventUri = createUri(behaviorChild, faultEvent, "e");
                         if (faultEventRepositoryService.existsInContext(faultEventUri)) {
@@ -299,7 +309,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                             faultEventChild.setBehavior(behaviorChild);
                             faultEventChild.setName(behaviorChild.getName() + " event");
                             faultEventChild.setEventType(FtaEventType.BASIC);
-                            faultEventChild.setGateType(GateType.UNUSED);
+                            faultEventChild.setGateType(null);
                             faultEventChild.setProbability(1.);
                             faultEventRepositoryService.persist(faultEventChild);
                         }
@@ -320,7 +330,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             if (faultEventRepositoryService.existsInContext(faultEventUri)) {
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
             } else {
-                faultEvent = new FaultEvent();
+                faultEvent = FaultEvent.create();
                 faultEvent.setBehavior(behavior);
                 faultEvent.setName(behavior.getName() + " fails b/c its parts fail");
                 faultEvent.setEventType(FtaEventType.INTERMEDIATE);
@@ -333,7 +343,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             for (Behavior behaviorChild : behavior.getChildBehaviors()) {
                 if(isVisited(behaviorChild))
                     continue;
-                FaultEvent fEvent = new FaultEvent();
+                FaultEvent fEvent = FaultEvent.create();
                 faultEventUri = createUri(behaviorChild, faultEvent, "");
                 if (faultEventRepositoryService.existsInContext(faultEventUri)) {
                     fEvent = faultEventRepositoryService.findRequired(faultEventUri);
@@ -384,7 +394,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private void setFaultEventTypes(boolean isBasic, FaultEvent fEvent){
         if(isBasic){
             fEvent.setEventType(FtaEventType.BASIC);
-            fEvent.setGateType(GateType.UNUSED);
+            fEvent.setGateType(null);
             fEvent.setProbability(1.);
         }else{
             fEvent.setEventType(FtaEventType.INTERMEDIATE);
