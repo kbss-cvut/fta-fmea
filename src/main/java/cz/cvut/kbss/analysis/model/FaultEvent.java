@@ -34,6 +34,9 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
     private FtaEventType eventType;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_has_event_type)
+    private FaultEventType faultEventType;
+
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
 

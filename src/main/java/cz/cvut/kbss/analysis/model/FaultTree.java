@@ -25,6 +25,9 @@ public class FaultTree extends NamedEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureModesTable, cascade = CascadeType.ALL)
     private FailureModesTable failureModesTable;
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_scenario)
+    private Set<FaultEventScenario> faultEventScenarios;
+
     @Override
     public String toString() {
         return "FaultTree <" + getUri() + "/>";

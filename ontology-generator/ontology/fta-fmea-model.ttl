@@ -29,6 +29,10 @@ fta-fmea:activates rdf:type owl:ObjectProperty ;
                    rdfs:label "activates" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/based-on
+fta-fmea:based-on rdf:type owl:ObjectProperty .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/bringsAbout
 fta-fmea:bringsAbout rdf:type owl:ObjectProperty ;
                      rdfs:domain fta-fmea:Event ;
@@ -43,11 +47,81 @@ fta-fmea:broughtAboutBy rdf:type owl:ObjectProperty ;
                         rdfs:label "brought about by" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/categorized-by
+fta-fmea:categorized-by rdf:type owl:ObjectProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/created-by
+fta-fmea:created-by rdf:type owl:ObjectProperty ;
+                    owl:inverseOf fta-fmea:creates .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/creates
+fta-fmea:creates rdf:type owl:ObjectProperty ;
+                 rdfs:domain fta-fmea:Event .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/documented-in
 fta-fmea:documented-in rdf:type owl:ObjectProperty ;
                        rdfs:domain fta-fmea:System ;
                        rdfs:range fta-fmea:Document ;
                        rdfs:label "Documented in" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/estimated-by
+fta-fmea:estimated-by rdf:type owl:ObjectProperty ;
+                      owl:inverseOf fta-fmea:is-general-estimate-of ;
+                      rdfs:domain fta-fmea:failure-rate ;
+                      rdfs:range fta-fmea:failure-rate-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-estimate
+fta-fmea:has-estimate rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf fta-fmea:has-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-event-type
+fta-fmea:has-event-type rdf:type owl:ObjectProperty ;
+                        rdfs:domain fta-fmea:fha-fault-event ;
+                        rdfs:range fta-fmea:fault-event-type .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-failure-rate
+fta-fmea:has-failure-rate rdf:type owl:ObjectProperty ;
+                          rdfs:domain fta-fmea:fault-event-type ;
+                          rdfs:range fta-fmea:failure-rate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-general-estimate
+fta-fmea:has-general-estimate rdf:type owl:ObjectProperty ;
+                              owl:inverseOf fta-fmea:is-estimation-of .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-manual-estimate
+fta-fmea:has-manual-estimate rdf:type owl:ObjectProperty ;
+                             rdfs:subPropertyOf fta-fmea:has-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-part
+fta-fmea:has-part rdf:type owl:ObjectProperty ;
+                  owl:inverseOf fta-fmea:isPartOf .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-prediction
+fta-fmea:has-prediction rdf:type owl:ObjectProperty ;
+                        rdfs:subPropertyOf fta-fmea:has-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-requirement
+fta-fmea:has-requirement rdf:type owl:ObjectProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-scenario
+fta-fmea:has-scenario rdf:type owl:ObjectProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-value
+fta-fmea:has-value rdf:type owl:ObjectProperty .
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasChildBehavior
@@ -158,6 +232,18 @@ fta-fmea:impairs rdf:type owl:ObjectProperty ;
                  rdfs:label "impairs" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/is-estimation-of
+fta-fmea:is-estimation-of rdf:type owl:ObjectProperty ;
+                          rdfs:domain fta-fmea:failure-rate ;
+                          rdfs:range fta-fmea:failure-rate-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/is-general-estimate-of
+fta-fmea:is-general-estimate-of rdf:type owl:ObjectProperty ;
+                                rdfs:domain fta-fmea:failure-rate-general-estimate ;
+                                rdfs:range fta-fmea:failure-rate .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/isChildBehaviorOf
 fta-fmea:isChildBehaviorOf rdf:type owl:ObjectProperty ;
                            rdfs:domain fta-fmea:Behavior ;
@@ -219,6 +305,14 @@ fta-fmea:manifestedBy rdf:type owl:ObjectProperty ;
                       rdfs:label "manifested by" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/performed-by
+fta-fmea:performed-by rdf:type owl:ObjectProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/preformed-by
+fta-fmea:preformed-by rdf:type owl:ObjectProperty .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/requires
 fta-fmea:requires rdf:type owl:ObjectProperty ;
                   rdfs:domain fta-fmea:Behavior ;
@@ -243,6 +337,26 @@ fta-fmea:triggers rdf:type owl:ObjectProperty ;
 #################################################################
 #    Data properties
 #################################################################
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/from
+fta-fmea:from rdf:type owl:DatatypeProperty ;
+              rdfs:domain fta-fmea:failure-rate-requirement .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-duration
+fta-fmea:has-duration rdf:type owl:DatatypeProperty ;
+                      rdfs:subPropertyOf owl:topDataProperty ;
+                      rdfs:domain fta-fmea:Event .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-end
+fta-fmea:has-end rdf:type owl:DatatypeProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-start
+fta-fmea:has-start rdf:type owl:DatatypeProperty ;
+                   rdfs:domain fta-fmea:Event .
+
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasBehaviorType
 fta-fmea:hasBehaviorType rdf:type owl:DatatypeProperty ;
@@ -331,6 +445,11 @@ fta-fmea:hasUsername rdf:type owl:DatatypeProperty ;
                      rdfs:domain fta-fmea:User ;
                      rdfs:range xsd:string ;
                      rdfs:label "has username" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/to
+fta-fmea:to rdf:type owl:DatatypeProperty ;
+            rdfs:domain fta-fmea:failure-rate-requirement .
 
 
 ###  http://purl.org/dc/terms/source
@@ -422,9 +541,125 @@ fta-fmea:User rdf:type owl:Class ;
               rdfs:label "User" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/aircraft-model
+fta-fmea:aircraft-model rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/analysis-event
+fta-fmea:analysis-event rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/analysis-product
+fta-fmea:analysis-product rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/estimation-event
+fta-fmea:estimation-event rdf:type owl:Class ;
+                          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                            owl:onProperty fta-fmea:categorized-by ;
+                                            owl:allValuesFrom fta-fmea:failure-rate-general-estimation-method
+                                          ] .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failire-rate-statistical-estimation-method
+fta-fmea:failire-rate-statistical-estimation-method rdf:type owl:Class ;
+                                                    rdfs:subClassOf fta-fmea:failure-rate-general-estimation-method .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate
+fta-fmea:failure-rate rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-estimate
+fta-fmea:failure-rate-estimate rdf:type owl:Class ;
+                               rdfs:subClassOf fta-fmea:failure-rate-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-estimate-from-failure-report-data
+fta-fmea:failure-rate-estimate-from-failure-report-data rdf:type owl:Class ;
+                                                        rdfs:subClassOf fta-fmea:failure-rate-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-fta-prediction
+fta-fmea:failure-rate-fta-prediction rdf:type owl:Class ;
+                                     rdfs:subClassOf fta-fmea:failure-rate-prediction .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-fta-prediction-method
+fta-fmea:failure-rate-fta-prediction-method rdf:type owl:Class ;
+                                            rdfs:subClassOf fta-fmea:failure-rate-general-estimation-method .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-general-estimate
+fta-fmea:failure-rate-general-estimate rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-general-estimation-method
+fta-fmea:failure-rate-general-estimation-method rdf:type owl:Class ;
+                                                rdfs:subClassOf fta-fmea:method .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-prediction
+fta-fmea:failure-rate-prediction rdf:type owl:Class ;
+                                 rdfs:subClassOf fta-fmea:failure-rate-general-estimate .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-requirement
+fta-fmea:failure-rate-requirement rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fault-event-scenario-type
+fta-fmea:fault-event-scenario-type rdf:type owl:Class ;
+                                   rdfs:subClassOf fta-fmea:fault-event-type ;
+                                   rdfs:comment "This entity represents a particular scenatrio of how a fault event may occur. For example, in a fault tree the top fault event may occur due to different causes. A cut set analysis extracts different cut-sets (fault event scenario) of leaf events which lead to a top fault event."@en ;
+                                   rdfs:label "fault event scenario type"@en .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fault-event-type
+fta-fmea:fault-event-type rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fault-tree-cut-set-extraction-method
+fta-fmea:fault-tree-cut-set-extraction-method rdf:type owl:Class ;
+                                              rdfs:subClassOf fta-fmea:method .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fha-fault-event
+fta-fmea:fha-fault-event rdf:type owl:Class ;
+                         rdfs:subClassOf fta-fmea:fault-event-type .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/method
+fta-fmea:method rdf:type owl:Class .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/summary
 fta-fmea:summary rdf:type owl:Class ;
                  rdfs:label "Summary" .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failire-rate-statistical-estimation-method
+fta-fmea:failire-rate-statistical-estimation-method rdf:type owl:NamedIndividual ,
+                                                             fta-fmea:failire-rate-statistical-estimation-method .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/failure-rate-fta-prediction-method
+fta-fmea:failure-rate-fta-prediction-method rdf:type owl:NamedIndividual ,
+                                                     fta-fmea:failure-rate-fta-prediction-method .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+fta-fmea:failire-rate-statistical-estimation-method rdfs:label "failure rate statistical estimation method"@en .
+
+
+fta-fmea:failure-rate-fta-prediction-method rdfs:label "failure rate fta prediction method"@en .
 
 
 ###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
