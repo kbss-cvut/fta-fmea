@@ -17,7 +17,10 @@ import java.util.*;
 public class FaultEvent extends Event {
 
     /**
-     * Use this factory method to create a FaultEvent with a rectangle. Rectangle cannot be initialized because it will cause
+     * Use this factory method to create a FaultEvent with a rectangle.
+     *
+     * NOTE: Rectangle cannot be initialized in constructor due to issue with parsing fault event with a value for
+     * rectangle from JSON-LD.
      * @return returns a new FaultEvent instance with initialized FaultEvent.rectangle field containing a new Rectangle instance.
      */
     public static FaultEvent create(){
