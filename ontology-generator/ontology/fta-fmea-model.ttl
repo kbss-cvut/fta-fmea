@@ -1,351 +1,430 @@
-@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix owl:      <http://www.w3.org/2002/07/owl#> .
-@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
-@prefix fta-fmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
-@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc-terms: <http://purl.org/dc/terms/> .
-
+@prefix fta-fmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
+@base <http://onto.fel.cvut.cz/ontologies/reliability-analysis-application> .
 
 <http://onto.fel.cvut.cz/ontologies/reliability-analysis-application> rdf:type owl:Ontology ;
                                                                        owl:imports <http://onto.fel.cvut.cz/ontologies/diagram> .
 
-fta-fmea:summary
-    rdf:type owl:Class ;
-    rdfs:label "Summary".
-
-fta-fmea:Document
-    rdf:type owl:Class ;
-    rdfs:label "Document".
-
-fta-fmea:documented-in
-    rdf:type owl:ObjectProperty;
-    rdfs:label "Documented in";
-    rdfs:domain fta-fmea:System ;
-    rdfs:range  fta-fmea:Document .
-
-fta-fmea:System
-    rdf:type   owl:Class ;
-    rdfs:label "System" .
-
-dc-terms:source
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "annotation source" .
-
-fta-fmea:hasPartComponent
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has part component" ;
-    rdfs:domain fta-fmea:System ;
-    rdfs:range  fta-fmea:Component .
-
-fta-fmea:Component
-    rdf:type   owl:Class ;
-    rdfs:label "Component" .
-
-fta-fmea:hasFunction
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has function" ;
-    rdfs:domain fta-fmea:Component ;
-    rdfs:range  fta-fmea:Function .
-
-fta-fmea:hasFailureMode
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has failure mode" ;
-    rdfs:domain fta-fmea:Component ;
-    rdfs:range  fta-fmea:FailureMode .
-
-fta-fmea:isPartOf
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "is part of" ;
-    rdfs:domain fta-fmea:Component ;
-    rdfs:range  fta-fmea:Component .
-
-fta-fmea:Function
-    rdf:type   owl:Class ;
-    rdfs:label "Function" .
-
-fta-fmea:hasComponent
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has component" ;
-    rdfs:domain fta-fmea:Behavior ;
-    rdfs:range  fta-fmea:Component .
-
-fta-fmea:FailureMode
-    rdf:type   owl:Class ;
-    rdfs:label "Failure mode" .
-
-fta-fmea:hasFailureModeType
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has failure mode type" ;
-    rdfs:domain fta-fmea:Behavior ;
-    rdfs:range  xsd:string .
-
-fta-fmea:requires
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "requires" ;
-    rdfs:domain fta-fmea:Behavior ;
-    rdfs:range  fta-fmea:Behavior .
-
-fta-fmea:isMitigatedBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "is mitigated by" ;
-    rdfs:domain fta-fmea:FailureMode ;
-    rdfs:range  fta-fmea:Mitigation .
-
-fta-fmea:hasMitigation
-    rdf:type owl:ObjectProperty ;
-    rdfs:label "hasMitigation" ;
-    rdfs:domain fta-fmea:FailureModesRow ;
-    rdfs:range fta-fmea:Mitigation.
-
-fta-fmea:hasEffect
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has effects" .
-
-fta-fmea:isManifestedBy
-    rdf:type   owl:ObjectProperty ;
-    rdfs:label "is manifested by" .
-
-fta-fmea:Mitigation
-    rdf:type   owl:Class ;
-    rdfs:label "Mitigation" .
-
-fta-fmea:RiskPriorityNumber
-    rdf:type   owl:Class ;
-    rdfs:label "Risk Priority Number" .
-
-fta-fmea:hasOccurrence
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has occurrence" ;
-    rdfs:domain fta-fmea:RiskPriorityNumber ;
-    rdfs:range  xsd:decimal .
-
-fta-fmea:hasSeverity
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has severity" ;
-    rdfs:domain fta-fmea:RiskPriorityNumber ;
-    rdfs:range  xsd:decimal .
-
-fta-fmea:hasDetection
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has detection" ;
-    rdfs:domain fta-fmea:RiskPriorityNumber ;
-    rdfs:range  xsd:decimal .
-
-fta-fmea:FaultEvent
-    rdf:type   owl:Class ;
-    rdfs:label "Fault event" .
-
-fta-fmea:hasProbability
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has probability" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  xsd:float .
-
-fta-fmea:hasChildren
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has children" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  fta-fmea:FaultEvent .
-
-fta-fmea:hasSequenceProbability
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has sequence probability" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  xsd:float .
-
-fta-fmea:hasChildrenSequence
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has children sequence" .
-
-fta-fmea:hasGateType
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has gate type" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  xsd:string .
-
-fta-fmea:hasFaultEventType
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has fault event type" ;
-    rdfs:domain fta-fmea:FaultEvent ;
-    rdfs:range  xsd:string .
-
-fta-fmea:FaultTree
-    rdf:type   owl:Class ;
-    rdfs:label "Fault Tree" .
-
-fta-fmea:hasFailureModesTable
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has failure modes table" ;
-    rdfs:domain fta-fmea:FaultTree ;
-    rdfs:range  fta-fmea:FailureModesTable .
-
-fta-fmea:FailureModesTable
-    rdf:type   owl:Class ;
-    rdfs:label "Faulure Modes Table" .
-
-fta-fmea:isDerivedFrom
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "is derived from" ;
-    rdfs:domain fta-fmea:FailureModesTable ;
-    rdfs:range  fta-fmea:FaultTree .
-
-fta-fmea:hasRow
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has row" ;
-    rdfs:domain fta-fmea:FailureModesTable ;
-    rdfs:range  fta-fmea:FailureModesRow .
-
-fta-fmea:FailureModesRow
-    rdf:type   owl:Class ;
-    rdfs:label "Faulure Modes Row" .
-
-fta-fmea:hasFinalEffect
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has final effect" ;
-    rdfs:domain fta-fmea:FailureModesRow ;
-    rdfs:range  fta-fmea:FaultEvent .
-
-fta-fmea:hasLocalEffect
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has local effect" ;
-    rdfs:domain fta-fmea:FailureModesRow ;
-    rdfs:range  fta-fmea:FaultEvent .
-
-fta-fmea:hasRPN
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "has risk priority number" ;
-    rdfs:domain fta-fmea:FailureModesRow ;
-    rdfs:range  fta-fmea:RiskPriorityNumber .
-
-fta-fmea:User
-    rdf:type   owl:Class ;
-    rdfs:label "User" .
-
-fta-fmea:hasUsername
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has username" ;
-    rdfs:domain fta-fmea:User ;
-    rdfs:range  xsd:string .
-
-fta-fmea:hasPassword
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has password" ;
-    rdfs:domain fta-fmea:User ;
-    rdfs:range  xsd:string .
-
-fta-fmea:hasName
-    rdf:type   owl:DatatypeProperty ;
-    rdfs:label "has name" ;
-    rdfs:range xsd:string .
-
-fta-fmea:hasDescription
-    rdf:type   owl:DatatypeProperty ;
-    rdfs:label "has description" ;
-    rdfs:range xsd:string .
-
-fta-fmea:Event
-    rdf:type owl:Class;
-    rdfs:label "Event".
-
-fta-fmea:triggeredBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "triggered by" ;
-    rdfs:domain fta-fmea:Event ;
-    rdfs:range  fta-fmea:Situation .
-
-fta-fmea:bringsAbout
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "brings about" ;
-    rdfs:domain fta-fmea:Event ;
-    rdfs:range  fta-fmea:Situation .
-
-fta-fmea:FunctionEvent
-    rdf:type owl:Class;
-    rdfs:label "Function Event".
-
-fta-fmea:manifestationOf
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "manifestation of" ;
-    rdfs:domain fta-fmea:FunctionEvent ;
-    rdfs:range  fta-fmea:Function .
-
-fta-fmea:manifestedBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "manifested by" ;
-    rdfs:domain fta-fmea:Function ;
-    rdfs:range  fta-fmea:FunctionEvent .
-
-fta-fmea:Behavior
-    rdf:type owl:Class;
-    rdfs:label "Behavior".
-
-fta-fmea:hasBehaviorType
-    rdf:type    owl:DatatypeProperty ;
-    rdfs:label  "has behavior type" ;
-    rdfs:domain fta-fmea:Behavior ;
-    rdfs:range  xsd:string .
-
-fta-fmea:hasChildBehavior
-    rdf:type owl:ObjectProperty;
-    rdfs:label "has child behavior";
-    rdfs:domain fta-fmea:Behavior;
-    rdfs:range fta-fmea:Behavior.
-
-fta-fmea:isChildBehaviorOf
-    rdf:type owl:ObjectProperty;
-    rdfs:label "is child behavior of";
-    rdfs:domain fta-fmea:Behavior;
-    rdfs:range fta-fmea:Behavior.
-
-fta-fmea:manifested-by
-    rdf:type owl:ObjectProperty;
-    rdfs:label "manifested by";
-    rdfs:domain fta-fmea:Behavior;
-    rdfs:range fta-fmea:Event.
-
-fta-fmea:manifestation-of
-    rdf:type owl:ObjectProperty;
-    rdfs:label "manifestation of";
-    rdfs:domain fta-fmea:Event;
-    rdfs:range fta-fmea:Behavior.
-
-fta-fmea:impairedBy
-    rdf:type owl:ObjectProperty;
-    rdfs:label "impaired by";
-    rdfs:domain fta-fmea:Behavior;
-    rdfs:range fta-fmea:Behavior.
-
-fta-fmea:impairs
-    rdf:type owl:ObjectProperty;
-    rdfs:label "impairs";
-    rdfs:domain fta-fmea:Behavior;
-    rdfs:range fta-fmea:Behavior.
-
-
-fta-fmea:activatedBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "activated by" ;
-    rdfs:domain fta-fmea:Behavior ;
-    rdfs:range  fta-fmea:Situation .
-
-fta-fmea:Situation
-    rdf:type owl:Class;
-    rdfs:label "Situation".
-
-fta-fmea:activates
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "activates" ;
-    rdfs:domain fta-fmea:Situation ;
-    rdfs:range  fta-fmea:Behavior .
-
-fta-fmea:broughtAboutBy
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "brought about by" ;
-    rdfs:domain fta-fmea:Situation ;
-    rdfs:range  fta-fmea:Event .
-
-fta-fmea:triggers
-    rdf:type    owl:ObjectProperty ;
-    rdfs:label  "triggers" ;
-    rdfs:domain fta-fmea:Situation ;
-    rdfs:range  fta-fmea:Event .
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/activatedBy
+fta-fmea:activatedBy rdf:type owl:ObjectProperty ;
+                     rdfs:domain fta-fmea:Behavior ;
+                     rdfs:range fta-fmea:Situation ;
+                     rdfs:label "activated by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/activates
+fta-fmea:activates rdf:type owl:ObjectProperty ;
+                   rdfs:domain fta-fmea:Situation ;
+                   rdfs:range fta-fmea:Behavior ;
+                   rdfs:label "activates" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/bringsAbout
+fta-fmea:bringsAbout rdf:type owl:ObjectProperty ;
+                     rdfs:domain fta-fmea:Event ;
+                     rdfs:range fta-fmea:Situation ;
+                     rdfs:label "brings about" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/broughtAboutBy
+fta-fmea:broughtAboutBy rdf:type owl:ObjectProperty ;
+                        rdfs:domain fta-fmea:Situation ;
+                        rdfs:range fta-fmea:Event ;
+                        rdfs:label "brought about by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/documented-in
+fta-fmea:documented-in rdf:type owl:ObjectProperty ;
+                       rdfs:domain fta-fmea:System ;
+                       rdfs:range fta-fmea:Document ;
+                       rdfs:label "Documented in" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasChildBehavior
+fta-fmea:hasChildBehavior rdf:type owl:ObjectProperty ;
+                          rdfs:domain fta-fmea:Behavior ;
+                          rdfs:range fta-fmea:Behavior ;
+                          rdfs:label "has child behavior" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasChildren
+fta-fmea:hasChildren rdf:type owl:ObjectProperty ;
+                     rdfs:domain fta-fmea:FaultEvent ;
+                     rdfs:range fta-fmea:FaultEvent ;
+                     rdfs:label "has children" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasChildrenSequence
+fta-fmea:hasChildrenSequence rdf:type owl:ObjectProperty ;
+                             rdfs:label "has children sequence" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasComponent
+fta-fmea:hasComponent rdf:type owl:ObjectProperty ;
+                      rdfs:domain fta-fmea:Behavior ;
+                      rdfs:range fta-fmea:Component ;
+                      rdfs:label "has component" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasEffect
+fta-fmea:hasEffect rdf:type owl:ObjectProperty ;
+                   rdfs:label "has effects" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFailureMode
+fta-fmea:hasFailureMode rdf:type owl:ObjectProperty ;
+                        rdfs:domain fta-fmea:Component ;
+                        rdfs:range fta-fmea:FailureMode ;
+                        rdfs:label "has failure mode" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFailureModesTable
+fta-fmea:hasFailureModesTable rdf:type owl:ObjectProperty ;
+                              rdfs:domain fta-fmea:FaultTree ;
+                              rdfs:range fta-fmea:FailureModesTable ;
+                              rdfs:label "has failure modes table" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFinalEffect
+fta-fmea:hasFinalEffect rdf:type owl:ObjectProperty ;
+                        rdfs:domain fta-fmea:FailureModesRow ;
+                        rdfs:range fta-fmea:FaultEvent ;
+                        rdfs:label "has final effect" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFunction
+fta-fmea:hasFunction rdf:type owl:ObjectProperty ;
+                     rdfs:domain fta-fmea:Component ;
+                     rdfs:range fta-fmea:Function ;
+                     rdfs:label "has function" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasLocalEffect
+fta-fmea:hasLocalEffect rdf:type owl:ObjectProperty ;
+                        rdfs:domain fta-fmea:FailureModesRow ;
+                        rdfs:range fta-fmea:FaultEvent ;
+                        rdfs:label "has local effect" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasMitigation
+fta-fmea:hasMitigation rdf:type owl:ObjectProperty ;
+                       rdfs:domain fta-fmea:FailureModesRow ;
+                       rdfs:range fta-fmea:Mitigation ;
+                       rdfs:label "hasMitigation" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasPartComponent
+fta-fmea:hasPartComponent rdf:type owl:ObjectProperty ;
+                          rdfs:domain fta-fmea:System ;
+                          rdfs:range fta-fmea:Component ;
+                          rdfs:label "has part component" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasRPN
+fta-fmea:hasRPN rdf:type owl:ObjectProperty ;
+                rdfs:domain fta-fmea:FailureModesRow ;
+                rdfs:range fta-fmea:RiskPriorityNumber ;
+                rdfs:label "has risk priority number" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasRow
+fta-fmea:hasRow rdf:type owl:ObjectProperty ;
+                rdfs:domain fta-fmea:FailureModesTable ;
+                rdfs:range fta-fmea:FailureModesRow ;
+                rdfs:label "has row" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/impairedBy
+fta-fmea:impairedBy rdf:type owl:ObjectProperty ;
+                    rdfs:domain fta-fmea:Behavior ;
+                    rdfs:range fta-fmea:Behavior ;
+                    rdfs:label "impaired by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/impairs
+fta-fmea:impairs rdf:type owl:ObjectProperty ;
+                 rdfs:domain fta-fmea:Behavior ;
+                 rdfs:range fta-fmea:Behavior ;
+                 rdfs:label "impairs" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/isChildBehaviorOf
+fta-fmea:isChildBehaviorOf rdf:type owl:ObjectProperty ;
+                           rdfs:domain fta-fmea:Behavior ;
+                           rdfs:range fta-fmea:Behavior ;
+                           rdfs:label "is child behavior of" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/isDerivedFrom
+fta-fmea:isDerivedFrom rdf:type owl:ObjectProperty ;
+                       rdfs:domain fta-fmea:FailureModesTable ;
+                       rdfs:range fta-fmea:FaultTree ;
+                       rdfs:label "is derived from" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/isManifestedBy
+fta-fmea:isManifestedBy rdf:type owl:ObjectProperty ;
+                        rdfs:label "is manifested by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/isMitigatedBy
+fta-fmea:isMitigatedBy rdf:type owl:ObjectProperty ;
+                       rdfs:domain fta-fmea:FailureMode ;
+                       rdfs:range fta-fmea:Mitigation ;
+                       rdfs:label "is mitigated by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/isPartOf
+fta-fmea:isPartOf rdf:type owl:ObjectProperty ;
+                  rdfs:domain fta-fmea:Component ;
+                  rdfs:range fta-fmea:Component ;
+                  rdfs:label "is part of" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/manifestation-of
+fta-fmea:manifestation-of rdf:type owl:ObjectProperty ;
+                          rdfs:domain fta-fmea:Event ;
+                          rdfs:range fta-fmea:Behavior ;
+                          rdfs:label "manifestation of" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/manifestationOf
+fta-fmea:manifestationOf rdf:type owl:ObjectProperty ;
+                         rdfs:domain fta-fmea:FunctionEvent ;
+                         rdfs:range fta-fmea:Function ;
+                         rdfs:label "manifestation of" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/manifested-by
+fta-fmea:manifested-by rdf:type owl:ObjectProperty ;
+                       rdfs:domain fta-fmea:Behavior ;
+                       rdfs:range fta-fmea:Event ;
+                       rdfs:label "manifested by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/manifestedBy
+fta-fmea:manifestedBy rdf:type owl:ObjectProperty ;
+                      rdfs:domain fta-fmea:Function ;
+                      rdfs:range fta-fmea:FunctionEvent ;
+                      rdfs:label "manifested by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/requires
+fta-fmea:requires rdf:type owl:ObjectProperty ;
+                  rdfs:domain fta-fmea:Behavior ;
+                  rdfs:range fta-fmea:Behavior ;
+                  rdfs:label "requires" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/triggeredBy
+fta-fmea:triggeredBy rdf:type owl:ObjectProperty ;
+                     rdfs:domain fta-fmea:Event ;
+                     rdfs:range fta-fmea:Situation ;
+                     rdfs:label "triggered by" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/triggers
+fta-fmea:triggers rdf:type owl:ObjectProperty ;
+                  rdfs:domain fta-fmea:Situation ;
+                  rdfs:range fta-fmea:Event ;
+                  rdfs:label "triggers" .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasBehaviorType
+fta-fmea:hasBehaviorType rdf:type owl:DatatypeProperty ;
+                         rdfs:domain fta-fmea:Behavior ;
+                         rdfs:range xsd:string ;
+                         rdfs:label "has behavior type" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDescription
+fta-fmea:hasDescription rdf:type owl:DatatypeProperty ;
+                        rdfs:range xsd:string ;
+                        rdfs:label "has description" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasDetection
+fta-fmea:hasDetection rdf:type owl:DatatypeProperty ;
+                      rdfs:domain fta-fmea:RiskPriorityNumber ;
+                      rdfs:range xsd:decimal ;
+                      rdfs:label "has detection" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFailureModeType
+fta-fmea:hasFailureModeType rdf:type owl:DatatypeProperty ;
+                            rdfs:domain fta-fmea:Behavior ;
+                            rdfs:range xsd:string ;
+                            rdfs:label "has failure mode type" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasFaultEventType
+fta-fmea:hasFaultEventType rdf:type owl:DatatypeProperty ;
+                           rdfs:domain fta-fmea:FaultEvent ;
+                           rdfs:range xsd:string ;
+                           rdfs:label "has fault event type" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasGateType
+fta-fmea:hasGateType rdf:type owl:DatatypeProperty ;
+                     rdfs:domain fta-fmea:FaultEvent ;
+                     rdfs:range xsd:string ;
+                     rdfs:label "has gate type" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasName
+fta-fmea:hasName rdf:type owl:DatatypeProperty ;
+                 rdfs:range xsd:string ;
+                 rdfs:label "has name" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasOccurrence
+fta-fmea:hasOccurrence rdf:type owl:DatatypeProperty ;
+                       rdfs:domain fta-fmea:RiskPriorityNumber ;
+                       rdfs:range xsd:decimal ;
+                       rdfs:label "has occurrence" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasPassword
+fta-fmea:hasPassword rdf:type owl:DatatypeProperty ;
+                     rdfs:domain fta-fmea:User ;
+                     rdfs:range xsd:string ;
+                     rdfs:label "has password" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasProbability
+fta-fmea:hasProbability rdf:type owl:DatatypeProperty ;
+                        rdfs:domain fta-fmea:FaultEvent ;
+                        rdfs:range xsd:float ;
+                        rdfs:label "has probability" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasSequenceProbability
+fta-fmea:hasSequenceProbability rdf:type owl:DatatypeProperty ;
+                                rdfs:domain fta-fmea:FaultEvent ;
+                                rdfs:range xsd:float ;
+                                rdfs:label "has sequence probability" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasSeverity
+fta-fmea:hasSeverity rdf:type owl:DatatypeProperty ;
+                     rdfs:domain fta-fmea:RiskPriorityNumber ;
+                     rdfs:range xsd:decimal ;
+                     rdfs:label "has severity" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasUsername
+fta-fmea:hasUsername rdf:type owl:DatatypeProperty ;
+                     rdfs:domain fta-fmea:User ;
+                     rdfs:range xsd:string ;
+                     rdfs:label "has username" .
+
+
+###  http://purl.org/dc/terms/source
+dc-terms:source rdf:type owl:DatatypeProperty ;
+                rdfs:label "annotation source" .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Behavior
+fta-fmea:Behavior rdf:type owl:Class ;
+                  rdfs:label "Behavior" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Component
+fta-fmea:Component rdf:type owl:Class ;
+                   rdfs:label "Component" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Document
+fta-fmea:Document rdf:type owl:Class ;
+                  rdfs:label "Document" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Event
+fta-fmea:Event rdf:type owl:Class ;
+               rdfs:label "Event" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FailureMode
+fta-fmea:FailureMode rdf:type owl:Class ;
+                     rdfs:label "Failure mode" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FailureModesRow
+fta-fmea:FailureModesRow rdf:type owl:Class ;
+                         rdfs:label "Faulure Modes Row" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FailureModesTable
+fta-fmea:FailureModesTable rdf:type owl:Class ;
+                           rdfs:label "Faulure Modes Table" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultEvent
+fta-fmea:FaultEvent rdf:type owl:Class ;
+                    rdfs:label "Fault event" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FaultTree
+fta-fmea:FaultTree rdf:type owl:Class ;
+                   rdfs:label "Fault Tree" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Function
+fta-fmea:Function rdf:type owl:Class ;
+                  rdfs:label "Function" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/FunctionEvent
+fta-fmea:FunctionEvent rdf:type owl:Class ;
+                       rdfs:label "Function Event" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Mitigation
+fta-fmea:Mitigation rdf:type owl:Class ;
+                    rdfs:label "Mitigation" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/RiskPriorityNumber
+fta-fmea:RiskPriorityNumber rdf:type owl:Class ;
+                            rdfs:label "Risk Priority Number" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Situation
+fta-fmea:Situation rdf:type owl:Class ;
+                   rdfs:label "Situation" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/System
+fta-fmea:System rdf:type owl:Class ;
+                rdfs:label "System" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/User
+fta-fmea:User rdf:type owl:Class ;
+              rdfs:label "User" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/summary
+fta-fmea:summary rdf:type owl:Class ;
+                 rdfs:label "Summary" .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
