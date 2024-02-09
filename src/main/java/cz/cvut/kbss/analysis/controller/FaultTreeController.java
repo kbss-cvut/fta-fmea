@@ -118,4 +118,12 @@ public class FaultTreeController {
         log.info("> generateFunctionalDependenciesFaultTree - {}, {}", functionFragment, faultTreeName);
         return repositoryService.generateFunctionDependencyTree(functionUri,faultTreeName);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(value = "/{faultTreeFragment}/cutsets")
+    public void performCutSetAnalysis(@PathVariable(name = "faultTreeFragment") String faultTreeFragment){
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        log.info("> performCutSetAnalysis - {}", faultTreeFragment);
+        repositoryService.performCutSetAnalysis(faultTreeUri);
+    }
 }
