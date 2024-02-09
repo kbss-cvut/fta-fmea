@@ -1,9 +1,11 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.dao.FaultEventScenarioDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
+import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree> {
 
     private final FaultTreeDao faultTreeDao;
+    private final FaultEventScenarioDao faultEventScenarioDao;
     private final FaultEventRepositoryService faultEventRepositoryService;
     private final FunctionRepositoryService functionRepositoryService;
     private final IdentifierService identifierService;
@@ -34,12 +37,14 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
                                       FaultTreeDao faultTreeDao,
+                                      FaultEventScenarioDao faultEventScenarioDao,
                                       FaultEventRepositoryService faultEventRepositoryService,
                                       FunctionRepositoryService functionRepositoryService,
                                       IdentifierService identifierService
     ) {
         super(validator);
         this.faultTreeDao = faultTreeDao;
+        this.faultEventScenarioDao = faultEventScenarioDao;
         this.faultEventRepositoryService = faultEventRepositoryService;
         this.functionRepositoryService = functionRepositoryService;
         this.identifierService = identifierService;
@@ -405,5 +410,25 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     @Transactional(readOnly = true)
     public List<FaultTree> findAllSummaries(){
         return ((FaultTreeDao)getPrimaryDao()).findAllSummaries();
+    }
+
+    @Transactional
+    public FaultTree performCutSetAnalysis(URI faultTreeUri){
+        FaultTree faultTree = findRequired(faultTreeUri);
+        CutSetExtractor extractor = new CutSetExtractor();
+        List<FaultEventScenario> scenarios = extractor.extract(faultTree);
+
+        if(faultTree.getFaultEventScenarios() != null)
+            for(FaultEventScenario faultEventScenario : faultTree.getFaultEventScenarios())
+                faultEventScenarioDao.remove(faultEventScenario);
+
+        for(FaultEventScenario scenario : scenarios){
+            scenario.updateProbability();
+            faultEventScenarioDao.persist(scenario);
+        }
+        faultTree.setFaultEventScenarios(new HashSet<>(scenarios));
+        getPrimaryDao().update(faultTree);
+
+        return faultTree;
     }
 }
