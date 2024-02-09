@@ -34,6 +34,9 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
     private FtaEventType eventType;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_has_event_type)
+    private FaultEventType faultEventType;
+
     @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
     private GateType gateType;
 
@@ -42,6 +45,9 @@ public class FaultEvent extends Event {
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
     private Double probability;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_based_on)
+    private String probabilityDiscriminator;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
