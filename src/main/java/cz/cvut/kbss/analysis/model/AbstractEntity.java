@@ -22,14 +22,15 @@ public abstract class AbstractEntity implements HasIdentifier, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if(! (o instanceof AbstractEntity))
+            return false;
         AbstractEntity that = (AbstractEntity) o;
         return Objects.equals(uri, that.uri);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri);
+        return Objects.hash(uri.toString());
     }
 
     @Override

@@ -50,18 +50,4 @@ public class FailureModesRow extends AbstractEntity {
     public String toString() {
         return "FailureModesRow <" + getUri() + "/>";
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FailureModesRow that = (FailureModesRow) o;
-        return Objects.equals(getUri(), that.getUri()) && Objects.equals(localEffect, that.getLocalEffect());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri());
-    }
-
 }

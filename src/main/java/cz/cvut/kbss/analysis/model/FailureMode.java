@@ -19,18 +19,4 @@ public class FailureMode extends Behavior {
     public String toString() {
         return "FailureMode <" + getUri() + "/>";
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FailureMode that = (FailureMode) o;
-        return Objects.equals(getUri(), that.getUri());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri());
-    }
-
 }

@@ -64,18 +64,4 @@ public class User extends AbstractEntity implements UserDetails {
     public String toString() {
         return "User <" + getUri() + "/>";
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User that = (User) o;
-        return Objects.equals(getUri(), that.getUri());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri());
-    }
-
 }

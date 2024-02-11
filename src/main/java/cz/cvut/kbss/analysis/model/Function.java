@@ -17,18 +17,6 @@ public class Function extends Behavior {
         return "Function <" + getUri() + "/>";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Function that = (Function) o;
-        return Objects.equals(getUri(), that.getUri());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri());
-    }
 
 }
 

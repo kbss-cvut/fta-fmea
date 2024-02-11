@@ -1,11 +1,11 @@
 package cz.cvut.kbss.analysis.dto;
 
 import cz.cvut.kbss.analysis.model.User;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 public class UserUpdateDTO extends User {
     private String newPassword;
 
