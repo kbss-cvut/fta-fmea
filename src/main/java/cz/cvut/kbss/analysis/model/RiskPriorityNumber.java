@@ -38,18 +38,4 @@ public class RiskPriorityNumber extends AbstractEntity {
     public String toString() {
         return "RiskPriorityNumber <" + getUri() + "/>";
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RiskPriorityNumber that = (RiskPriorityNumber) o;
-        return Objects.equals(getUri(), that.getUri());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri());
-    }
-
 }

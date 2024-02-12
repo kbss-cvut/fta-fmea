@@ -27,18 +27,4 @@ public class FailureModesTable extends NamedEntity {
     public String toString() {
         return "FailureModesTable <" + getUri() + "/>";
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FailureModesTable that = (FailureModesTable) o;
-        return Objects.equals(getUri(), that.getUri());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUri());
-    }
-
 }
