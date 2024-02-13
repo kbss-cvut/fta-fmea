@@ -84,27 +84,4 @@ public class CutSetExtractor {
         }
         return andScenarios;
     }
-//
-//
-//    public static void main(String[] args) {
-//        List<Integer> sizes = Stream.of(2,3).toList();
-//        List<Integer> inds = new ArrayList<>(sizes.size());
-//        sizes.forEach(s -> inds.add(0));
-//        int i = 0;
-//        while( i < inds.size()) {
-//            while (i < inds.size()) {
-//                int ii = inds.get(i) + 1;
-//                if (ii < sizes.get(i)) {
-//                    inds.set(i, ii);
-//                    i = 0;
-//                    break;
-//                }
-//                inds.set(i, 0);
-//                i++;
-//            }
-//            System.out.println(inds);
-//        }
-//        System.out.println("END");
-//    }
-
 }
