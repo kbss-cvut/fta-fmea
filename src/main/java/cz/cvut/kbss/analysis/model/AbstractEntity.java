@@ -25,12 +25,14 @@ public abstract class AbstractEntity implements HasIdentifier, Serializable {
         if(! (o instanceof AbstractEntity))
             return false;
         AbstractEntity that = (AbstractEntity) o;
+        if(uri == null && that.uri == null)
+            return super.equals(o);
         return Objects.equals(uri, that.uri);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri.toString());
+        return uri != null ? Objects.hash(uri.toString()) : super.hashCode();
     }
 
     @Override
