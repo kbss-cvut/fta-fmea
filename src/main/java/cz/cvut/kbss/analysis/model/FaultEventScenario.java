@@ -44,4 +44,13 @@ public class FaultEventScenario extends AnalysisProduct {
     public boolean isEmptyScenario(){
         return scenarioParts == null || scenarioParts.isEmpty();
     }
+
+    /**
+     *
+     * @param faultEventScenario
+     * @return returns true if all the parts of the faultEventScenario are included in this faultEventScenario
+     */
+    public boolean contains(FaultEventScenario faultEventScenario){
+        return getScenarioParts().containsAll(faultEventScenario.getScenarioParts());
+    }
 }

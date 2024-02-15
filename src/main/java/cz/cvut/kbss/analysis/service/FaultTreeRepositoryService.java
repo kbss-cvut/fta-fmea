@@ -416,7 +416,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     public FaultTree performCutSetAnalysis(URI faultTreeUri){
         FaultTree faultTree = findRequired(faultTreeUri);
         CutSetExtractor extractor = new CutSetExtractor();
-        List<FaultEventScenario> scenarios = extractor.extract(faultTree);
+        List<FaultEventScenario> scenarios = extractor.extractMinimalScenarios(faultTree);
 
         if(faultTree.getFaultEventScenarios() != null)
             for(FaultEventScenario faultEventScenario : faultTree.getFaultEventScenarios())

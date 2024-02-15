@@ -6,10 +6,7 @@ import cz.cvut.kbss.analysis.model.FaultTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -30,16 +27,56 @@ public class CutSetExtractor {
 
         return null;
     }
-    public List<FaultEventScenario> extract(FaultTree faultTree){
+
+    public List<FaultEventScenario> extractMinimalScenarios(FaultTree faultTree){
         Consumer<Logger> errorMessage = validateTree(faultTree);
         if(errorMessage != null){
             errorMessage.accept(LOG);
             return null;
         }
-
-        return extract(faultTree.getManifestingEvent()).stream()
+        List<FaultEventScenario> scenarios = extract(faultTree.getManifestingEvent()).stream()
                 .filter(s -> !s.isEmptyScenario()).toList();
+        scenarios = extractMinimalScenarios(scenarios);
+        return scenarios;
     }
+
+    public List<FaultEventScenario> extractMinimalScenarios(List<FaultEventScenario> allScenarios){
+        Map<FaultEvent, List<FaultEventScenario>> map = new HashMap<>();
+        Set<FaultEventScenario> nonMinimalScenarios = new HashSet<>();
+
+        for(int i = 0; i < allScenarios.size() ; i ++){
+            for(FaultEvent faultEvent : allScenarios.get(i).getScenarioParts()) {
+                List<FaultEventScenario> feScenarios = map.get(faultEvent);
+                if(feScenarios == null){
+                    feScenarios = new ArrayList<>();
+                    map.put(faultEvent, feScenarios);
+                }
+                feScenarios.add(allScenarios.get(i));
+            }
+        }
+
+        for(Map.Entry<FaultEvent, List<FaultEventScenario>> e : map.entrySet()){
+            if(e.getValue().size() < 1)
+                continue;
+            List<FaultEventScenario> scenarios = e.getValue()
+                    .stream().filter(fes -> !nonMinimalScenarios.contains(fes))
+                    .sorted(Comparator.comparing((FaultEventScenario fes) -> fes.getScenarioParts().size()).reversed())
+                    .toList();
+
+            for( int i = 0; i < scenarios.size() - 1; i ++ ){
+                for( int j = i + 1; j < scenarios.size(); j ++ ){
+                    if(scenarios.get(i).contains(scenarios.get(j))){
+                        nonMinimalScenarios.add(scenarios.get(i));
+                        break;
+                    }
+                }
+            }
+        }
+        List<FaultEventScenario> minimalScenarios = new ArrayList<>(allScenarios);
+        minimalScenarios.removeAll(nonMinimalScenarios);
+        return minimalScenarios;
+    }
+
 
     public List<FaultEventScenario> extract(FaultEvent faultEvent){
         if(faultEvent.getGateType() == null || faultEvent.getChildren() == null || faultEvent.getChildren().isEmpty())
