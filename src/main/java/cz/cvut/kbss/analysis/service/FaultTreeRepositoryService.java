@@ -6,6 +6,7 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
+import cz.cvut.kbss.analysis.model.fta.FTAMinimalCutSetEvaluation;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
@@ -429,6 +430,27 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         faultTree.setFaultEventScenarios(new HashSet<>(scenarios));
         getPrimaryDao().update(faultTree);
 
+        return faultTree;
+    }
+
+    @Transactional
+    public FaultTree evaluate(URI faultTreeUri) {
+        FaultTree faultTree = findRequired(faultTreeUri);
+
+        if(faultTree.getFaultEventScenarios() != null) {
+            for (FaultEventScenario faultEventScenario : faultTree.getFaultEventScenarios())
+                faultEventScenarioDao.remove(faultEventScenario);
+            faultTree.setFaultEventScenarios(null);
+        }
+
+        FTAMinimalCutSetEvaluation evaluator = new FTAMinimalCutSetEvaluation();
+        evaluator.evaluate(faultTree);
+
+        if(faultTree.getFaultEventScenarios() != null)
+            for(FaultEventScenario scenario : faultTree.getFaultEventScenarios()){
+                scenario.updateProbability();
+                faultEventScenarioDao.persist(scenario);
+            }
         return faultTree;
     }
 }

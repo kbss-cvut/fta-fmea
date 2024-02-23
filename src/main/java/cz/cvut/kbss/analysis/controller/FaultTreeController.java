@@ -126,4 +126,13 @@ public class FaultTreeController {
         log.info("> performCutSetAnalysis - {}", faultTreeFragment);
         repositoryService.performCutSetAnalysis(faultTreeUri);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(value = "/{faultTreeFragment}/evaluate")
+    public void evaluate(@PathVariable(name = "faultTreeFragment") String faultTreeFragment){
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        log.info("> performCutSetAnalysis - {}", faultTreeFragment);
+        repositoryService.evaluate(faultTreeUri);
+    }
+
 }
