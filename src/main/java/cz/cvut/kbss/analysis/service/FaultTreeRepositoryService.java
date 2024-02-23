@@ -90,12 +90,6 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         }
     }
 
-    @Override
-    protected void preUpdate(FaultTree instance) {
-        super.preUpdate(instance);
-        propagateProbabilities(instance);
-    }
-
     private void propagateProbabilities(FaultTree faultTree) {
         log.info("> propagateProbabilities - {}", faultTree);
 
