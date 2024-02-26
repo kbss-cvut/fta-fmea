@@ -3,14 +3,12 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.exception.CalculationException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
-import cz.cvut.kbss.analysis.service.strategy.GateStrategyFactory;
+import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +18,6 @@ import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -69,21 +66,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Transactional(readOnly = true)
     public Double propagateProbability(FaultEvent event) {
         log.info("> propagateProbability - {}", event);
-
-        if (event.getEventType() == FtaEventType.INTERMEDIATE) {
-            List<Double> childProbabilities = event.getChildren().stream()
-                    .map(this::propagateProbability).collect(Collectors.toList());
-
-            try {
-                double eventProbability = GateStrategyFactory.get(event.getGateType()).propagate(childProbabilities, event);
-                event.setProbability(eventProbability);
-            }catch (CalculationException ex){
-                log.info(ex.getMessage());
-            }
-        }
-
-        Double resultProbability = event.getProbability();
-
+        Double resultProbability = new DirectFtaEvaluation().evaluate(event);
         log.info("< propagateProbability - {}", resultProbability);
         return resultProbability;
     }

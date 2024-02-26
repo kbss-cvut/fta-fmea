@@ -94,6 +94,11 @@ public class CutSetExtractor {
         return processAndGateScenarios(partScenarios);
     }
 
+    public List<FaultEventScenario> extractMinimalScenarios(FaultEvent faultEvent){
+        List<FaultEventScenario> minScenarios = extract(faultEvent);
+        return extractMinimalScenarios(minScenarios);
+    }
+
     protected List<FaultEventScenario> processAndGateScenarios(List<List<FaultEventScenario>> partScenarios){
         List<Integer> inds = new ArrayList<>(partScenarios.size());
         partScenarios.forEach(l -> inds.add(0));
