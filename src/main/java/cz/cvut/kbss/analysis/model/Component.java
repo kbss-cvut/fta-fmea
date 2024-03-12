@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,26 +15,10 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_Component)
 @Getter
 @Setter
-public class Component extends NamedEntity {
+public class Component extends Item {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Function> functions = new HashSet<>();
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<FailureMode> failureModes = new HashSet<>();
-
-    @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    private URI parentComponent;
-
-    public void addFunction(Function function) {
-        function.setComponent(this);
-        getFunctions().add(function);
-    }
-
-    public void addFailureMode(FailureMode failureMode) {
-        failureMode.setComponent(this);
-        getFailureModes().add(failureMode);
-    }
+    @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH})// TODO - how to load parent components, e.g. simulate fetch EAGER
+    private Item parentComponent;
 
     @Override
     public String toString() {

@@ -4,9 +4,9 @@ import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
-import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
 import lombok.extern.slf4j.Slf4j;
@@ -87,8 +87,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         FaultEvent event = findRequired(faultEventUri);
         event.setBehavior(failureMode);
 
-        Component component = componentRepositoryService.findRequired(failureMode.getComponent().getUri());
-        component.addFailureMode(failureMode);
+        Item item = componentRepositoryService.findRequired(failureMode.getItem().getUri());
+        item.addFailureMode(failureMode);
 
         update(event);
 

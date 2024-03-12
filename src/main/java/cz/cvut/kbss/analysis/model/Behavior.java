@@ -6,16 +6,16 @@ import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.validation.constraints.NotEmpty;
-
 import java.util.HashSet;
 import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_Behavior)
-@MappedSuperclass
 @Getter
 @Setter
-public abstract class Behavior extends NamedEntity {
+public abstract class Behavior extends DomainEntity<Behavior> {
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
+    protected Set<Behavior> supertypes;
 
     @OWLDataProperty(iri = Vocabulary.s_p_hasBehaviorType)
     private BehaviorType behaviorType = BehaviorType.AtomicBehavior;
@@ -33,7 +33,7 @@ public abstract class Behavior extends NamedEntity {
     private Set<Event> manifestations = new HashSet<>();
 
     @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
-    private Component component;
+    private Item item;
 
 
     @OWLObjectProperty(iri = Vocabulary.s_p_activatedBy)
