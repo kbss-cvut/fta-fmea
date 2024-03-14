@@ -59,7 +59,7 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
 
         component.addFunction(function);
         update(component);
-        function.setComponent(component);
+        function.setItem(component);
 
         log.info("< addFunction - {}", function);
         return function;
@@ -100,7 +100,7 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         component.getFunctions()
                 .stream()
                 .filter(function -> function.getUri().equals(functionUri)).findFirst().ifPresent(function -> {
-                    function.setComponent(null);
+                    function.setItem(null);
                     component.getFunctions().remove(function);
                 });
 
@@ -141,7 +141,7 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
                 .removeIf(function -> function.getUri().equals(failureModeUri));
 
         update(component);
-        failureMode.setComponent(null);
+        failureMode.setItem(null);
         failureModeRepositoryService.update(failureMode);
         log.info("> deleteFailureMode - deleted");
     }
@@ -154,8 +154,9 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
         Component component = findRequired(componentUri);
         Component linkComponent = findRequired(linkComponentUri);
 
-        component.setParentComponent(linkComponent.getUri());
+        linkComponent.addComponent(component);
         update(component);
+        update(linkComponent);
 
         log.info("< linkComponents");
         return component;
@@ -186,10 +187,10 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
 
         findAll().stream()
                 .filter(component -> component.getParentComponent() != null
-                        && component.getParentComponent().equals(sourceComponentUri)
+                        && component.getParentComponent().getUri().equals(sourceComponentUri)
                 )
                 .forEach(component -> {
-                    component.setParentComponent(targetComponentUri);
+                    target.addComponent(component);
                     update(component);
                 });
 

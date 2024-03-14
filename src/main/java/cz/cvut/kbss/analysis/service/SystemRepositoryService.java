@@ -6,6 +6,7 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
+import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.System;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,7 @@ public class SystemRepositoryService extends BaseRepositoryService<System> {
     public Set<FailureMode> getAllFailureModes(URI systemUri) {
         System system = findRequired(systemUri);
         Set<FailureMode> failureModes = new HashSet<>();
-        for(Component comp: system.getComponents()) {
+        for(Item comp: system.getComponents()) {
             failureModes.addAll(comp.getFailureModes());
         }
         return failureModes;

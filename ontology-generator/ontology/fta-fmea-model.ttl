@@ -107,6 +107,10 @@ fta-fmea:has-part rdf:type owl:ObjectProperty ;
                   owl:inverseOf fta-fmea:isPartOf .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-participant
+fta-fmea:has-participant rdf:type owl:ObjectProperty .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-prediction
 fta-fmea:has-prediction rdf:type owl:ObjectProperty ;
                         rdfs:subPropertyOf fta-fmea:has-general-estimate .
@@ -118,6 +122,10 @@ fta-fmea:has-requirement rdf:type owl:ObjectProperty .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-scenario
 fta-fmea:has-scenario rdf:type owl:ObjectProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-type-category
+fta-fmea:has-type-category rdf:type owl:ObjectProperty .
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-value
@@ -320,6 +328,10 @@ fta-fmea:requires rdf:type owl:ObjectProperty ;
                   rdfs:label "requires" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-selected-estimation
+fta-fmea:has-selected-estimation rdf:type owl:ObjectProperty .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/triggeredBy
 fta-fmea:triggeredBy rdf:type owl:ObjectProperty ;
                      rdfs:domain fta-fmea:Event ;
@@ -343,6 +355,18 @@ fta-fmea:from rdf:type owl:DatatypeProperty ;
               rdfs:domain fta-fmea:failure-rate-requirement .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/ata-code
+fta-fmea:ata-code rdf:type owl:DatatypeProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/code
+fta-fmea:code rdf:type owl:DatatypeProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/criticality
+fta-fmea:criticality rdf:type owl:DatatypeProperty .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-duration
 fta-fmea:has-duration rdf:type owl:DatatypeProperty ;
                       rdfs:subPropertyOf owl:topDataProperty ;
@@ -353,9 +377,29 @@ fta-fmea:has-duration rdf:type owl:DatatypeProperty ;
 fta-fmea:has-end rdf:type owl:DatatypeProperty .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/material-reference
+fta-fmea:material-reference rdf:type owl:DatatypeProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/part-number
+fta-fmea:part-number rdf:type owl:DatatypeProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/quantity
+fta-fmea:quantity rdf:type owl:DatatypeProperty .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/schematic-designation
+fta-fmea:schematic-designation rdf:type owl:DatatypeProperty .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-start
 fta-fmea:has-start rdf:type owl:DatatypeProperty ;
                    rdfs:domain fta-fmea:Event .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/stock
+fta-fmea:stock rdf:type owl:DatatypeProperty .
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/hasBehaviorType
@@ -468,6 +512,7 @@ fta-fmea:Behavior rdf:type owl:Class ;
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/Component
 fta-fmea:Component rdf:type owl:Class ;
+                   rdfs:subClassOf fta-fmea:item ;
                    rdfs:label "Component" .
 
 
@@ -533,6 +578,7 @@ fta-fmea:Situation rdf:type owl:Class ;
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/System
 fta-fmea:System rdf:type owl:Class ;
+                rdfs:subClassOf fta-fmea:item ;
                 rdfs:label "System" .
 
 
@@ -551,6 +597,11 @@ fta-fmea:analysis-event rdf:type owl:Class .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/analysis-product
 fta-fmea:analysis-product rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/ata-system
+fta-fmea:ata-system rdf:type owl:Class ;
+                    rdfs:subClassOf fta-fmea:System .
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/estimation-event
@@ -629,13 +680,37 @@ fta-fmea:fha-fault-event rdf:type owl:Class ;
                          rdfs:subClassOf fta-fmea:fault-event-type .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/item
+fta-fmea:item rdf:type owl:Class .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/method
 fta-fmea:method rdf:type owl:Class .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/reusable-system
+fta-fmea:reusable-system rdf:type owl:Class ;
+                         rdfs:subClassOf fta-fmea:System .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/sns-component
+fta-fmea:sns-component rdf:type owl:Class ;
+                       rdfs:subClassOf fta-fmea:System .
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/summary
 fta-fmea:summary rdf:type owl:Class ;
                  rdfs:label "Summary" .
+
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/verification-method
+fta-fmea:verification-method rdf:type owl:Class ;
+                             rdfs:subClassOf fta-fmea:method .
+
+
+###  http://onto.fel.cvut.cz/ontologies/reliability-analysis-application/sns-component-failure-type
+<http://onto.fel.cvut.cz/ontologies/reliability-analysis-application/sns-component-failure-type> rdf:type owl:Class ;
+                                                                                                 rdfs:subClassOf fta-fmea:fault-event-type .
 
 
 #################################################################

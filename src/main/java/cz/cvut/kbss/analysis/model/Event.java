@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.CascadeType;
+import cz.cvut.kbss.jopa.model.annotations.FetchType;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import lombok.Getter;
@@ -13,7 +14,13 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_Event)
 @Getter
 @Setter
-public class Event extends NamedEntity {
+public class Event extends DomainEntity<Event> {
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
+    protected Set<Event> supertypes;
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, fetch = FetchType.EAGER)
+    protected Set<Event> contextEvents;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf, cascade = CascadeType.ALL)
     private Behavior behavior;

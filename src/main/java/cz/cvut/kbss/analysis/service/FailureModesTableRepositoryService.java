@@ -125,8 +125,8 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
             Function function = functionFailure.getFunction();
             row.put("function", function.getName());
 
-            Component component = function.getComponent();
-            if(component != null) row.put("component", component.getName());
+            Item item = function.getItem();
+            if(item != null) row.put("component", item.getName());
 
             // TODO be less strict due to deleted events??
             FailureMode failureMode = localEffect.getFailureMode();
@@ -162,7 +162,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
 
                 if (localEffect.getBehavior() != null
                         && !treeRoot.getName().equals(localEffect.getName())
-                        && localEffect.getBehavior().getComponent() == function.getComponent()) {
+                        && localEffect.getBehavior().getItem() == function.getItem()) {
                     row.put("localEffect", localEffect.getName());
                 }
                 localEffectUri = localEffect.getUri().toString();

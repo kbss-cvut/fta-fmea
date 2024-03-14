@@ -134,7 +134,9 @@ class ComponentRepositoryServiceTest {
     void linkComponents_shouldFindComponent_shouldSetParentNull_shouldCallUpdate() {
         Component component = new Component();
         component.setUri(Generator.generateUri());
-        component.setParentComponent(Generator.generateUri());
+        Component parent = new Component();
+        parent.setUri(Generator.generateUri());
+        component.setParentComponent(parent);
 
         Mockito.when(componentDao.find(eq(component.getUri()))).thenReturn(Optional.of(component));
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);

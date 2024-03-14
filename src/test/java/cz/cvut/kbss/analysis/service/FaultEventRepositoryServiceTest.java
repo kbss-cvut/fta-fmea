@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.net.URI;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -131,10 +130,10 @@ public class FaultEventRepositoryServiceTest {
         failureMode.setUri(Generator.generateUri());
         Component component = new Component();
         component.setUri(Generator.generateUri());
-        failureMode.setComponent(component);
+        failureMode.setItem(component);
 
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
-        Mockito.when(componentRepositoryService.findRequired(eq(failureMode.getComponent().getUri()))).thenReturn(component);
+        Mockito.when(componentRepositoryService.findRequired(eq(failureMode.getItem().getUri()))).thenReturn(component);
         Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
         Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
         Mockito.when(faultEventDao.update(eq(event))).thenReturn(event);
