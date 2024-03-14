@@ -2,17 +2,20 @@ package cz.cvut.kbss.analysis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
+import cz.cvut.kbss.jopa.model.annotations.ParticipationConstraints;
+import cz.cvut.kbss.jopa.model.annotations.Transient;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.validation.constraints.NotEmpty;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 

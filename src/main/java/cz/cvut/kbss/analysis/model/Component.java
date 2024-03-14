@@ -1,16 +1,11 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Builder;
+import cz.cvut.kbss.jopa.model.annotations.CascadeType;
+import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.validation.constraints.NotEmpty;
-import java.net.URI;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_component)
 @Getter

@@ -3,7 +3,6 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
-import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;

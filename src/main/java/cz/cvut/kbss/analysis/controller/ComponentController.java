@@ -5,7 +5,6 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
-import cz.cvut.kbss.analysis.service.FunctionRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;

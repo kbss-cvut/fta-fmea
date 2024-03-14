@@ -1,8 +1,6 @@
 package cz.cvut.kbss.analysis.service.validation;
 
 import cz.cvut.kbss.analysis.dao.ComponentDao;
-import cz.cvut.kbss.analysis.environment.Generator;
-import cz.cvut.kbss.analysis.exception.ValidationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import org.junit.jupiter.api.Assertions;
@@ -14,8 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ComponentValidatorTest {
 

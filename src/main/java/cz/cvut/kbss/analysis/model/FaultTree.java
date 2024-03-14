@@ -2,13 +2,10 @@ package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 

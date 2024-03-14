@@ -3,16 +3,10 @@ package cz.cvut.kbss.analysis.model;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
-import cz.cvut.kbss.jopa.model.annotations.ParticipationConstraints;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
 @OWLClass(iri = Vocabulary.s_c_risk_priority_number)
 @Getter

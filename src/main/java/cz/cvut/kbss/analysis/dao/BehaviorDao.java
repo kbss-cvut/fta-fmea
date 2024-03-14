@@ -6,13 +6,9 @@ import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.resources.ResourceUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
-import cz.cvut.kbss.jopa.model.IRI;
-import org.eclipse.rdf4j.common.io.ResourceUtil;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
