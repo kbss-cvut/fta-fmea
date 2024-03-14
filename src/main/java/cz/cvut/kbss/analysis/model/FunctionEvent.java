@@ -9,12 +9,12 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_FunctionEvent)
+@OWLClass(iri = Vocabulary.s_c_function_event)
 @Getter
 @Setter
 public class FunctionEvent extends Event{
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_manifestation_of)
     private Set<Function> functions = new HashSet<>();
 
     public void addFunction(Function function){

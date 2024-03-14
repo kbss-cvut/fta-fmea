@@ -12,17 +12,17 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_FaultTree)
+@OWLClass(iri = Vocabulary.s_c_fault_tree)
 @Getter
 @Setter
 public class FaultTree extends NamedEntity {
 
     @NotNull(message = "Manifesting event must be chosen")
     @ParticipationConstraints(nonEmpty = true)
-    @OWLObjectProperty(iri = Vocabulary.s_p_isManifestedBy, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_manifested_by, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private FaultEvent manifestingEvent;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureModesTable, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_failure_modes_table, cascade = CascadeType.ALL)
     private FailureModesTable failureModesTable;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_scenario, fetch = FetchType.EAGER)

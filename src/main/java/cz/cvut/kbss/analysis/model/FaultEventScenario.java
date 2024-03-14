@@ -18,7 +18,7 @@ public class FaultEventScenario extends AnalysisProduct {
     @OWLObjectProperty(iri = Vocabulary.s_p_has_part, fetch = FetchType.EAGER)
     private Set<FaultEvent> scenarioParts;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
+    @OWLDataProperty(iri = Vocabulary.s_p_probability)
     private Double probability;
 
 

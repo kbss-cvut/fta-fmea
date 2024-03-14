@@ -14,13 +14,13 @@ import lombok.Setter;
 @Setter
 public class FailureRateEstimate extends AnalysisProduct{
 
-    @OWLDataProperty(iri = Vocabulary.s_p_has_value)
+    @OWLDataProperty(iri = Vocabulary.s_p_value)
     protected Double value;
 
     /**
      * The estimation method
      */
-    @OWLObjectProperty(iri = Vocabulary.s_p_based_on, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_based_on, cascade = CascadeType.ALL)
     protected EstimationMethod estimationMethod;
 
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import java.util.Objects;
 
-@OWLClass(iri = Vocabulary.s_c_Function)
+@OWLClass(iri = Vocabulary.s_c_function)
 @Getter
 @Setter
 public class Function extends Behavior {

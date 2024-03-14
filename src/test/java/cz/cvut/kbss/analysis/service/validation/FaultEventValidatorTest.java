@@ -36,7 +36,7 @@ class FaultEventValidatorTest {
         FaultEvent event = new FaultEvent();
         event.setName("Duplicate Name");
 
-        Mockito.when(faultEventDao.existsWithPredicate(Vocabulary.s_p_hasName, event.getName())).thenReturn(true);
+        Mockito.when(faultEventDao.existsWithPredicate(Vocabulary.s_p_name, event.getName())).thenReturn(true);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);
@@ -51,7 +51,7 @@ class FaultEventValidatorTest {
         event.setEventType(FtaEventType.BASIC);
         event.setName("Valid Name");
 
-        Mockito.when(faultEventDao.existsWithPredicate(Vocabulary.s_p_hasName, event.getName())).thenReturn(false);
+        Mockito.when(faultEventDao.existsWithPredicate(Vocabulary.s_p_name, event.getName())).thenReturn(false);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
         faultEventValidator.validate(event, bindingResult);

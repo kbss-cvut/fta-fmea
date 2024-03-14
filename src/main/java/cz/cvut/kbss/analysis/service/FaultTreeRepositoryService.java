@@ -259,11 +259,11 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
     private URI createUri(Behavior behavior, FaultEvent parentEvent, String type) throws URISyntaxException {
         String behaviorUri = behavior.getUri().toString();
         if(parentEvent == null){
-            return new URI(identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent
+            return new URI(identifierService.composeIdentifier(Vocabulary.s_c_fault_event
                     , behaviorUri.substring(behaviorUri.lastIndexOf("/") + 1)) + type);
         }else{
             String parentBehaviorUri = parentEvent.getUri().toString();
-            return new URI(identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent
+            return new URI(identifierService.composeIdentifier(Vocabulary.s_c_fault_event
                     , behaviorUri.substring(behaviorUri.lastIndexOf("/") + 1)) + parentBehaviorUri.split("instance")[1] + type);
         }
     }

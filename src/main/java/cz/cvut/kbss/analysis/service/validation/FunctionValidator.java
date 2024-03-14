@@ -31,7 +31,7 @@ public class FunctionValidator implements Validator {
 
         Function instance = (Function) target;
 
-        boolean duplicate = functionDao.existsWithPredicate(Vocabulary.s_p_hasName, instance.getName());
+        boolean duplicate = functionDao.existsWithPredicate(Vocabulary.s_p_name, instance.getName());
         if(instance.getUri() == null && duplicate) {
             errors.rejectValue("name", "name.duplicate", "Duplicate component name");
         }

@@ -12,7 +12,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Objects;
 
-@OWLClass(iri = Vocabulary.s_c_Mitigation)
+@OWLClass(iri = Vocabulary.s_c_mitigation)
 @Getter
 @Setter
 public class Mitigation extends Behavior {

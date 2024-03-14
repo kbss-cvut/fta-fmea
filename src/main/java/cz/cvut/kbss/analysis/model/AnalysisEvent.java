@@ -14,18 +14,18 @@ import java.util.Date;
 @Setter
 public class AnalysisEvent<T extends AnalysisProduct> extends AbstractEntity{
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_performed_by)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_performed_by)
     private User agent;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_based_on)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_based_on)
     private NamedEntity analysisMethod;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_has_start)
+    @OWLDataProperty(iri = Vocabulary.s_p_start)
     private Date startTime;
-    @OWLDataProperty(iri = Vocabulary.s_p_has_end)
+    @OWLDataProperty(iri = Vocabulary.s_p_end)
     private Date endTime;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_creates)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_created)
     private T product;
 
 }

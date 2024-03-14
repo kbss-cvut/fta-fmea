@@ -11,16 +11,16 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_FailureModesTable)
+@OWLClass(iri = Vocabulary.s_c_failure_modes_table)
 @Getter
 @Setter
 public class FailureModesTable extends NamedEntity {
 
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.LAZY)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from, fetch = FetchType.LAZY)
     private FaultTree faultTree;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasRow, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_row, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<FailureModesRow> rows = new HashSet<>();
 
     @Override

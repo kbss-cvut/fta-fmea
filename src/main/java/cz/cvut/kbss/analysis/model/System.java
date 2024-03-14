@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_System)
+@OWLClass(iri = Vocabulary.s_c_system)
 @Getter
 @Setter
 public class System extends Item {

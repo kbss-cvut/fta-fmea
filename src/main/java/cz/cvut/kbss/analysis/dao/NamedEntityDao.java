@@ -12,8 +12,8 @@ import java.util.List;
 
 public class NamedEntityDao<T extends NamedEntity> extends BaseDao<T> {
 
-    public static URI P_HAS_NAME = URI.create(Vocabulary.s_p_hasName);
-    public static URI P_HAS_DESCRIPTION = URI.create(Vocabulary.s_p_hasDescription);
+    public static URI P_HAS_NAME = URI.create(Vocabulary.s_p_name);
+    public static URI P_HAS_DESCRIPTION = URI.create(Vocabulary.s_p_description);
     protected NamedEntityDao(Class<T> type, EntityManager em, PersistenceConf config) {
         super(type, em, config);
     }

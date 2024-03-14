@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.*;
 
-@OWLClass(iri = Vocabulary.s_c_FaultEvent)
+@OWLClass(iri = Vocabulary.s_c_fault_event)
 @Getter
 @Setter
 public class FaultEvent extends Event {
@@ -31,32 +31,32 @@ public class FaultEvent extends Event {
 
     @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasFaultEventType)
+    @OWLDataProperty(iri = Vocabulary.s_p_fault_event_type)
     private FtaEventType eventType;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasGateType)
+    @OWLDataProperty(iri = Vocabulary.s_p_gate_type)
     private GateType gateType;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_rectangle, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Rectangle rectangle;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasProbability)
+    @OWLDataProperty(iri = Vocabulary.s_p_probability)
     private Double probability;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_selected_estimation, fetch = FetchType.EAGER)
     private FailureRateEstimate selectedEstimate;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildren, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_child, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_failure_mode, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private FailureMode failureMode;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasSequenceProbability)
+    @OWLDataProperty(iri = Vocabulary.s_p_sequence_probability)
     private Double sequenceProbability;
 
     @Sequence
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildrenSequence, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_child_sequence, fetch = FetchType.EAGER)
     private List<URI> childrenSequence = new ArrayList<>();
     public FailureMode getFailureMode(){
         return getBehavior() instanceof FailureMode ? (FailureMode) getBehavior() : null;

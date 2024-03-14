@@ -35,23 +35,23 @@ public class FunctionController {
     @GetMapping(value = "/{functionFragment}/requiredFunctions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<Behavior> getFunctions(@PathVariable(name = "functionFragment") String function) {
         log.info("> getRequiredFunctions - {}", function);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, function);
         return functionRepositoryService.getRequiredBehavior(functionUri);
     }
 
     @PostMapping(value = "/{functionFragment}/requiredFunctions/{requiredFunctionFragment}")
     public Function addRequiredFunction(@PathVariable(name = "functionFragment") String functionFragment,@PathVariable(name = "requiredFunctionFragment") String requiredFunctionFragment ) {
         log.info("> addRequiredFunction - {}, {}", functionFragment, requiredFunctionFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
-        URI requiredFunctionURI = identifierService.composeIdentifier(Vocabulary.s_c_Function, requiredFunctionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
+        URI requiredFunctionURI = identifierService.composeIdentifier(Vocabulary.s_c_function, requiredFunctionFragment);
         return functionRepositoryService.addRequiredBehavior(functionUri, requiredFunctionURI);
     }
 
     @DeleteMapping(value = "/{functionFragment}/requiredFunctions/{requiredFunctionFragment}")
     public void deleteFunction(@PathVariable(name = "functionFragment") String functionFragment, @PathVariable(name = "requiredFunctionFragment") String requiredFunctionFragment) {
         log.info("> deleteRequiredFunction - {}, {}", functionFragment, functionFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
-        URI requiredFunctionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, requiredFunctionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
+        URI requiredFunctionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, requiredFunctionFragment);
 
         functionRepositoryService.deleteRequiredBehavior(functionUri,requiredFunctionUri);
         log.info("< deleteRequiredFunction");
@@ -67,14 +67,14 @@ public class FunctionController {
     @GetMapping(value = "/{functionFragment}/getComponent", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Component getComponent(@PathVariable(name = "functionFragment") String function) {
         log.info("> getComponent - {}", function);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, function);
         return functionRepositoryService.getComponent(functionUri);
     }
 
     @GetMapping(value = "/{functionFragment}/impairedBehaviors", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public List<Behavior> getImpairedBehaviors(@PathVariable(name = "functionFragment") String function) {
         log.info("> getImpairedBehaviors - {}", function);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, function);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, function);
         return functionRepositoryService.getImpairingBehaviors(functionUri);
     }
 
@@ -82,8 +82,8 @@ public class FunctionController {
     public void addChildBehavior(@PathVariable(name = "functionFragment") String functionFragment
             ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
         log.info("> addChildBehavior - {}, {}", functionFragment, childBehaviorFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
-        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, childBehaviorFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_function, childBehaviorFragment);
         functionRepositoryService.addChildBehavior(functionUri, childBehaviorUri);
     }
 
@@ -91,22 +91,22 @@ public class FunctionController {
     public void removeChildBehavior(@PathVariable(name = "functionFragment") String failureModeFragment
             ,@PathVariable(name = "childBehaviorFragment") String childBehaviorFragment ) {
         log.info("> removeChildBehavior - {}, {}", failureModeFragment, childBehaviorFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, failureModeFragment);
-        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, childBehaviorFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, failureModeFragment);
+        URI childBehaviorUri = identifierService.composeIdentifier(Vocabulary.s_c_function, childBehaviorFragment);
         functionRepositoryService.removeChildBehavior(functionUri, childBehaviorUri);
     }
 
     @GetMapping(value = "/{functionFragment}/childTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<URI> getChildTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
         log.info("> getChildTransitiveClosure - {}", functionFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
         return functionRepositoryService.getTransitiveClosure(functionUri,"child");
     }
 
     @GetMapping(value = "/{functionFragment}/requiredTransitiveClosure", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<URI> getRequiredTransitiveClosure(@PathVariable(name = "functionFragment") String functionFragment){
         log.info("> getRequiredTransitiveClosure - {}", functionFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
         return functionRepositoryService.getTransitiveClosure(functionUri, "required");
     }
 }

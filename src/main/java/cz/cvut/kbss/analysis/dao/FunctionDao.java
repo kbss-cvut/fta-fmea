@@ -15,6 +15,7 @@ import java.util.List;
 
 @Repository
 public class FunctionDao extends BehaviorDao<Function> {
+    public static URI P_HAS_FUNCTION = URI.create(Vocabulary.s_p_has_function);
 
     @Autowired
     protected FunctionDao(EntityManager em, PersistenceConf config) {
@@ -24,7 +25,7 @@ public class FunctionDao extends BehaviorDao<Function> {
     public Component getComponent(URI functionUri) {
         return em
                 .createNativeQuery("SELECT ?component WHERE { ?component ?hasFunction ?function }", Component.class)
-                .setParameter("hasFunction", URI.create(Vocabulary.s_p_hasFunction))
+                .setParameter("hasFunction", P_HAS_FUNCTION)
                 .setParameter("function", functionUri)
                 .getResultList().stream().findFirst().orElse(null);
     }
@@ -33,7 +34,7 @@ public class FunctionDao extends BehaviorDao<Function> {
     public List<Behavior> getImpairingBehaviors(URI functionUri){
         return em
                 .createNativeQuery("SELECT ?failureMode WHERE { ?failureMode ?impairs ?function }", Behavior.class)
-                .setParameter("impairs", URI.create(Vocabulary.s_p_impairs))
+                .setParameter("impairs", P_IS_IMPAIRING)
                 .setParameter("function", functionUri)
                 .getResultList();
     }

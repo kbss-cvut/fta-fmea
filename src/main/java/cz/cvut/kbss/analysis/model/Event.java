@@ -11,24 +11,24 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_Event)
+@OWLClass(iri = Vocabulary.s_c_event)
 @Getter
 @Setter
 public class Event extends DomainEntity<Event> {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from, fetch = FetchType.EAGER)
     protected Set<Event> supertypes;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_part_of, fetch = FetchType.EAGER)
     protected Set<Event> contextEvents;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_manifestationOf, cascade = CascadeType.ALL)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_manifestation_of, cascade = CascadeType.ALL)
     private Behavior behavior;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_bringsAbout)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_bringing_about)
     private Set<Situation> bringsAboutSituations = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_triggeredBy)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_triggered_by)
     private Set<Situation> triggeredBySituations = new HashSet<>();
 
     public void setBehavior(Behavior behavior){

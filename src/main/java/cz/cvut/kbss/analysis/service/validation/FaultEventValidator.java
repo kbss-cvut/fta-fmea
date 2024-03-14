@@ -34,7 +34,7 @@ public class FaultEventValidator implements Validator {
 
         FaultEvent instance = (FaultEvent) target;
 
-        boolean duplicate = faultEventDao.existsWithPredicate(Vocabulary.s_p_hasName, instance.getName());
+        boolean duplicate = faultEventDao.existsWithPredicate(Vocabulary.s_p_name, instance.getName());
         if(instance.getUri() == null && duplicate) {
             errors.rejectValue("name", "name.duplicate");
         }

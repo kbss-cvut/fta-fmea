@@ -31,7 +31,7 @@ public class ComponentValidator implements Validator {
 
         Component instance = (Component) target;
 
-        boolean duplicate = componentDao.existsWithPredicate(Vocabulary.s_p_hasName, instance.getName());
+        boolean duplicate = componentDao.existsWithPredicate(Vocabulary.s_p_name, instance.getName());
         if(instance.getUri() == null && duplicate) {
             errors.rejectValue("name", "name.duplicate", "Duplicate component name");
         }

@@ -12,12 +12,12 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_Component)
+@OWLClass(iri = Vocabulary.s_c_component)
 @Getter
 @Setter
 public class Component extends Item {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isPartOf, cascade = {CascadeType.MERGE, CascadeType.REFRESH})// TODO - how to load parent components, e.g. simulate fetch EAGER
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_part_of, cascade = {CascadeType.MERGE, CascadeType.REFRESH})// TODO - how to load parent components, e.g. simulate fetch EAGER
     private Item parentComponent;
 
     @Override

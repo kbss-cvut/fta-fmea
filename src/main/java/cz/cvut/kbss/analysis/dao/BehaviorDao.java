@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 
 public abstract class BehaviorDao<T extends Behavior> extends NamedEntityDao<T>{
+    public static URI P_IS_IMPAIRING = URI.create(Vocabulary.s_p_is_impairing);
     public BehaviorDao(Class<T> type, EntityManager em, PersistenceConf config) {
         super(type, em, config);
     }
@@ -31,7 +32,7 @@ public abstract class BehaviorDao<T extends Behavior> extends NamedEntityDao<T>{
     }
 
     public Set<URI> getTransitiveImpairingBehaviors(URI behaviorURI){
-        return getTransitiveClosure(ResourceUtils.IMPAIRING_BEHAVIORS, URI.create(Vocabulary.s_p_impairs));
+        return getTransitiveClosure(ResourceUtils.IMPAIRING_BEHAVIORS, P_IS_IMPAIRING);
     }
 
     /**
@@ -59,7 +60,7 @@ public abstract class BehaviorDao<T extends Behavior> extends NamedEntityDao<T>{
      * @return
      */
     public Set<URI> getIndirectImpairingBehaviors(URI behaviorURI){
-        return getTransitiveClosure(ResourceUtils.INDIRECT_IMPAIRING_BEHAVIORS, URI.create(Vocabulary.s_p_impairs));
+        return getTransitiveClosure(ResourceUtils.INDIRECT_IMPAIRING_BEHAVIORS, P_IS_IMPAIRING);
     }
 
     public Set<URI> getTransitiveClosure(String queryName, URI behaviorURI) {

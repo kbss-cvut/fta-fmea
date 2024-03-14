@@ -36,7 +36,7 @@ class ComponentValidatorTest {
         Component component = new Component();
         component.setName("Duplicate Name");
 
-        Mockito.when(componentDao.existsWithPredicate(Vocabulary.s_p_hasName, component.getName())).thenReturn(true);
+        Mockito.when(componentDao.existsWithPredicate(Vocabulary.s_p_name, component.getName())).thenReturn(true);
 
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(component, componentValidator);
@@ -51,7 +51,7 @@ class ComponentValidatorTest {
         Component component = new Component();
         component.setName("Valid Name");
 
-        Mockito.when(componentDao.existsWithPredicate(Vocabulary.s_p_hasName, component.getName())).thenReturn(false);
+        Mockito.when(componentDao.existsWithPredicate(Vocabulary.s_p_name, component.getName())).thenReturn(false);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(component, componentValidator);
         componentValidator.validate(component, bindingResult);

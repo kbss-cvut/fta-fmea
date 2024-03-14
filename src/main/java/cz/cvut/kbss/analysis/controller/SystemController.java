@@ -42,14 +42,14 @@ public class SystemController {
     @GetMapping(value = "/{systemFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public System find(@PathVariable(name = "systemFragment") String systemFragment) {
         log.info("> find - {}", systemFragment);
-        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
         return repositoryService.findRequired(systemUri);
     }
 
     @GetMapping(value = "/{systemFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<FailureMode> getFailureModes(@PathVariable(name = "systemFragment") String systemFragment) {
         log.info("> getAllFailureModes - {}", systemFragment);
-        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
         return repositoryService.getAllFailureModes(systemUri);
     }
 
@@ -76,7 +76,7 @@ public class SystemController {
     public void delete(@PathVariable(name = "systemFragment") String systemFragment) {
         log.info("> delete - {}", systemFragment);
 
-        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
         repositoryService.remove(systemUri);
     }
 
@@ -84,8 +84,8 @@ public class SystemController {
     public void addComponent(@PathVariable(name = "systemFragment") String systemFragment,
                              @PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> addComponent - {}, {}", systemFragment, componentFragment);
-        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
 
         repositoryService.addComponent(systemUri, componentUri);
     }
@@ -94,8 +94,8 @@ public class SystemController {
     public void deleteComponent(@PathVariable(name = "systemFragment") String systemFragment,
                                 @PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> deleteComponent - {}, {}", systemFragment, componentFragment);
-        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
 
         repositoryService.removeComponent(systemUri, componentUri);
     }
@@ -103,7 +103,7 @@ public class SystemController {
 
     @PostMapping(value = "/{systemFragment}/documents")
     public void importDocument(@PathVariable(name = "systemFragment") String systemFragment, @RequestParam URI documentId) throws UnsupportedEncodingException {
-        URI systemURI = identifierService.composeIdentifier(Vocabulary.s_c_System, systemFragment);
+        URI systemURI = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
         log.info("> importing annotations from document <{}> into system <{}>", documentId, systemURI);
         annotatorService.convertDocument(documentId.toString());
         repositoryService.importDocument(systemURI, documentId);

@@ -16,20 +16,20 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-@OWLClass(iri = Vocabulary.s_c_User)
+@OWLClass(iri = Vocabulary.s_c_user)
 @Getter
 @Setter
 public class User extends AbstractEntity implements UserDetails {
 
     @NotEmpty(message = "Username must not be empty")
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasUsername)
+    @OWLDataProperty(iri = Vocabulary.s_p_username)
     private String username;
 
     @NotEmpty(message = "Password must not be empty")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasPassword)
+    @OWLDataProperty(iri = Vocabulary.s_p_password)
     private String password;
 
     @Transient
