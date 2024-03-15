@@ -1,6 +1,6 @@
 # Project Description
 
-This project creates java sources files based on the appliation ontology.
+This project creates java source files based on the application ontology.
 
 ### Project structure
 - ./ontology - ontology folder
