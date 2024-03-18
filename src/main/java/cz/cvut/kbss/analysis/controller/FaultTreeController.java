@@ -38,7 +38,7 @@ public class FaultTreeController {
     @GetMapping(value = "/{faultTreeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public FaultTree find(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> find - {}", faultTreeFragment);
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
         return repositoryService.findRequired(faultTreeUri);
     }
 
@@ -65,14 +65,14 @@ public class FaultTreeController {
     public void delete(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> delete - {}", faultTreeFragment);
 
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
         repositoryService.remove(faultTreeUri);
     }
 
     @GetMapping(value = "/{faultTreeFragment}/reusableEvents", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public List<FaultEvent> reusableEvents(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> reusableEvents - {}", faultTreeFragment);
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
 
         return repositoryService.getReusableEvents(faultTreeUri);
     }
@@ -80,7 +80,7 @@ public class FaultTreeController {
     @GetMapping(value = "/{faultTreeFragment}/treePaths", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public List<List<FaultEvent>> getTreePaths(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> getTreePaths - {}", faultTreeFragment);
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
 
         return repositoryService.getTreePaths(faultTreeUri);
     }
@@ -98,7 +98,7 @@ public class FaultTreeController {
             @PathVariable(name = "faultTreeFragment") String faultTreeFragment,
             @RequestBody FailureModesTable failureModesTable) {
         log.info("> createFailureModesTable - {}, {}", faultTreeFragment, failureModesTable);
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
 
         return repositoryService.createFailureModesTable(faultTreeUri, failureModesTable);
     }
@@ -106,7 +106,7 @@ public class FaultTreeController {
     @GetMapping(value = "/{faultTreeFragment}/failureModesTable", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureModesTable getFailureModesTable(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> getFailureModesTable - {}", faultTreeFragment);
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
 
         return repositoryService.getFailureModesTable(faultTreeUri);
     }
@@ -114,7 +114,7 @@ public class FaultTreeController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{functionFragment}/generateFunctionalDependencies/{faultTreeName}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FaultTree generateFunctionalDependenciesFaultTree(@PathVariable("functionFragment") String functionFragment,@PathVariable("faultTreeName") String faultTreeName) throws URISyntaxException {
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
         log.info("> generateFunctionalDependenciesFaultTree - {}, {}", functionFragment, faultTreeName);
         return repositoryService.generateFunctionDependencyTree(functionUri,faultTreeName);
     }
@@ -122,7 +122,7 @@ public class FaultTreeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping(value = "/{faultTreeFragment}/cutsets")
     public void performCutSetAnalysis(@PathVariable(name = "faultTreeFragment") String faultTreeFragment){
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
         log.info("> performCutSetAnalysis - {}", faultTreeFragment);
         repositoryService.performCutSetAnalysis(faultTreeUri);
     }
@@ -130,7 +130,7 @@ public class FaultTreeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping(value = "/{faultTreeFragment}/evaluate")
     public void evaluate(@PathVariable(name = "faultTreeFragment") String faultTreeFragment){
-        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultTree, faultTreeFragment);
+        URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
         log.info("> performCutSetAnalysis - {}", faultTreeFragment);
         repositoryService.evaluate(faultTreeUri);
     }

@@ -20,7 +20,7 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
         return em
                 .createNativeQuery("ASK WHERE { ?x a ?type ; ?hasChildren ?eventUri . }", Boolean.class)
                 .setParameter("type", typeUri)
-                .setParameter("hasChildren", URI.create(Vocabulary.s_p_hasChildren))
+                .setParameter("hasChildren", URI.create(Vocabulary.s_p_has_child))
                 .setParameter("eventUri", faultEventIri)
                 .getSingleResult();
     }

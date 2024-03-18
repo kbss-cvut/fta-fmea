@@ -52,7 +52,7 @@ public class FailureModesTableController {
     public void delete(@PathVariable(name = "failureModeTableFragment") String failureModeTableFragment) {
         log.info("> delete - {}", failureModeTableFragment);
 
-        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
+        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_failure_modes_table, failureModeTableFragment);
         repositoryService.remove(tableUri);
     }
 
@@ -60,7 +60,7 @@ public class FailureModesTableController {
     public FailureModesTableDataDTO computeTableData(@PathVariable(name = "failureModeTableFragment") String failureModeTableFragment) {
         log.info("> computeTableData - {}", failureModeTableFragment);
 
-        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
+        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_failure_modes_table, failureModeTableFragment);
         return repositoryService.computeTableData(tableUri);
     }
 
@@ -68,7 +68,7 @@ public class FailureModesTableController {
     public String export(@PathVariable(name = "failureModeTableFragment") String failureModeTableFragment, HttpServletResponse response) {
         log.info("> export - {}", failureModeTableFragment);
 
-        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureModesTable, failureModeTableFragment);
+        URI tableUri = identifierService.composeIdentifier(Vocabulary.s_c_failure_modes_table, failureModeTableFragment);
 
         response.setContentType("text/csv");
         response.addHeader("Content-Disposition", "attachment; filename=\"table.csv\"");

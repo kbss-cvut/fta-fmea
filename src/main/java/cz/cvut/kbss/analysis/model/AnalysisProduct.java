@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnalysisProduct extends AbstractEntity{
-    @OWLObjectProperty(iri = Vocabulary.s_p_creates)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_created_by)
     private AnalysisEvent creationEvent;
 
 }

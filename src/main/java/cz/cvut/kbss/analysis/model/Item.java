@@ -13,13 +13,13 @@ import java.util.Set;
 @Setter
 public class Item extends DomainEntity<Item> {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from, fetch = FetchType.EAGER)
     protected Set<Item> supertypes;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_documented_in)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_documented_in)
     private Set<Document> documents;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasPartComponent, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_part_component, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Component> components = new HashSet<>();
 
     public void addComponent(Component component) {
@@ -27,9 +27,9 @@ public class Item extends DomainEntity<Item> {
         component.setParentComponent(this);
     }
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFunction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_function, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Function> functions = new HashSet<>();
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasFailureMode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_failure_mode, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FailureMode> failureModes = new HashSet<>();
 
 

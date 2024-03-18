@@ -5,7 +5,6 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
 import cz.cvut.kbss.analysis.service.ComponentRepositoryService;
-import cz.cvut.kbss.analysis.service.FunctionRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
@@ -53,21 +52,21 @@ public class ComponentController {
     public void delete(@PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> delete - {}", componentFragment);
 
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
         repositoryService.remove(componentUri);
     }
 
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<Function> getFunctions(@PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> getFunctions - {}", componentFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
         return repositoryService.getFunctions(componentUri);
     }
 
     @GetMapping(value = "/{componentFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public Set<FailureMode> getFailureModes(@PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> getFailureModes - {}", componentFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
         return repositoryService.getFailureModes(componentUri);
     }
 
@@ -75,7 +74,7 @@ public class ComponentController {
     @PostMapping(value = "/{componentFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureMode addFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody FailureMode failureMode) {
         log.info("> addFailureMode - {}, {}", componentFragment, failureMode);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
 
         return repositoryService.addFailureMode(componentUri,failureMode);
     }
@@ -84,16 +83,16 @@ public class ComponentController {
     @PostMapping(value = "/{componentFragment}/failureModes/{failureModeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public void addFailureModeByURI(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "failureModeFragment") String failureModeFragment) {
         log.info("> addFailureModeByUri - {}, {}", componentFragment, failureModeFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_failure_mode, failureModeFragment);
         repositoryService.addFailureModeByUri(componentUri, failureModeUri);
     }
 
     @DeleteMapping(value = "/{componentFragment}/failureModes/{failureModeFragment}")
     public void deleteFailureMode(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "failureModeFragment") String failureModeFragment) {
         log.info("> deleteFailureMode - {}, {}", componentFragment, failureModeFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_FailureMode, failureModeFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
+        URI failureModeUri = identifierService.composeIdentifier(Vocabulary.s_c_failure_mode, failureModeFragment);
 
         repositoryService.deleteFailureMode(componentUri, failureModeUri);
         log.info("< deleteFailureMode");
@@ -103,7 +102,7 @@ public class ComponentController {
     @PostMapping(value = "/{componentFragment}/functions", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Function addFunction(@PathVariable(name = "componentFragment") String componentFragment, @RequestBody Function function) {
         log.info("> addFunction - {}, {}", componentFragment, function);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
 
         return repositoryService.addFunction(componentUri, function);
     }
@@ -112,8 +111,8 @@ public class ComponentController {
     @PostMapping(value = "/{componentFragment}/functions/{functionFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Function addFunctionByURI(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "functionFragment") String functionFragment) {
         log.info("> addFunction - {}, {}", componentFragment, functionFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
         
         return repositoryService.addFunctionByURI(componentUri, functionUri);
     }
@@ -121,8 +120,8 @@ public class ComponentController {
     @DeleteMapping(value = "/{componentFragment}/functions/{functionFragment}")
     public void deleteFunction(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "functionFragment") String functionFragment) {
         log.info("> deleteFunction - {}, {}", componentFragment, functionFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_Function, functionFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
+        URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
 
         repositoryService.deleteFunction(componentUri, functionUri);
         log.info("< deleteFunction");
@@ -133,8 +132,8 @@ public class ComponentController {
             @PathVariable(name = "componentFragment") String componentFragment,
             @PathVariable(name = "linkFragment") String linkFragment) {
         log.info("> addFunction - {}, {}", componentFragment, linkFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
-        URI linkComponentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, linkFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
+        URI linkComponentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, linkFragment);
 
         return repositoryService.linkComponents(componentUri, linkComponentUri);
     }
@@ -142,7 +141,7 @@ public class ComponentController {
     @DeleteMapping(value = "/{componentFragment}/linkComponent")
     public void unlinkComponents(@PathVariable(name = "componentFragment") String componentFragment) {
         log.info("> unlinkComponents - {}", componentFragment);
-        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, componentFragment);
+        URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
 
         repositoryService.unlinkComponents(componentUri);
         log.info("< unlinkComponents");
@@ -153,8 +152,8 @@ public class ComponentController {
             ,@PathVariable(name = "targetFragment") String targetFragment){
         log.info("> mergeComponents - {} {}", sourceFragment, targetFragment);
 
-        URI sourceUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, sourceFragment);
-        URI targetUri = identifierService.composeIdentifier(Vocabulary.s_c_Component, targetFragment);
+        URI sourceUri = identifierService.composeIdentifier(Vocabulary.s_c_component, sourceFragment);
+        URI targetUri = identifierService.composeIdentifier(Vocabulary.s_c_component, targetFragment);
 
         repositoryService.mergeComponents(sourceUri, targetUri);
     }

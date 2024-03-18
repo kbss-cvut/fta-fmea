@@ -21,7 +21,7 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
         return em
                 .createNativeQuery("ASK WHERE { ?x a ?type ; ?isManifestedBy ?eventUri . }", Boolean.class)
                 .setParameter("type", typeUri)
-                .setParameter("isManifestedBy", URI.create(Vocabulary.s_p_isManifestedBy))
+                .setParameter("isManifestedBy", URI.create(Vocabulary.s_p_is_manifested_by))
                 .setParameter("eventUri", faultEventIri)
                 .getSingleResult();
     }

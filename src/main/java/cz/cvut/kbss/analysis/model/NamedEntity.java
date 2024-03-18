@@ -13,11 +13,11 @@ public class NamedEntity extends AbstractEntity{
 
     @NotEmpty(message = "Name must not be empty")
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_hasName)
+    @OWLDataProperty(iri = Vocabulary.s_p_name)
     private String name;
 
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasDescription)
+    @OWLDataProperty(iri = Vocabulary.s_p_description)
     private String description;
 
 }

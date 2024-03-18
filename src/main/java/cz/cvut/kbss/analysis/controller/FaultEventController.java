@@ -36,7 +36,7 @@ public class FaultEventController {
     public void delete(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
         log.info("> delete - {}", faultEventFragment);
 
-        URI faultEventIri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventIri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
         FaultEvent instance = repositoryService.findRequired(faultEventIri);
         repositoryService.remove(instance);
     }
@@ -51,7 +51,7 @@ public class FaultEventController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping(value = "/{faultEventFragment}/rectangle", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public void updateRectangle(@PathVariable(name = "faultEventFragment") String faultEventFragment, @RequestBody Rectangle rectangle) {
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
         log.trace("> update - updating rectangle - {} for event <{}>", rectangle, faultEventUri);
         repositoryService.update(rectangle);
     }
@@ -60,7 +60,7 @@ public class FaultEventController {
     @PostMapping(value = "/{faultEventFragment}/inputEvents", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FaultEvent addInputEvent(@PathVariable(name = "faultEventFragment") String faultEventFragment, @RequestBody FaultEvent inputEvent) {
         log.info("> addInputEvent - {}, {}", faultEventFragment, inputEvent);
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         return repositoryService.addInputEvent(faultEventUri, inputEvent);
     }
@@ -68,7 +68,7 @@ public class FaultEventController {
     @GetMapping(value = "/{faultEventFragment}/failureMode", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureMode getFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
         log.info("> getFailureMode - {}", faultEventFragment);
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         return repositoryService.getFailureMode(faultEventUri);
     }
@@ -77,7 +77,7 @@ public class FaultEventController {
     @PostMapping(value = "/{faultEventFragment}/failureMode", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureMode addFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment, @RequestBody FailureMode failureMode) {
         log.info("> addFailureMode - {}, {}", faultEventFragment, failureMode);
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         return repositoryService.addFailureMode(faultEventUri, failureMode);
     }
@@ -85,7 +85,7 @@ public class FaultEventController {
     @DeleteMapping(value = "/{faultEventFragment}/failureMode")
     public void deleteFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
         log.info("> deleteFailureMode - {}", faultEventFragment);
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         repositoryService.deleteFailureMode(faultEventUri);
         log.info("< deleteFailureMode");
@@ -96,7 +96,7 @@ public class FaultEventController {
             @PathVariable(name = "faultEventFragment") String faultEventFragment,
             @RequestBody List<URI> childrenSequence) {
         log.info("> updateChildrenSequence - {}, {}", faultEventFragment, childrenSequence);
-        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_FaultEvent, faultEventFragment);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         repositoryService.updateChildrenSequence(faultEventUri, childrenSequence);
     }

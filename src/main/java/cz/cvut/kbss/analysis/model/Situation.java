@@ -9,17 +9,17 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_Situation)
+@OWLClass(iri = Vocabulary.s_c_situation)
 @Getter
 @Setter
 public class Situation extends AbstractEntity {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_broughtAboutBy)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_brought_about_by)
     private Set<Event> broughtAboutByEvents = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_triggers)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_trigger)
     private Set<Event> triggersEvents = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_activates)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_activating)
     private Set<Behavior> behaviors = new HashSet<>();
 }

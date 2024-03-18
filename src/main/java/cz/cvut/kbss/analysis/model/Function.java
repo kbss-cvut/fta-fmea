@@ -1,13 +1,11 @@
 package cz.cvut.kbss.analysis.model;
 
 import cz.cvut.kbss.analysis.util.Vocabulary;
-import cz.cvut.kbss.jopa.model.annotations.*;
+import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Objects;
-
-@OWLClass(iri = Vocabulary.s_c_Function)
+@OWLClass(iri = Vocabulary.s_c_function)
 @Getter
 @Setter
 public class Function extends Behavior {

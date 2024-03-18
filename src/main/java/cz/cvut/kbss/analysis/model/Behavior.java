@@ -9,34 +9,34 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.s_c_Behavior)
+@OWLClass(iri = Vocabulary.s_c_behavior)
 @Getter
 @Setter
 public abstract class Behavior extends DomainEntity<Behavior> {
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_isDerivedFrom, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from, fetch = FetchType.EAGER)
     protected Set<Behavior> supertypes;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_hasBehaviorType)
+    @OWLDataProperty(iri = Vocabulary.s_p_behavior_type)
     private BehaviorType behaviorType = BehaviorType.AtomicBehavior;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_requires, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_required, fetch = FetchType.EAGER)
     private Set<Behavior> requiredBehaviors = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_impairs, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_impairing, fetch = FetchType.EAGER)
     private Set<Behavior> impairedBehaviors = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasChildBehavior, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_child_behavior, fetch = FetchType.EAGER)
     private Set<Behavior> childBehaviors = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_manifested_by)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_manifested_by)
     private Set<Event> manifestations = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_hasComponent, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_component, fetch = FetchType.EAGER)
     private Item item;
 
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_activatedBy)
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_activated_by)
     private Set<Situation> activatedBySituations = new HashSet<>();
 
     public boolean isFailureModeCause() {
