@@ -5,6 +5,7 @@ import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
+import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,4 +28,17 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
                 .getSingleResult();
     }
 
+    @Override
+    public EntityDescriptor getEntityDescriptor(FaultTree entity) {
+        if(entity.getUri() == null)
+            entity.setUri(identifierService.generateNewInstanceUri(typeUri.toString()));
+        EntityDescriptor entityDescriptor = new EntityDescriptor(entity.getUri());
+        return entityDescriptor;
+    }
+
+    @Override
+    public EntityDescriptor getEntityDescriptor(URI uri) {
+        EntityDescriptor entityDescriptor = new EntityDescriptor(uri);
+        return entityDescriptor;
+    }
 }
