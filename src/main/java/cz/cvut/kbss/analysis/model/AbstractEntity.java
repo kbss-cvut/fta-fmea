@@ -13,6 +13,9 @@ import java.util.Objects;
 @Data
 public abstract class AbstractEntity implements HasIdentifier, Serializable {
 
+    @Transient
+    private URI context;
+
     @Id(generated = true)
     private URI uri;
 
