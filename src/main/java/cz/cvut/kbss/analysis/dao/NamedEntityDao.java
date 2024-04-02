@@ -4,8 +4,10 @@ import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.NamedEntity;
 import cz.cvut.kbss.analysis.model.Summary;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
 import java.util.List;
@@ -14,8 +16,9 @@ public class NamedEntityDao<T extends NamedEntity> extends BaseDao<T> {
 
     public static URI P_HAS_NAME = URI.create(Vocabulary.s_p_name);
     public static URI P_HAS_DESCRIPTION = URI.create(Vocabulary.s_p_description);
-    protected NamedEntityDao(Class<T> type, EntityManager em, PersistenceConf config) {
-        super(type, em, config);
+    @Autowired
+    protected NamedEntityDao(Class<T> type, EntityManager em, PersistenceConf config, IdentifierService identifierService) {
+        super(type, em, config, identifierService);
     }
 
     public List<T> findAllSummaries(){

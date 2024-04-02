@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class FunctionDao extends BehaviorDao<Function> {
     public static URI P_HAS_FUNCTION = URI.create(Vocabulary.s_p_has_function);
 
     @Autowired
-    protected FunctionDao(EntityManager em, PersistenceConf config) {
-        super(Function.class, em, config);
+    protected FunctionDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
+        super(Function.class, em, config, identifierService);
     }
 
     public Component getComponent(URI functionUri) {

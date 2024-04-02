@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -12,8 +13,9 @@ import java.net.URI;
 
 @Repository
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
-    protected FaultEventDao(EntityManager em, PersistenceConf config) {
-        super(FaultEvent.class, em, config);
+    @Autowired
+    protected FaultEventDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
+        super(FaultEvent.class, em, config, identifierService);
     }
 
     public boolean isChild(URI faultEventIri) {

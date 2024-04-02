@@ -3,7 +3,7 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.util.EntityToOwlClassMapper;
-import cz.cvut.kbss.analysis.model.util.HasIdentifier;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.jopa.model.EntityManager;
 
 import java.net.URI;
@@ -21,12 +21,14 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
 
     protected final EntityManager em;
     protected final PersistenceConf config;
+    protected final IdentifierService identifierService;
 
-    protected BaseDao(Class<T> type, EntityManager em, PersistenceConf config) {
+    protected BaseDao(Class<T> type, EntityManager em, PersistenceConf config, IdentifierService identifierService) {
         this.type = type;
         this.typeUri = URI.create(EntityToOwlClassMapper.getOwlClassForEntity(type));
         this.em = em;
         this.config = config;
+        this.identifierService = identifierService;
     }
 
     @Override

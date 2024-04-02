@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.ResourceException;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.resources.ResourceUtils;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 
@@ -15,8 +16,8 @@ import java.util.stream.Collectors;
 
 public abstract class BehaviorDao<T extends Behavior> extends NamedEntityDao<T>{
     public static URI P_IS_IMPAIRING = URI.create(Vocabulary.s_p_is_impairing);
-    public BehaviorDao(Class<T> type, EntityManager em, PersistenceConf config) {
-        super(type, em, config);
+    public BehaviorDao(Class<T> type, EntityManager em, PersistenceConf config, IdentifierService identifierService) {
+        super(type, em, config, identifierService);
     }
 
     public Set<URI> getTransitiveRequiredBehaviors(URI behaviorURI){
