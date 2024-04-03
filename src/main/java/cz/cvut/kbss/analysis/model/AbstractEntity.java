@@ -8,6 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Objects;
+import java.util.Set;
 
 @MappedSuperclass
 @Data
@@ -18,6 +19,9 @@ public abstract class AbstractEntity implements HasIdentifier, Serializable {
 
     @Id(generated = true)
     private URI uri;
+
+    @Types
+    private Set<URI> types;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_source, fetch = FetchType.EAGER)
     private URI annotationSource;

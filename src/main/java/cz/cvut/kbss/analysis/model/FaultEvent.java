@@ -29,6 +29,14 @@ public class FaultEvent extends Event {
         return faultEvent;
     }
 
+    @Transient
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_reference_to)
+    private URI references;
+
+    @Transient
+    @OWLDataProperty(iri = Vocabulary.s_p_is_reference)
+    private boolean isReference;
+
     @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_fault_event_type)
