@@ -231,11 +231,11 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         URI faultEventUri1 = createUri(behavior, parentEvent, "e");
         URI faultEventUri2 = createUri(behavior, parentEvent, "f");
 
-        if (faultEventRepositoryService.existsInContext(faultEventUri)) {
+        if (faultEventRepositoryService.existsInPersistenceContext(faultEventUri)) {
             return faultEventRepositoryService.findRequired(faultEventUri);
-        } else if(faultEventRepositoryService.existsInContext(faultEventUri1)){
+        } else if(faultEventRepositoryService.existsInPersistenceContext(faultEventUri1)){
             return faultEventRepositoryService.findRequired(faultEventUri1);
-        } else if(faultEventRepositoryService.existsInContext(faultEventUri2)){
+        } else if(faultEventRepositoryService.existsInPersistenceContext(faultEventUri2)){
             return faultEventRepositoryService.findRequired(faultEventUri2);
         } else {
             FaultEvent faultEvent = FaultEvent.create();
@@ -276,9 +276,9 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             URI faultEventUri = createUri(impairingBehavior, impairedBehaviorEvent, "");
             URI faultEventUriTypeEvent = createUri(impairingBehavior, impairedBehaviorEvent, "e");
 
-            if(faultEventRepositoryService.existsInContext(faultEventUri)) {
+            if(faultEventRepositoryService.existsInPersistenceContext(faultEventUri)) {
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
-            }else if(faultEventRepositoryService.existsInContext(faultEventUriTypeEvent)){
+            }else if(faultEventRepositoryService.existsInPersistenceContext(faultEventUriTypeEvent)){
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUriTypeEvent);
             }else {
                 faultEvent = FaultEvent.create();
@@ -302,7 +302,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                         FaultEvent faultEventChild = FaultEvent.create();
                         faultEventChild.setBehavior(behaviorChild);
                         faultEventUri = createUri(behaviorChild, faultEvent, "e");
-                        if (faultEventRepositoryService.existsInContext(faultEventUri)) {
+                        if (faultEventRepositoryService.existsInPersistenceContext(faultEventUri)) {
                             faultEventChild = faultEventRepositoryService.findRequired(faultEventUri);
                         } else {
                             faultEventChild.setUri(faultEventUri);
@@ -327,7 +327,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         FaultEvent faultEvent;
         if(behavior instanceof Function){
             URI faultEventUri = createUri(behavior, null, "f");
-            if (faultEventRepositoryService.existsInContext(faultEventUri)) {
+            if (faultEventRepositoryService.existsInPersistenceContext(faultEventUri)) {
                 faultEvent = faultEventRepositoryService.findRequired(faultEventUri);
             } else {
                 faultEvent = FaultEvent.create();
@@ -345,7 +345,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                     continue;
                 FaultEvent fEvent = FaultEvent.create();
                 faultEventUri = createUri(behaviorChild, faultEvent, "");
-                if (faultEventRepositoryService.existsInContext(faultEventUri)) {
+                if (faultEventRepositoryService.existsInPersistenceContext(faultEventUri)) {
                     fEvent = faultEventRepositoryService.findRequired(faultEventUri);
                 } else {
                     fEvent.setBehavior(behaviorChild);

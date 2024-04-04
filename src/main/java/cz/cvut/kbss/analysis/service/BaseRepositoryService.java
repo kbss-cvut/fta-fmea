@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.classmate.ResolvedType;
@@ -17,9 +16,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
-import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 
 /**
@@ -243,13 +240,13 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
     }
 
     /**
-     * Checks whether an instance with the specified identifier exists in the current context and or the repository.
+     * Checks whether an instance with the specified identifier exists in the current persistence context and or the repository.
      *
      * @param id ID to check
      * @return {@code true} if the instance exists, {@code false} otherwise
      */
-    public boolean existsInContext(URI id) {
-        return getPrimaryDao().existsInContext(id);
+    public boolean existsInPersistenceContext(URI id) {
+        return getPrimaryDao().existsInPersistenceContext(id);
     }
 
     /**

@@ -46,7 +46,8 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
         EntityDescriptor entityDescriptor = new EntityDescriptor(graph);
         EntityType<FaultEvent> fe = em.getMetamodel().entity(FaultEvent.class);
         entityDescriptor.addAttributeContext(fe.getAttribute("supertypes"), null);
-        // TODO - consider not persisting failure mode in graph context
+        entityDescriptor.addAttributeContext(fe.getAttribute("behavior"), null);
+
         return entityDescriptor;
     }
 

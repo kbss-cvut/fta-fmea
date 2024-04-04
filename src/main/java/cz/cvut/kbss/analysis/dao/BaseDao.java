@@ -162,7 +162,7 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     public boolean exists(URI id) {
         Objects.requireNonNull(id);
         try {
-            return em.createNativeQuery("ASK { ?x a ?type . }", Boolean.class) // TODO - consider existence in graph context
+            return em.createNativeQuery("ASK { ?x a ?type . }", Boolean.class)
                     .setParameter("x", id)
                     .setParameter("type", typeUri)
                     .getSingleResult();
@@ -177,13 +177,13 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
      * @return
      */
     @Override
-    public boolean existsInContext(URI id) {
+    public boolean existsInPersistenceContext(URI id) {
         Objects.requireNonNull(id);
-        return em.find(type, id) != null;// TODO - consider existence in graph context, alternatively consider em.contains
+        return em.find(type, id) != null;
     }
 
     @Override
-    public boolean existsWithPredicate(String predicate, String value) {// TODO - consider existence in graph context
+    public boolean existsWithPredicate(String predicate, String value) {
         Objects.requireNonNull(value);
         return em
                 .createNativeQuery("ASK WHERE { ?x a ?type ; ?predicate ?value . }", Boolean.class)
