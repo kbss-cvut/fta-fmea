@@ -49,9 +49,6 @@ public class FaultEvent extends Event {
     @OWLObjectProperty(iri = Vocabulary.s_p_has_child, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_has_failure_mode, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private FailureMode failureMode;
-
     @OWLDataProperty(iri = Vocabulary.s_p_sequence_probability)
     private Double sequenceProbability;
 

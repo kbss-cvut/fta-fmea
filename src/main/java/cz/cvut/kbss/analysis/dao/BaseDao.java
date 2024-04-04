@@ -2,31 +2,58 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
+import cz.cvut.kbss.analysis.model.AbstractEntity;
 import cz.cvut.kbss.analysis.model.util.EntityToOwlClassMapper;
-import cz.cvut.kbss.analysis.model.util.HasIdentifier;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.jopa.model.EntityManager;
+import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Base implementation of the generic DAO API.
  *
  * @param <T> the entity class this DAO manages
  */
-public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> {
+public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T> {
 
     protected final Class<T> type;
     protected final URI typeUri;
 
     protected final EntityManager em;
     protected final PersistenceConf config;
+    protected final IdentifierService identifierService;
 
-    protected BaseDao(Class<T> type, EntityManager em, PersistenceConf config) {
+    protected BaseDao(Class<T> type, EntityManager em, PersistenceConf config, IdentifierService identifierService) {
         this.type = type;
         this.typeUri = URI.create(EntityToOwlClassMapper.getOwlClassForEntity(type));
         this.em = em;
         this.config = config;
+        this.identifierService = identifierService;
+    }
+
+    public EntityDescriptor getEntityDescriptor(T entity){
+        return new EntityDescriptor();
+    }
+
+    public EntityDescriptor getEntityDescriptor(URI uri){
+        return new EntityDescriptor();
+    }
+
+    public URI getContext(T entity){
+        if(entity.getContext() == null)
+            entity.setContext(getContext(entity.getUri()));
+        return entity.getContext();
+    }
+
+    public URI getContext(URI uri){
+        return em.createNativeQuery("SELECT DISTINCT ?context {GRAPH ?context {?uri a ?type}}", URI.class)
+                .setParameter("uri", uri)
+                .getSingleResult();
     }
 
     @Override
@@ -56,7 +83,8 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     public Optional<T> find(URI id) {
         Objects.requireNonNull(id);
         try {
-            return Optional.ofNullable(em.find(type, id));
+            EntityDescriptor entityDescriptor = getEntityDescriptor(id);
+            return Optional.ofNullable(em.find(type, id, entityDescriptor));
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
@@ -66,7 +94,8 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     public Optional<T> getReference(URI id) {
         Objects.requireNonNull(id);
         try {
-            return Optional.ofNullable(em.getReference(type, id));
+            EntityDescriptor entityDescriptor = getEntityDescriptor(id);
+            return Optional.ofNullable(em.getReference(type, id, entityDescriptor));
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
@@ -76,7 +105,7 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     public void persist(T entity) {
         Objects.requireNonNull(entity);
         try {
-            em.persist(entity);
+            _persist(entity);
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
@@ -86,17 +115,23 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     public void persist(Collection<T> entities) {
         Objects.requireNonNull(entities);
         try {
-            entities.forEach(em::persist);
+            entities.forEach(this::_persist);
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
+    }
+
+    protected void _persist(T entity){
+        EntityDescriptor entityDescriptor = getEntityDescriptor(entity);
+        em.persist(entity, entityDescriptor);
     }
 
     @Override
     public T update(T entity) {
         Objects.requireNonNull(entity);
         try {
-            return em.merge(entity);
+            EntityDescriptor entityDescriptor = getEntityDescriptor(entity);
+            return em.merge(entity, entityDescriptor);
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
@@ -106,7 +141,8 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
     public void remove(T entity) {
         Objects.requireNonNull(entity);
         try {
-            em.remove(em.merge(entity));
+            EntityDescriptor entityDescriptor = getEntityDescriptor(entity);
+            em.remove(em.merge(entity,entityDescriptor));
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
@@ -135,8 +171,13 @@ public abstract class BaseDao<T extends HasIdentifier> implements GenericDao<T> 
         }
     }
 
+    /**
+     * Checks if the input id exists in current persistence context.
+     * @param id Entity identifier
+     * @return
+     */
     @Override
-    public boolean existsInContext(URI id) {
+    public boolean existsInPersistenceContext(URI id) {
         Objects.requireNonNull(id);
         return em.find(type, id) != null;
     }

@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.exceptions.NoResultException;
 import cz.cvut.kbss.jopa.model.EntityManager;
@@ -17,8 +18,8 @@ import java.util.Optional;
 public class UserDao extends BaseDao<User> {
 
     @Autowired
-    public UserDao(EntityManager em, PersistenceConf config) {
-        super(User.class, em, config);
+    public UserDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
+        super(User.class, em, config, identifierService);
     }
 
     /**

@@ -103,7 +103,7 @@ public interface GenericDao<T extends HasIdentifier> {
      * @param id Entity identifier
      * @return {@literal true} if entity exists, {@literal false} otherwise
      */
-    boolean existsInContext(URI id);
+    boolean existsInPersistenceContext(URI id);
 
     /**
      * Checks whether an entity with the specified predicate and its value exists (and has the type managed by this
