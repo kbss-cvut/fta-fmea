@@ -1,11 +1,14 @@
 package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
+import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
+import cz.cvut.kbss.jopa.model.metamodel.Attribute;
+import cz.cvut.kbss.jopa.model.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,6 +42,12 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
     @Override
     public EntityDescriptor getEntityDescriptor(URI uri) {
         EntityDescriptor entityDescriptor = new EntityDescriptor(uri);
+        EntityType<FaultTree> ft = em.getMetamodel().entity(type);
+        EntityType<FaultEvent> fe = em.getMetamodel().entity(FaultEvent.class);
+        Attribute manifestingEvent = ft.getAttribute("manifestingEvent");
+        entityDescriptor.addAttributeContext(manifestingEvent, uri);
+        entityDescriptor.getAttributeDescriptor(manifestingEvent)
+                .addAttributeContext(fe.getAttribute("supertypes"), null);
         return entityDescriptor;
     }
 }
