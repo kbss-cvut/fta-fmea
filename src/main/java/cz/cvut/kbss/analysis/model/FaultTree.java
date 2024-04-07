@@ -22,7 +22,7 @@ public class FaultTree extends NamedEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_has_failure_modes_table, cascade = CascadeType.ALL)
     private FailureModesTable failureModesTable;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_has_scenario, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_scenario, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<FaultEventScenario> faultEventScenarios;
 
     @Override

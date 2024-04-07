@@ -419,7 +419,6 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
 
         for(FaultEventScenario scenario : scenarios){
             scenario.updateProbability();
-            faultEventScenarioDao.persist(scenario);
         }
         faultTree.setFaultEventScenarios(new HashSet<>(scenarios));
         getPrimaryDao().update(faultTree);
@@ -440,11 +439,12 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         FTAMinimalCutSetEvaluation evaluator = new FTAMinimalCutSetEvaluation();
         evaluator.evaluate(faultTree);
 
-        if(faultTree.getFaultEventScenarios() != null)
-            for(FaultEventScenario scenario : faultTree.getFaultEventScenarios()){
+        if(faultTree.getFaultEventScenarios() != null) {
+            for (FaultEventScenario scenario : faultTree.getFaultEventScenarios()) {
                 scenario.updateProbability();
-                faultEventScenarioDao.persist(scenario);
             }
+            getPrimaryDao().update(faultTree);
+        }
         return faultTree;
     }
 }
