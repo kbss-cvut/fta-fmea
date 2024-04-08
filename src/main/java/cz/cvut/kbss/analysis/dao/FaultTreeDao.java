@@ -35,7 +35,7 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
     public EntityDescriptor getEntityDescriptor(FaultTree entity) {
         if(entity.getUri() == null)
             entity.setUri(identifierService.generateNewInstanceUri(typeUri.toString()));
-        EntityDescriptor entityDescriptor = new EntityDescriptor(entity.getUri());
+        EntityDescriptor entityDescriptor = getEntityDescriptor(entity.getUri());
         return entityDescriptor;
     }
 
@@ -48,6 +48,7 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
         entityDescriptor.addAttributeContext(manifestingEvent, uri);
         entityDescriptor.getAttributeDescriptor(manifestingEvent)
                 .addAttributeContext(fe.getAttribute("supertypes"), null);
+        entityDescriptor.addAttributeContext(ft.getAttribute("failureModesTable"), null);
         return entityDescriptor;
     }
 }
