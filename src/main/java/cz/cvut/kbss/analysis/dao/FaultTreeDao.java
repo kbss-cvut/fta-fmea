@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
+import java.util.Optional;
 
 @Repository
 public class FaultTreeDao extends NamedEntityDao<FaultTree> {
@@ -45,10 +46,28 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
         EntityType<FaultTree> ft = em.getMetamodel().entity(type);
         EntityType<FaultEvent> fe = em.getMetamodel().entity(FaultEvent.class);
         Attribute manifestingEvent = ft.getAttribute("manifestingEvent");
+        Attribute children = fe.getAttribute("children");
+
         entityDescriptor.addAttributeContext(manifestingEvent, uri);
         entityDescriptor.getAttributeDescriptor(manifestingEvent)
-                .addAttributeContext(fe.getAttribute("supertypes"), null);
+                .addAttributeContext(fe.getAttribute("supertypes"), null)
+                .addAttributeContext(children, uri).getAttributeDescriptor(children)
+                        .addAttributeContext(fe.getAttribute("supertypes"), null);
+
         entityDescriptor.addAttributeContext(ft.getAttribute("failureModesTable"), null);
+
         return entityDescriptor;
+    }
+
+    @Override
+    public Optional<FaultTree> find(URI id) {
+        Optional<FaultTree> faultTreeOpt = super.find(id);
+        if(!faultTreeOpt.isPresent())
+            return faultTreeOpt;
+        FaultTree faultTree = faultTreeOpt.get();
+        faultTree.getAllEvents().stream()
+                .map(e -> e.getBehavior()).filter(b -> b!=null).map(b -> b.getItem())
+                .filter(i -> i != null).forEach(i -> i.getName());
+        return Optional.of(faultTree);
     }
 }

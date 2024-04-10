@@ -64,6 +64,23 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         persist(faultTree);
     }
 
+    @Override
+    public FaultTree findRequired(URI id) {
+        FaultTree ft = super.findRequired(id);
+        // remove component children
+        Set<Item> items = ft.getAllEvents().stream().map(e -> e.getSupertypes())
+                .filter(ts -> ts!= null)
+                .flatMap(ts -> ts.stream())
+                .map(Event::getBehavior)
+                .filter(ts -> ts!= null)
+                .map(Behavior::getItem)
+                .filter(c -> c != null).collect(Collectors.toSet());
+        for(Item i : items){
+            items.forEach(c -> c.setComponents(null));
+        }
+        return ft;
+    }
+
     @Transactional
     public FaultTree findWithPropagation(URI faultTreeUri) {
         log.info("> findWithPropagation - {}", faultTreeUri);

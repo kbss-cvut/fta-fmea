@@ -73,6 +73,23 @@ public class FaultEvent extends Event {
     public void addChildren(Set<FaultEvent> children){getChildren().addAll(children);}
     public void addChildSequenceUri(URI childUri) {getChildrenSequence().add(childUri);}
 
+    public Set<FaultEvent> getAllEventParts(){
+        Stack<FaultEvent> stack = new Stack<>();
+        stack.push(this);
+        Set<FaultEvent> result = new HashSet<>();
+        while(!stack.isEmpty()){
+            FaultEvent f = stack.pop();
+            if(!result.add(f))
+                continue;
+
+            if(f.getChildren() == null || f.getChildren().isEmpty())
+                continue;
+
+            f.getChildren().forEach(stack::push);
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         return "FaultEvent <" + getUri() + "/>";
