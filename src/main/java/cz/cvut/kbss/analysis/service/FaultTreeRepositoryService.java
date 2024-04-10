@@ -80,15 +80,9 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         for(Item i : items){
             items.forEach(c -> c.setComponents(null));
         }
-        return ft;
-    }
 
-    @Transactional
-    @Override
-    public FaultTree findRequired(URI id) {
-        FaultTree faultTree = super.findRequired(id);
-        setReferences(faultTree);
-        return faultTree;
+        setReferences(ft);
+        return ft;
     }
 
     public void setReferences(FaultTree faultTree){
