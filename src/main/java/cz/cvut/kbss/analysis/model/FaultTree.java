@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @OWLClass(iri = Vocabulary.s_c_fault_tree)
@@ -24,6 +26,12 @@ public class FaultTree extends NamedEntity {
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_scenario, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<FaultEventScenario> faultEventScenarios;
+
+    public Set<FaultEvent> getAllEvents(){
+        return Optional.ofNullable(getManifestingEvent())
+                .filter(e -> e != null)
+                .map(e -> e.getAllEventParts()).orElse(new HashSet<>());
+    }
 
     @Override
     public String toString() {
