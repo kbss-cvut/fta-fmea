@@ -77,7 +77,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             return;
 
         List<Event> supertypes = inputEvent.getSupertypes().stream()
-                .filter(e -> e.getTypes() != null && !e.getTypes().contains(ATOMIC_TYPE))
+                .filter(e -> e.getTypes() == null || !e.getTypes().contains(ATOMIC_TYPE))
                 .collect(Collectors.toList());
         if(supertypes.isEmpty())
             return;
