@@ -64,6 +64,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         persist(faultTree);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public FaultTree findRequired(URI id) {
         FaultTree ft = super.findRequired(id);
