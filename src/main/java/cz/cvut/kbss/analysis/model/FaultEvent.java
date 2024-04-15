@@ -31,7 +31,7 @@ public class FaultEvent extends Event {
 
     @Transient
     @OWLObjectProperty(iri = Vocabulary.s_p_is_reference_to)
-    private URI references;
+    private FaultEventReference references;
 
     @Transient
     @OWLDataProperty(iri = Vocabulary.s_p_is_reference)

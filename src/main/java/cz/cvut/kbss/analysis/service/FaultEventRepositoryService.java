@@ -4,10 +4,7 @@ import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
-import cz.cvut.kbss.analysis.model.Event;
-import cz.cvut.kbss.analysis.model.FailureMode;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.Item;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
@@ -91,7 +88,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
                             .collect(Collectors.joining(",")));
 
         Event supertype = supertypes.get(0);
-        List<URI> referencedRoots = faultEventDao.getFaultEventRootWithSupertype(supertype.getUri());
+        List<FaultEventReference> referencedRoots = faultEventDao.getFaultEventRootWithSupertype(supertype.getUri());
 
         if(referencedRoots == null || referencedRoots.isEmpty())
             return;

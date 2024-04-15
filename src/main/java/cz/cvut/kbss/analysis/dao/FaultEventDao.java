@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.FaultEventReference;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -73,16 +74,16 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
     }
 
 
-    public List<URI> getFaultEventRootWithSupertype(URI supertype){
+    public List<FaultEventReference> getFaultEventRootWithSupertype(URI supertype){
         try{
             return em.createNativeQuery(
                             """
-                                    SELECT DISTINCT ?uri WHERE{
-                                        ?uri ?derivedFrom ?supertype.
-                                        ?uri ?ftaEventTypeProp ?ftaEventType.
-                                        ?uri a ?type.
-                                        ?faultTree ?isManifestedByProp ?uri
-                                    }""", URI.class)
+                                    SELECT DISTINCT ?faultEvent ?faultTree WHERE{
+                                        ?faultEvent ?derivedFrom ?supertype.
+                                        ?faultEvent ?ftaEventTypeProp ?ftaEventType.
+                                        ?faultEvent a ?type.
+                                        ?faultTree ?isManifestedByProp ?faultEvent
+                                    }""", "FaultEventReference")
                     .setParameter("derivedFrom", DERIVED_FROM_PROP)
                     .setParameter("supertype", supertype)
                     .setParameter("ftaEventTypeProp", FTA_EVENT_TYPE_PROP)
