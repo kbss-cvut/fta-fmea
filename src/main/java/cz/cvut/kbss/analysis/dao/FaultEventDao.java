@@ -13,9 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
+import java.util.List;
 
 @Repository
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
+
+    public final static URI DERIVED_FROM_PROP = URI.create(Vocabulary.s_p_is_derived_from);
+    public final static URI FTA_EVENT_TYPE_PROP = URI.create(Vocabulary.s_p_fault_event_type);
+    public final static URI IS_MANIFESTED_BY_PROP = URI.create(Vocabulary.s_p_is_manifested_by);
+
     @Autowired
     protected FaultEventDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
         super(FaultEvent.class, em, config, identifierService);
@@ -61,6 +67,28 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
         try{
             EntityDescriptor entityDescriptor = getRectangleDescriptor(rect.getUri());
             return em.merge(rect, entityDescriptor);
+        }catch (RuntimeException e){
+            throw new PersistenceException(e);
+        }
+    }
+
+
+    public List<URI> getFaultEventRootWithSupertype(URI supertype){
+        try{
+            return em.createNativeQuery(
+                            """
+                                    SELECT DISTINCT ?uri WHERE{
+                                        ?uri ?derivedFrom ?supertype.
+                                        ?uri ?ftaEventTypeProp ?ftaEventType.
+                                        ?uri a ?type.
+                                        ?faultTree ?isManifestedByProp ?uri
+                                    }""", URI.class)
+                    .setParameter("derivedFrom", DERIVED_FROM_PROP)
+                    .setParameter("supertype", supertype)
+                    .setParameter("ftaEventTypeProp", FTA_EVENT_TYPE_PROP)
+                    .setParameter("type", this.typeUri)
+                    .setParameter("isManifestedByProp", IS_MANIFESTED_BY_PROP)
+                    .getResultList();
         }catch (RuntimeException e){
             throw new PersistenceException(e);
         }

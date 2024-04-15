@@ -321,6 +321,8 @@ fta-fmea:is-triggered-by rdf:type owl:ObjectProperty ;
                      rdfs:range fta-fmea:situation ;
                      rdfs:label "is triggered by" .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/is-reference-to
+fta-fmea:is-reference-to rdf:type owl:ObjectProperty .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-trigger
 fta-fmea:has-trigger rdf:type owl:ObjectProperty ;
@@ -332,6 +334,9 @@ fta-fmea:has-trigger rdf:type owl:ObjectProperty ;
 #################################################################
 #    Data properties
 #################################################################
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/is-reference
+fta-fmea:is-reference rdf:type owl:DatatypeProperty .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/value
 fta-fmea:value rdf:type owl:DatatypeProperty .
@@ -658,6 +663,11 @@ fta-fmea:fault-event-scenario-type rdf:type owl:Class ;
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fault-event-type
 fta-fmea:fault-event-type rdf:type owl:Class .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/atomic-event-type
+fta-fmea:atomic-event-type rdf:type owl:Class .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/complex-event-type
+fta-fmea:complex-event-type rdf:type owl:Class .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fault-tree-cut-set-extraction-method
 fta-fmea:fault-tree-cut-set-extraction-method rdf:type owl:Class ;

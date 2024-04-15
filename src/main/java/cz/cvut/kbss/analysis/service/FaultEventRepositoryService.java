@@ -4,11 +4,14 @@ import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
+import cz.cvut.kbss.analysis.model.Event;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
+import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,10 +21,15 @@ import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FaultEventRepositoryService extends BaseRepositoryService<FaultEvent> {
+
+    public static final URI ATOMIC_TYPE = URI.create(Vocabulary.s_c_atomic_event_type);
+    public static final URI COMPLEX_TYPE = URI.create(Vocabulary.s_c_complex_event_type);
+
 
     private final FaultEventDao faultEventDao;
     private final ComponentRepositoryService componentRepositoryService;
@@ -60,7 +68,41 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         currentEvent.addChildSequenceUri(inputEvent.getUri());
         update(currentEvent);
 
+        setExternalReference(eventUri, inputEvent);
         return inputEvent;
+    }
+
+    protected void setExternalReference(URI eventUri, FaultEvent inputEvent){
+        if(inputEvent.getSupertypes() == null || inputEvent.getEventType() != FtaEventType.EXTERNAL)
+            return;
+
+        List<Event> supertypes = inputEvent.getSupertypes().stream()
+                .filter(e -> e.getTypes() == null || !e.getTypes().contains(ATOMIC_TYPE))
+                .collect(Collectors.toList());
+        if(supertypes.isEmpty())
+            return;
+
+        inputEvent.setReference(true);
+
+        if(supertypes.size() > 1)
+            log.warn("new event added to event <{}> has multiple supertypes [{}]",
+                    eventUri,
+                    supertypes.stream().map(e -> String.format("<%s>", e.getUri().toString()))
+                            .collect(Collectors.joining(",")));
+
+        Event supertype = supertypes.get(0);
+        List<URI> referencedRoots = faultEventDao.getFaultEventRootWithSupertype(supertype.getUri());
+
+        if(referencedRoots == null || referencedRoots.isEmpty())
+            return;
+
+        if(referencedRoots.size() > 1)
+            log.warn("new event added to event <{}> with supertype <{}> is used in multiple root fault events [{}]",
+                    eventUri, supertype.getUri(),
+                    referencedRoots.stream().map(u -> String.format("<%s>", u.toString()))
+                            .collect(Collectors.joining(",")));
+
+        inputEvent.setReferences(referencedRoots.get(0));
     }
 
     @Transactional(readOnly = true)
