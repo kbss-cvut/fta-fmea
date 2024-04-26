@@ -1,8 +1,8 @@
 package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
+import cz.cvut.kbss.analysis.exception.PersistenceException;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
-public class FaultTreeDao extends NamedEntityDao<FaultTree> {
+public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
 
     @Autowired
     protected FaultTreeDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
@@ -43,6 +45,7 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
     @Override
     public EntityDescriptor getEntityDescriptor(URI uri) {
         EntityDescriptor entityDescriptor = new EntityDescriptor(uri);
+        super.setEntityDescriptor(entityDescriptor);
         EntityType<FaultTree> ft = em.getMetamodel().entity(type);
         EntityType<FaultEvent> fe = em.getMetamodel().entity(FaultEvent.class);
         Attribute manifestingEvent = ft.getAttribute("manifestingEvent");
@@ -62,12 +65,54 @@ public class FaultTreeDao extends NamedEntityDao<FaultTree> {
     @Override
     public Optional<FaultTree> find(URI id) {
         Optional<FaultTree> faultTreeOpt = super.find(id);
-        if(!faultTreeOpt.isPresent())
+        if(faultTreeOpt.isEmpty())
             return faultTreeOpt;
         FaultTree faultTree = faultTreeOpt.get();
         faultTree.getAllEvents().stream()
                 .map(e -> e.getBehavior()).filter(b -> b!=null).map(b -> b.getItem())
                 .filter(i -> i != null).forEach(i -> i.getName());
+
         return Optional.of(faultTree);
+    }
+
+    @Override
+    public List<FaultTree> findAllSummaries() {
+        try {
+            List<FaultTreeSummary> ret = em.createNativeQuery("""
+                            PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+                            SELECT * WHERE { 
+                                ?uri a ?type. 
+                                ?uri ?pName ?name.
+                                OPTIONAL{?uri ?pDescription ?description.} 
+                                OPTIONAL{?uri ?pCreated ?created.}
+                                OPTIONAL{?uri ?pModified ?modified.}
+                                OPTIONAL{?uri ?pCreator ?creator.}
+                                OPTIONAL{?uri ?pLastEditor ?lastEditor.}
+                                OPTIONAL{ 
+                                    ?uri fta:is-manifested-by ?root .
+                                    ?root fta:is-derived-from ?sup.
+                                    ?sup fta:is-manifestation-of ?behavior .
+                                    ?behavior fta:has-component ?subsystemUri.
+                                    ?subsystemUri fta:name ?subsystemName.
+                                    ?subsystemUri fta:is-part-of+ ?systemUri.
+                                    FILTER NOT EXISTS{
+                                        ?systemUri fta:is-part-of ?system2.
+                                    }
+                                    ?systemUri fta:name ?systemName.
+                                }
+                            }""", "FaultTreeSummary")
+                    .setParameter("type", typeUri)
+                    .setParameter("pName", P_HAS_NAME)
+                    .setParameter("pDescription", P_HAS_DESCRIPTION)
+                    .setParameter("pCreated", P_CREATED)
+                    .setParameter("pModified", P_MODIFIED)
+                    .setParameter("pCreator", P_CREATOR)
+                    .setParameter("pLastEditor", P_LAST_EDITOR)
+                    .getResultList();
+
+            return ret.stream().map(s -> s.asEntity(type)).toList();
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
     }
 }

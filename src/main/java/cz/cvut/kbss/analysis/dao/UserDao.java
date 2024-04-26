@@ -46,6 +46,23 @@ public class UserDao extends BaseDao<User> {
         }
     }
 
+    public String findUsername(URI uri){
+        Objects.requireNonNull(uri);
+        try {
+            return em
+                        .createNativeQuery("SELECT ?username WHERE { ?x a ?type ; ?hasUsername ?username . }",
+                                String.class)
+                        .setParameter("type", typeUri)
+                        .setParameter("x", uri)
+                        .setParameter("hasUsername", URI.create(Vocabulary.s_p_username))
+                        .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
+
     /**
      * Checks whether a user with the specified username exists.
      *

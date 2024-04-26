@@ -37,11 +37,19 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     }
 
     public EntityDescriptor getEntityDescriptor(T entity){
-        return new EntityDescriptor();
+        EntityDescriptor descriptor = new EntityDescriptor();
+        setEntityDescriptor(descriptor);
+        return descriptor;
     }
 
     public EntityDescriptor getEntityDescriptor(URI uri){
-        return new EntityDescriptor();
+        EntityDescriptor descriptor = new EntityDescriptor();
+        setEntityDescriptor(descriptor);
+        return descriptor;
+    }
+
+    protected void setEntityDescriptor(EntityDescriptor descriptor){
+
     }
 
     public URI getContext(T entity){
