@@ -11,7 +11,7 @@ import java.util.Set;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class DomainEntity<T extends DomainEntity> extends NamedEntity{
+public abstract class DomainEntity<T extends DomainEntity> extends ManagedEntity{
 
     @OWLDataProperty(iri = Vocabulary.s_p_has_type_category)
     private TypeCategory typeCategory;

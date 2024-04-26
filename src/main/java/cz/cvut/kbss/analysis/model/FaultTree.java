@@ -14,7 +14,14 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.s_c_fault_tree)
 @Getter
 @Setter
-public class FaultTree extends NamedEntity {
+public class FaultTree extends ManagedEntity {
+
+    @Transient
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_artifact_of)
+    protected NamedEntity system;
+    @Transient
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_performed_by)
+    protected NamedEntity subsystem;
 
     @NotNull(message = "Manifesting event must be chosen")
     @ParticipationConstraints(nonEmpty = true)
@@ -31,6 +38,14 @@ public class FaultTree extends NamedEntity {
         return Optional.ofNullable(getManifestingEvent())
                 .filter(e -> e != null)
                 .map(e -> e.getAllEventParts()).orElse(new HashSet<>());
+    }
+
+    @Override
+    public void setAs(NamedEntity namedEntity) {
+        if(namedEntity instanceof FaultTreeSummary)
+            ((FaultTreeSummary)namedEntity).copyTo(this);
+        else
+            super.setAs(namedEntity);
     }
 
     @Override
