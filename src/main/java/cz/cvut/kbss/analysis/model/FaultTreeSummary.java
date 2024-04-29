@@ -31,6 +31,15 @@ public class FaultTreeSummary extends ManagedEntity{
     @OWLDataProperty(iri = Vocabulary.s_p_subsystem_name)
     protected String subsystemName;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_required_failure_rate)
+    protected Double requiredFailureRate;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_calculated_failure_rate)
+    protected Double calculatedFailureRate;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_fha_based_failure_rate)
+    protected Double fhaBasedFailureRate;
+
 
     public void copyTo(FaultTree faultTree){
         super.copyTo(faultTree);
@@ -44,5 +53,8 @@ public class FaultTreeSummary extends ManagedEntity{
             faultTree.getSubsystem().setUri(this.getSubsystemUri());
             faultTree.getSubsystem().setName(this.getSubsystemName());
         }
+        faultTree.setRequiredFailureRate(this.getRequiredFailureRate());
+        faultTree.setCalculatedFailureRate(this.getCalculatedFailureRate());
+        faultTree.setFhaBasedFailureRate(this.getFhaBasedFailureRate());
     }
 }

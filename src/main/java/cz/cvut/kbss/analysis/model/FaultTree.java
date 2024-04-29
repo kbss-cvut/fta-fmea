@@ -23,6 +23,17 @@ public class FaultTree extends ManagedEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_is_performed_by)
     protected NamedEntity subsystem;
 
+    @Transient
+    @OWLDataProperty(iri = Vocabulary.s_p_required_failure_rate)
+    protected Double requiredFailureRate;
+    @Transient
+    @OWLDataProperty(iri = Vocabulary.s_p_calculated_failure_rate)
+    protected Double calculatedFailureRate;
+    @Transient
+    @OWLDataProperty(iri = Vocabulary.s_p_fha_based_failure_rate)
+    protected Double fhaBasedFailureRate;
+
+
     @NotNull(message = "Manifesting event must be chosen")
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_is_manifested_by, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
