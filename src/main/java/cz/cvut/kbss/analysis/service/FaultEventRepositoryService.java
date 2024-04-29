@@ -9,6 +9,7 @@ import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
 import cz.cvut.kbss.analysis.util.Vocabulary;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +77,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
         List<Event> supertypes = inputEvent.getSupertypes().stream()
                 .filter(e -> e.getTypes() == null || !e.getTypes().contains(ATOMIC_TYPE))
-                .collect(Collectors.toList());
+                .toList();
         if(supertypes.isEmpty())
             return;
 
@@ -170,6 +172,23 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Transactional(readOnly = true)
     public boolean isRootEventReused(FaultEvent rootEvent) {
         return faultEventDao.isChild(rootEvent.getUri());
+    }
+
+    @Override
+    protected void postUpdate(@NonNull FaultEvent instance) {
+        super.postUpdate(instance);
+        setChange(instance);
+    }
+
+    @Override
+    protected void postRemove(@NonNull FaultEvent instance) {
+        super.postRemove(instance);
+        setChange(instance);
+    }
+
+    protected void setChange(FaultEvent instance){
+        URI context = faultEventDao.getContext(instance);
+        faultTreeDao.setChangedByContext(context, new Date());
     }
 
 }

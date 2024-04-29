@@ -125,6 +125,7 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
         Objects.requireNonNull(instance);
         prePersist(instance);
         getPrimaryDao().persist(instance);
+        postPersist(instance);
     }
 
     /**
@@ -138,6 +139,10 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
     protected void prePersist(@NonNull T instance) {
         validate(instance);
     }
+
+    protected void postPersist(@NonNull T instance) {
+    }
+
 
     /**
      * Merges the specified updated instance into the repository.
