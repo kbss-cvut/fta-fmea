@@ -3,6 +3,8 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultEventScenarioDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
+import cz.cvut.kbss.analysis.dao.UserDao;
+import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
@@ -12,6 +14,7 @@ import cz.cvut.kbss.analysis.model.fta.GateType;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import cz.cvut.kbss.analysis.util.Vocabulary;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,13 +29,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree> {
+public class FaultTreeRepositoryService extends ComplexManagedEntityRepositoryService<FaultTree> {
 
     private final FaultTreeDao faultTreeDao;
     private final FaultEventScenarioDao faultEventScenarioDao;
     private final FaultEventRepositoryService faultEventRepositoryService;
     private final FunctionRepositoryService functionRepositoryService;
     private final IdentifierService identifierService;
+
 
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
 
@@ -42,9 +46,10 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                                       FaultEventScenarioDao faultEventScenarioDao,
                                       FaultEventRepositoryService faultEventRepositoryService,
                                       FunctionRepositoryService functionRepositoryService,
-                                      IdentifierService identifierService
+                                      IdentifierService identifierService,
+                                      UserDao userDao
     ) {
-        super(validator);
+        super(validator, userDao);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
         this.faultEventRepositoryService = faultEventRepositoryService;
@@ -78,7 +83,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
                 .map(Behavior::getItem)
                 .filter(c -> c != null).collect(Collectors.toSet());
         for(Item i : items){
-            items.forEach(c -> c.setComponents(null));
+            i.setComponents(null);
         }
 
         setReferences(ft);
@@ -115,8 +120,19 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
         return faultTree;
     }
 
+    public FaultTree update(FaultTree instance) {
+        if(instance.getManifestingEvent() == null && instance.getUri() != null){
+            FaultTree managedInstance = getPrimaryDao().find(instance.getUri()).orElse(null);
+            if(managedInstance == null)
+                throw EntityNotFoundException.create("Could find instance to update", instance.getUri());
+            managedInstance.setName(instance.getName());
+            instance = managedInstance;
+        }
+        return super.update(instance);
+    }
+
     @Override
-    protected void prePersist(FaultTree instance) {
+    protected void prePersist(@NotNull FaultTree instance) {
         super.prePersist(instance);
 
         URI faultEventUri = instance.getManifestingEvent().getUri();
@@ -258,7 +274,7 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             }
         }
 
-        setFaultEventTypes(faultEvents.size() == 0, parentFaultEvent);
+        setFaultEventTypes(faultEvents.isEmpty(), parentFaultEvent);
         removeVisited(behavior);
         parentFaultEvent.addChildren(faultEvents);
     }
@@ -437,11 +453,6 @@ public class FaultTreeRepositoryService extends BaseRepositoryService<FaultTree>
             fEvent.setEventType(FtaEventType.INTERMEDIATE);
             fEvent.setGateType(GateType.OR);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public List<FaultTree> findAllSummaries(){
-        return ((FaultTreeDao)getPrimaryDao()).findAllSummaries();
     }
 
     @Transactional

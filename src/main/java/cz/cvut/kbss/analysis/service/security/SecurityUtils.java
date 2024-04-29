@@ -1,12 +1,11 @@
 package cz.cvut.kbss.analysis.service.security;
 
 import cz.cvut.kbss.analysis.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import cz.cvut.kbss.analysis.model.UserReference;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +29,10 @@ public class SecurityUtils {
      */
     public static User currentUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public static UserReference currentUserReference(){
+        return new UserReference(currentUser());
     }
 
     /**

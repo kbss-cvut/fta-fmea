@@ -330,6 +330,13 @@ fta-fmea:has-trigger rdf:type owl:ObjectProperty ;
                   rdfs:range fta-fmea:event ;
                   rdfs:label "has trigger" .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/is-artifact-of
+fta-fmea:is-artifact-of rdf:type owl:ObjectProperty ;
+                  rdfs:range fta-fmea:system ;
+                  rdfs:label "is artifact of" .
+
+
+
 
 #################################################################
 #    Data properties
@@ -494,6 +501,14 @@ fta-fmea:to rdf:type owl:DatatypeProperty ;
 dc-terms:source rdf:type owl:DatatypeProperty ;
                 rdfs:label "source" .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/subsystem-name
+fta-fmea:subsystem-name rdf:type owl:DatatypeProperty ;
+                  rdfs:label "subsystem name" .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/system-name
+fta-fmea:system-name rdf:type owl:DatatypeProperty ;
+                  rdfs:label "system name" .
+
 
 #################################################################
 #    Classes
@@ -579,6 +594,10 @@ fta-fmea:system rdf:type owl:Class ;
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/user
 fta-fmea:user rdf:type owl:Class ;
               rdfs:label "user" .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/editor
+fta-fmea:editor rdf:type owl:Class ;
+               rdfs:label "editor" .
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/aircraft-model
@@ -700,6 +719,22 @@ fta-fmea:sns-component rdf:type owl:Class ;
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/summary
 fta-fmea:summary rdf:type owl:Class ;
                  rdfs:label "summary" .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/summary
+fta-fmea:managed-entity rdf:type owl:Class ;
+                 rdfs:label "managed entity" .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/named-entity
+fta-fmea:named-entity rdf:type owl:Class ;
+                 rdfs:label "named entity" .
+
+ ###  http://onto.fel.cvut.cz/ontologies/reliability-analysis-application#fault-tree-summary
+ :fault-tree-summary rdf:type owl:Class .
+
+
+ ###  http://onto.fel.cvut.cz/ontologies/reliability-analysis-application#system-summary
+ :system-summary rdf:type owl:Class .
+
 
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/verification-method

@@ -6,7 +6,12 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
-@MappedSuperclass
+@SparqlResultSetMappings(
+        @SparqlResultSetMapping(name="Summary", entities = {
+                @EntityResult(entityClass=NamedEntity.class)
+        })
+)
+@OWLClass(iri = Vocabulary.s_c_named_entity)
 @Getter
 @Setter
 public class NamedEntity extends AbstractEntity{
@@ -19,5 +24,30 @@ public class NamedEntity extends AbstractEntity{
 
     @OWLDataProperty(iri = Vocabulary.s_p_description)
     private String description;
+
+
+    public <T extends NamedEntity> T asEntity(Class<T> cls){
+        T entity = newInstance(cls);
+        entity.setAs(this);
+        return entity;
+    }
+
+    public void setAs(NamedEntity namedEntity){
+        namedEntity.copyTo(this);
+    }
+
+    public void copyTo(NamedEntity namedEntity){
+        namedEntity.setUri(this.getUri());
+        namedEntity.setName(this.getName());
+        namedEntity.setDescription(this.getDescription());
+    }
+
+    public static <T extends AbstractEntity> T newInstance(Class<T> cls){
+        try {
+            return cls.getConstructor().newInstance();
+        }catch (Exception e){
+            throw new RuntimeException(String.format("Entity class %s does not have no-arg constructor", cls.getName()));
+        }
+    }
 
 }

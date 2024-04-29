@@ -1,9 +1,9 @@
 package cz.cvut.kbss.analysis.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
+import cz.cvut.kbss.analysis.dao.UserDao;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Item;
@@ -22,15 +22,21 @@ import java.util.Set;
 
 @Service
 @Slf4j
-public class SystemRepositoryService extends BaseRepositoryService<System> {
+public class SystemRepositoryService extends ComplexManagedEntityRepositoryService<System> {
 
     private final SystemDao systemDao;
     private final ComponentRepositoryService componentRepositoryService;
     private final ComponentDao componentDao;
 
     @Autowired
-    public SystemRepositoryService(@Qualifier("defaultValidator") Validator validator, SystemDao systemDao, ComponentRepositoryService componentRepositoryService, ComponentDao componentDao) {
-        super(validator);
+    public SystemRepositoryService(@Qualifier("defaultValidator") Validator validator,
+                                   SystemDao systemDao,
+                                   ComponentRepositoryService componentRepositoryService,
+                                   ComponentDao componentDao,
+                                   UserDao userDao
+
+    ) {
+        super(validator, userDao);
         this.systemDao = systemDao;
         this.componentRepositoryService = componentRepositoryService;
         this.componentDao = componentDao;
