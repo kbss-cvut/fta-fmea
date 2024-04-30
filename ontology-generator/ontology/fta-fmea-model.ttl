@@ -496,6 +496,17 @@ fta-fmea:username rdf:type owl:DatatypeProperty ;
 fta-fmea:to rdf:type owl:DatatypeProperty ;
             rdfs:domain fta-fmea:failure-rate-requirement .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/required-failure-rate
+fta-fmea:required-failure-rate rdf:type owl:DatatypeProperty ;
+            rdfs:domain fta-fmea:fault-tree .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/calculated-failure-rate
+fta-fmea:calculated-failure-rate rdf:type owl:DatatypeProperty ;
+            rdfs:domain fta-fmea:fault-tree .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/fha-based-failure-rate
+fta-fmea:fha-based-failure-rate rdf:type owl:DatatypeProperty ;
+            rdfs:domain fta-fmea:fault-tree .
 
 ###  http://purl.org/dc/terms/source
 dc-terms:source rdf:type owl:DatatypeProperty ;

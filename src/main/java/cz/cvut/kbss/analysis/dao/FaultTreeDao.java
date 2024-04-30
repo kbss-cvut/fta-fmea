@@ -2,7 +2,9 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
-import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.FaultTree;
+import cz.cvut.kbss.analysis.model.FaultTreeSummary;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
@@ -91,15 +92,34 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                 OPTIONAL{ 
                                     ?uri fta:is-manifested-by ?root .
                                     ?root fta:is-derived-from ?sup.
-                                    ?sup fta:is-manifestation-of ?behavior .
-                                    ?behavior fta:has-component ?subsystemUri.
-                                    ?subsystemUri fta:name ?subsystemName.
-                                    ?subsystemUri fta:is-part-of+ ?systemUri.
-                                    FILTER NOT EXISTS{
-                                        ?systemUri fta:is-part-of ?system2.
+                                    OPTIONAL{
+                                        ?root fta:probability ?calculatedFailureRate.
                                     }
-                                    ?systemUri fta:name ?systemName.
+                                    OPTIONAL{
+                                        ?sup fta:has-failure-rate ?failureRate.
+                                        OPTIONAL{
+                                            ?failureRate fta:has-prediction ?failureRatePrediction.
+                                            ?failureRatePrediction fta:value ?fhaBasedFailureRate.
+                                        }
+                                        
+                                        OPTIONAL{
+                                            ?failureRate fta:has-requirement ?failureRateRequirement.
+                                            ?failureRateRequirement fta:to ?requiredFailureRate.
+                                        }
+                                    }
+                                    OPTIONAL{
+                                        ?sup fta:is-manifestation-of ?behavior .
+                                        ?behavior fta:has-component ?subsystemUri.
+                                        ?subsystemUri fta:name ?subsystemName.
+                                        ?subsystemUri fta:is-part-of+ ?systemUri.
+                                        FILTER NOT EXISTS{
+                                            ?systemUri fta:is-part-of ?system2.
+                                        }
+                                        ?systemUri fta:name ?systemName.
+                                    }
                                 }
+                                
+                                {}
                             }""", "FaultTreeSummary")
                     .setParameter("type", typeUri)
                     .setParameter("pName", P_HAS_NAME)
