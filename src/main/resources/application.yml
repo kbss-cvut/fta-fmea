@@ -2,7 +2,7 @@ server:
   port: 9999
 
 repository:
-  url: http://localhost:7200/repositories/fta-fmea
+  url: http://localhost:1235/services/db-server/repositories/fta-fmea
 
 
 persistence:
