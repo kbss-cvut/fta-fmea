@@ -8,7 +8,7 @@ import cz.cvut.kbss.jopa.model.annotations.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
-@OWLClass(iri = Vocabulary.s_c_user)
+@OWLClass(iri = Vocabulary.s_c_Person)
 @Getter
 @Setter
 public class UserReference extends AbstractEntity{

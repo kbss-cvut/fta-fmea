@@ -6,6 +6,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc-terms: <http://purl.org/dc/terms/> .
 @prefix fta-fmea: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @base <http://onto.fel.cvut.cz/ontologies/reliability-analysis-application> .
 
 <http://onto.fel.cvut.cz/ontologies/reliability-analysis-application> rdf:type owl:Ontology ;
@@ -459,7 +460,7 @@ fta-fmea:occurrence rdf:type owl:DatatypeProperty ;
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/password
 fta-fmea:password rdf:type owl:DatatypeProperty ;
-                     rdfs:domain fta-fmea:user ;
+                     rdfs:domain foaf:Person ;
                      rdfs:range xsd:string ;
                      rdfs:label "password" .
 
@@ -487,7 +488,7 @@ fta-fmea:severity rdf:type owl:DatatypeProperty ;
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/username
 fta-fmea:username rdf:type owl:DatatypeProperty ;
-                     rdfs:domain fta-fmea:user ;
+                     rdfs:domain foaf:Person ;
                      rdfs:range xsd:string ;
                      rdfs:label "username" .
 
@@ -602,8 +603,8 @@ fta-fmea:system rdf:type owl:Class ;
                 rdfs:label "system" .
 
 
-###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/user
-fta-fmea:user rdf:type owl:Class ;
+###  http://xmlns.com/foaf/0.1/Person
+foaf:Person rdf:type owl:Class ;
               rdfs:label "user" .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/editor
