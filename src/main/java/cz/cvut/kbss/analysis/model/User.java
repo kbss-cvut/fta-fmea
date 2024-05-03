@@ -19,7 +19,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-@OWLClass(iri = Vocabulary.s_c_user)
+@OWLClass(iri = Vocabulary.s_c_Person)
 @Getter
 @Setter
 public class User extends AbstractEntity implements UserDetails {
