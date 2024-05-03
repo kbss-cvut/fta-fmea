@@ -2,7 +2,7 @@ server:
   port: 9999
 
 repository:
-  url: http://localhost:1235/services/db-server/repositories/fta-fmea
+  url: http://localhost/ava/services/db-server/repositories/fta-fmea
 
 
 persistence:
@@ -10,6 +10,11 @@ persistence:
   language: cs
 
 security:
+  provider: oidc
+  oidcRoleClaim: realm_access.roles
+  appContext: http://localhost:3000/fta-fmea
+  cors:
+    allowedOrigins:
   jwt:
     secretKey: lwrUj5PmCE6X8ekbLd9wDTRlBkEJA0HB
     expiryMs: 28800000 # 8 hours
@@ -26,3 +31,12 @@ annotator:
   list-documents-api: ${LIST_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=list-documents}
   convert-document-api: ${CONVERT_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=convert-document}
   process-annotatoins-api: ${PROCESS_ANNOTATION_API:https://localhost:8090/annotator/process-annotation-service.sh}
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost/services/auth/realms/record-manager
+          jwk-set-uri: http://localhost/services/auth/realms/record-manager/protocol/openid-connect/certs
+
