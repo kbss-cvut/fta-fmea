@@ -11,6 +11,7 @@ import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
 import cz.cvut.kbss.analysis.model.fta.FTAMinimalCutSetEvaluation;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -37,7 +38,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final FunctionRepositoryService functionRepositoryService;
     private final IdentifierService identifierService;
 
-
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
 
     @Autowired
@@ -47,9 +47,10 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       FaultEventRepositoryService faultEventRepositoryService,
                                       FunctionRepositoryService functionRepositoryService,
                                       IdentifierService identifierService,
-                                      UserDao userDao
+                                      UserDao userDao,
+                                      SecurityUtils securityUtils
     ) {
-        super(validator, userDao);
+        super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
         this.faultEventRepositoryService = faultEventRepositoryService;

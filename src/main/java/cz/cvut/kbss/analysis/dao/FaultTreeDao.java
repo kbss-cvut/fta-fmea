@@ -6,6 +6,7 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.model.FaultTreeSummary;
 import cz.cvut.kbss.analysis.service.IdentifierService;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
@@ -22,8 +23,8 @@ import java.util.Optional;
 public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
 
     @Autowired
-    protected FaultTreeDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
-        super(FaultTree.class, em, config, identifierService);
+    protected FaultTreeDao(EntityManager em, PersistenceConf config, IdentifierService identifierService, SecurityUtils securityUtils) {
+        super(FaultTree.class, em, config, identifierService, securityUtils);
     }
 
     public boolean isRootEvent(URI faultEventIri) {
