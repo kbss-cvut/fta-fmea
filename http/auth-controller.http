@@ -5,7 +5,7 @@ Content-Type: application/ld+json
   "username": "jakub",
   "password": "heslicko",
   "types": [
-    "http://onto.fel.cvut.cz/ontologies/fta-fmea-application/User"
+    "http://xmlns.com/foaf/0.1/Person"
   ],
   "@context": {
     "iri": "@id",
