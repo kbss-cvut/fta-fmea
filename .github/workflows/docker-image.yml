@@ -2,16 +2,18 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-
   build:
+    # Skip if PR is from a fork
+    if: github.event_name != 'pull_request' || github.event.repository.full_name == github.event.pull_request.head.repo.full_name
 
     runs-on: ubuntu-latest
     permissions:
@@ -34,7 +36,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository }}
           flavor: |
-            latest=true
+            ${{ github.ref == 'refs/heads/main' && 'latest=true' || '' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
