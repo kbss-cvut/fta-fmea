@@ -16,9 +16,9 @@ public class SecurityConstants {
 
     public static final String PASSWORD_PARAM = "password";
 
-    public static final String SECURITY_CHECK_URI = "/j_spring_security_check";
+    public static final String SECURITY_CHECK_URI = "/auth/signin";
 
-    public static final String LOGOUT_URI = "/j_spring_security_logout";
+    public static final String LOGOUT_URI = "/auth/logout";
 
     public static final String COOKIE_URI = "/";
 
