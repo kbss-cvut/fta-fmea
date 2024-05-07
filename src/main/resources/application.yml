@@ -11,13 +11,10 @@ persistence:
 
 security:
   provider: oidc
-  oidcRoleClaim: realm_access.roles
-  appContext: http://localhost:3000/fta-fmea
-  cors:
-    allowedOrigins:
-  jwt:
-    secretKey: lwrUj5PmCE6X8ekbLd9wDTRlBkEJA0HB
-    expiryMs: 28800000 # 8 hours
+
+appContext: http://localhost:5173
+oidc.RoleClaim: realm_access.roles
+cors.allowedOrigins:
 
 logging:
   pattern:
@@ -37,6 +34,6 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost/services/auth/realms/record-manager
-          jwk-set-uri: http://localhost/services/auth/realms/record-manager/protocol/openid-connect/certs
+          issuer-uri: http://localhost/ava/services/auth/realms/record-manager
+          jwt-set-uri: http://localhost/ava/services/auth/realms/record-manager/protocol/openid-connect/certs
 

@@ -3,7 +3,6 @@ package cz.cvut.kbss.analysis.security;
 
 import cz.cvut.kbss.analysis.config.SecurityConfig;
 import cz.cvut.kbss.analysis.config.conf.SecurityConf;
-import cz.cvut.kbss.analysis.service.ConfigReader;
 import cz.cvut.kbss.analysis.util.OidcGrantedAuthoritiesExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
