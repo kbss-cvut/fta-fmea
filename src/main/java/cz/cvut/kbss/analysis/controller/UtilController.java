@@ -2,9 +2,7 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.config.conf.RepositoryConf;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.Item;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.util.Exporter;
 import cz.cvut.kbss.analysis.service.FaultEventRepositoryService;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
@@ -17,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.lang.System;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
@@ -71,6 +70,12 @@ public class UtilController {
 //        Item sys2 = factory.acPartonomy1("acm2");
 //        factory.persist(sys2);
 //        return Stream.of(sys1).toList();
+    }
+
+    @GetMapping(value = "/fha-based-example")
+    public List<FaultEventType> createFHABasedFailureRateEstimates(){
+        List<FaultEventType> ret = factory.createFHABasedFailureRateEstimates();
+        return ret;
     }
 
     @GetMapping(value = "/uri")

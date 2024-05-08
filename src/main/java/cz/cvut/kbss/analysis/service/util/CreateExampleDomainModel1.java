@@ -83,6 +83,13 @@ public class CreateExampleDomainModel1 {//implements ApplicationListener<Context
 
 
     @Transactional
+    public List<FaultEventType> createFHABasedFailureRateEstimates() {
+        CreateExampleFHABasedFailureRateEstimates exampleGenerator = new CreateExampleFHABasedFailureRateEstimates(em);
+        List<FaultEventType> ret = exampleGenerator.generateFHABasedFailureRateEstimates((d) -> failureRate(d, estimateEstimationMethod));
+        return ret;
+    }
+
+    @Transactional
     public List<? extends Item> createModel(){
 //        log.info("post construct - CreateExampleDomainModel1.createModel, em = {}", em);
         System ac1 = acPartonomy1("acm1");
@@ -526,14 +533,24 @@ public class CreateExampleDomainModel1 {//implements ApplicationListener<Context
 //            fm.addManifestation(faultEventType);
             faultEventType.setBehavior(fm);
 
-            FailureRateEstimate fre = new FailureRateEstimate();
-            fre.setEstimationMethod(predictionEstimationMethod);
-            fre.setValue(predictedFailreRate);
-            FailureRate fr = new FailureRate();
-            fr.setPrediction(fre);
+            FailureRate fr = failureRate(predictedFailreRate, predictionEstimationMethod);
             faultEventType.setFailureRate(fr);
         }
         return c;
+    }
+
+    public FailureRate failureRate(Double predictedFailureRate, EstimationMethod method){
+        FailureRate fr = new FailureRate();
+        FailureRateEstimate fre = failureRateEstimate(predictedFailureRate, method);
+        fr.setEstimate(fre);
+        return fr;
+    }
+
+    public FailureRateEstimate failureRateEstimate(Double predictedFailureRate, EstimationMethod method){
+        FailureRateEstimate fre = new FailureRateEstimate();
+        fre.setEstimationMethod(method);
+        fre.setValue(predictedFailureRate);
+        return fre;
     }
 
 
