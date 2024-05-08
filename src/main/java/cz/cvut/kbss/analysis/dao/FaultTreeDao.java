@@ -97,20 +97,23 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                     }
                                     OPTIONAL{
                                         ?sup fta:has-failure-rate ?failureRate.
-                                        OPTIONAL{
-                                            ?failureRate fta:has-prediction ?failureRatePrediction.
-                                            ?failureRatePrediction fta:value ?fhaBasedFailureRate.
-                                        }
-                                        
-                                        OPTIONAL{
-                                            ?failureRate fta:has-requirement ?failureRateRequirement.
-                                            ?failureRateRequirement fta:to ?requiredFailureRate.
-                                        }
+                                        ?failureRate fta:has-requirement ?failureRateRequirement.
+                                        ?failureRateRequirement fta:to ?requiredFailureRate.
                                     }
+                                    OPTIONAL{
+                                        ?sup fta:is-derived-from ?supsup.
+                                        ?supsup fta:has-failure-rate ?fhaFailureRateQ.
+                                        ?fhaFailureRateQ fta:has-estimate ?fhaFailureRateP.
+                                        ?fhaFailureRateP a fta:failure-rate-estimate;
+                                                         fta:value ?fhaBasedFailureRate.
+                                    } 
                                     OPTIONAL{
                                         ?sup fta:is-manifestation-of ?behavior .
                                         ?behavior fta:has-component ?subsystemUri.
-                                        ?subsystemUri fta:name ?subsystemName.
+                                        ?subsystemUri fta:is-derived-from ?subsystemType.
+                                        ?subsystemType fta:name ?subsystemTypeLabel.
+                                        ?subsystemType fta:ata-code ?subsystemTypeCode.
+                                        BIND(CONCAT(str(?subsystemTypeCode), " - ", str(?subsystemTypeLabel)) as ?subsystemName)
                                         ?subsystemUri fta:is-part-of+ ?systemUri.
                                         FILTER NOT EXISTS{
                                             ?systemUri fta:is-part-of ?system2.
@@ -118,8 +121,6 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                         ?systemUri fta:name ?systemName.
                                     }
                                 }
-                                
-                                {}
                             }""", "FaultTreeSummary")
                     .setParameter("type", typeUri)
                     .setParameter("pName", P_HAS_NAME)
