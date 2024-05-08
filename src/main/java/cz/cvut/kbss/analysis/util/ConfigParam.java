@@ -4,7 +4,11 @@ public enum ConfigParam {
 
     SECURITY_SAME_SITE("security.sameSite"),
 
-    APP_CONTEXT("appContext");
+    APP_CONTEXT("appContext"),
+
+    OIDC_ROLE_CLAIM("oidc.RoleClaim"),
+
+    CORS_ALLOWED_ORIGINS("cors.allowedOrigins");
 
     private final String name;
 

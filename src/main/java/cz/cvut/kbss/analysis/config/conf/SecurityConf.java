@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.config.conf;
 
+import cz.cvut.kbss.analysis.util.ConfigParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class SecurityConf {
 
     @Autowired
     public SecurityConf(Environment env) {
-        allowedOrigins = env.getProperty("cors.allowedOrigins");
-        appContext = env.getProperty("appContext");
-        roleClaim = env.getProperty("oidc.RoleClaim");
+        allowedOrigins = env.getProperty(ConfigParam.CORS_ALLOWED_ORIGINS.toString());
+        appContext = env.getProperty(ConfigParam.APP_CONTEXT.toString());
+        roleClaim = env.getProperty(ConfigParam.OIDC_ROLE_CLAIM.toString());
     }
 }
