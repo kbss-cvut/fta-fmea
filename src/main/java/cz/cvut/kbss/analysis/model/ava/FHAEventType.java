@@ -1,6 +1,5 @@
 package cz.cvut.kbss.analysis.model.ava;
 
-import cz.cvut.kbss.analysis.model.Event;
 import cz.cvut.kbss.analysis.model.FaultEventType;
 import cz.cvut.kbss.analysis.model.method.VerificationMethod;
 import cz.cvut.kbss.analysis.util.Vocabulary;
