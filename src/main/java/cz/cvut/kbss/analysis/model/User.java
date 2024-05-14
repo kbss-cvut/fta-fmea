@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -67,4 +68,30 @@ public class User extends AbstractEntity implements UserDetails {
     public String toString() {
         return "User <" + getUri() + "/>";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User that = (User) o;
+        return Objects.equals(getUri(), that.getUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUri());
+    }
+
+    /**
+     * @return A copy of this user.
+     */
+    public User copy() {
+        final User copy = new User();
+        copy.setUri(getUri());
+        copy.setUsername(getUsername());
+        copy.setPassword(getPassword());
+        copy.setRoles(getRoles());
+        return copy;
+    }
+
 }

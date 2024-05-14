@@ -93,7 +93,7 @@ public class Environment {
             jsonLdObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             jsonLdObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             final JsonLdModule module = new JsonLdModule();
-            module.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.termit");
+            module.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.analysis");
             jsonLdObjectMapper.registerModule(module);
         }
         return jsonLdObjectMapper;

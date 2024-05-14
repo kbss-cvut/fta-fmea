@@ -23,8 +23,11 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
     public static URI P_CREATOR = URI.create( DC.Terms.CREATOR);
     public static URI P_LAST_EDITOR = URI.create(Vocabulary.s_c_editor);
 
-    protected ManagedEntityDao(Class<T> type, EntityManager em, PersistenceConf config, IdentifierService identifierService) {
+    protected final SecurityUtils securityUtils;
+
+    protected ManagedEntityDao(Class<T> type, EntityManager em, PersistenceConf config, IdentifierService identifierService, SecurityUtils securityUtils) {
         super(type, em, config, identifierService);
+        this.securityUtils = securityUtils;
     }
 
 
@@ -41,7 +44,7 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
     }
 
     public void setChangedByContext(URI context, Date date){
-        UserReference user = SecurityUtils.currentUserReference();
+        UserReference user = securityUtils.getCurrentUserReference();
         em.createNativeQuery("""
                 DELETE{
                     GRAPH ?context{ 

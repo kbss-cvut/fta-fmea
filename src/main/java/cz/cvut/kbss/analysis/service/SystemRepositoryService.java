@@ -8,6 +8,7 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.System;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,10 +34,11 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
                                    SystemDao systemDao,
                                    ComponentRepositoryService componentRepositoryService,
                                    ComponentDao componentDao,
-                                   UserDao userDao
+                                   UserDao userDao,
+                                   SecurityUtils securityUtils
 
     ) {
-        super(validator, userDao);
+        super(validator, userDao, securityUtils);
         this.systemDao = systemDao;
         this.componentRepositoryService = componentRepositoryService;
         this.componentDao = componentDao;

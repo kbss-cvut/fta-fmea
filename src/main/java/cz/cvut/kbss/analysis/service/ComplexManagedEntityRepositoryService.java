@@ -21,16 +21,18 @@ import java.util.List;
  */
 public abstract class ComplexManagedEntityRepositoryService<T extends ManagedEntity> extends BaseRepositoryService<T> {
     protected final UserDao userDao;
+    protected final SecurityUtils securityUtils;
 
-    public ComplexManagedEntityRepositoryService(Validator validator, UserDao userDao) {
+    public ComplexManagedEntityRepositoryService(Validator validator, UserDao userDao, SecurityUtils securityUtils) {
         super(validator);
         this.userDao = userDao;
+        this.securityUtils = securityUtils;
     }
 
     @Override
     protected void preUpdate(@NonNull T instance) {
         super.preUpdate(instance);
-        UserReference user = SecurityUtils.currentUserReference();
+        UserReference user = securityUtils.getCurrentUserReference();
         instance.setLastEditor(user);
         instance.setModified(new Date());
     }
@@ -38,7 +40,7 @@ public abstract class ComplexManagedEntityRepositoryService<T extends ManagedEnt
     @Override
     protected void prePersist(@NonNull T instance) {
         super.prePersist(instance);
-        UserReference user = SecurityUtils.currentUserReference();
+        UserReference user = securityUtils.getCurrentUserReference();
         instance.setCreator(user);
         instance.setCreated(new Date());
     }
