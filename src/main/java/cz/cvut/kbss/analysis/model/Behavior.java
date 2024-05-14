@@ -17,7 +17,7 @@ public abstract class Behavior extends DomainEntity<Behavior> {
     @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from, fetch = FetchType.EAGER)
     protected Set<Behavior> supertypes;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_behavior_type)
+    @OWLDataProperty(iri = Vocabulary.s_p_behavior_type, simpleLiteral = true)
     private BehaviorType behaviorType = BehaviorType.AtomicBehavior;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_required, fetch = FetchType.EAGER)

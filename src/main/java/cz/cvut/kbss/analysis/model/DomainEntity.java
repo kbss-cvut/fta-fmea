@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 public abstract class DomainEntity<T extends DomainEntity> extends ManagedEntity{
 
-    @OWLDataProperty(iri = Vocabulary.s_p_has_type_category)
+    @OWLDataProperty(iri = Vocabulary.s_p_has_type_category, simpleLiteral = true)
     private TypeCategory typeCategory;
 
     public abstract Set<T> getSupertypes();
