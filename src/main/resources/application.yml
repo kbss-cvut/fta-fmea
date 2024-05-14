@@ -10,7 +10,7 @@ persistence:
   language: cs
 
 security:
-  provider: oidc
+  provider: internal
 
 appContext: http://localhost:5173
 oidc.RoleClaim: realm_access.roles
