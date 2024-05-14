@@ -7,6 +7,6 @@ import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 
 @OWLClass(iri = Vocabulary.s_c_failure_rate_general_estimation_method)
 public class EstimationMethod extends NamedEntity {
-    @OWLDataProperty(iri = Vocabulary.s_p_code)
+    @OWLDataProperty(iri = Vocabulary.s_p_code, simpleLiteral = true)
     public String code;
 }

@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VerificationMethod extends NamedEntity {
-    @OWLDataProperty(iri = Vocabulary.s_p_code)
+    @OWLDataProperty(iri = Vocabulary.s_p_code, simpleLiteral = true)
     public String code;
 }

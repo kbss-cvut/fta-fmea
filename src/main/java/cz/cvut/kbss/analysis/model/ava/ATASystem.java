@@ -1,8 +1,6 @@
 package cz.cvut.kbss.analysis.model.ava;
 
 import cz.cvut.kbss.analysis.model.Component;
-import cz.cvut.kbss.analysis.model.Item;
-import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
@@ -17,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class ATASystem extends Component {
 
-    @OWLDataProperty(iri = Vocabulary.s_p_ata_code)
+    @OWLDataProperty(iri = Vocabulary.s_p_ata_code, simpleLiteral = true)
     private String ataCode;
 
 }
