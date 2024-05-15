@@ -39,10 +39,10 @@ public class FaultEvent extends Event {
 
     @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_fault_event_type)
+    @OWLDataProperty(iri = Vocabulary.s_p_fault_event_type, simpleLiteral = true)
     private FtaEventType eventType;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_gate_type)
+    @OWLDataProperty(iri = Vocabulary.s_p_gate_type, simpleLiteral = true)
     private GateType gateType;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_rectangle, fetch = FetchType.EAGER, cascade = CascadeType.ALL)

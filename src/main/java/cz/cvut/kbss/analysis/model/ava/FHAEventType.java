@@ -22,6 +22,6 @@ public class FHAEventType extends FaultEventType {
     @OWLObjectProperty(iri = Vocabulary.s_c_verification_method)
     private Set<VerificationMethod> verificationMethods;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_material_reference)
+    @OWLDataProperty(iri = Vocabulary.s_p_material_reference, simpleLiteral = true)
     private Set<String> referencedMaterials;
 }

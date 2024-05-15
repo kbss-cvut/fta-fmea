@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class FailureMode extends Behavior {
 
-    @OWLDataProperty(iri = Vocabulary.s_p_failure_mode_type)
+    @OWLDataProperty(iri = Vocabulary.s_p_failure_mode_type, simpleLiteral = true)
     private FailureModeType failureModeType = FailureModeType.FailureMode;
 
     @Override
