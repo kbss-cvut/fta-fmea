@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.FaultEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.FaultEventRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -71,6 +72,20 @@ public class FaultEventController {
         URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         return repositoryService.getFailureMode(faultEventUri);
+    }
+
+    @GetMapping(value = "/top-fault-events/{systemFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<FaultEventType> getTopFaultEvents(@PathVariable String systemFragment){
+        log.info("> getFaultEventTypes - {}", systemFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
+        return repositoryService.getTopFaultEvents(systemUri);
+    }
+
+    @GetMapping(value = "/all-fault-events/{systemFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<FaultEventType> getAllFaultEvents(@PathVariable String systemFragment){
+        log.info("> getFaultEventTypes - {}", systemFragment);
+        URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
+        return repositoryService.getAllFaultEvents(systemUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

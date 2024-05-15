@@ -191,4 +191,10 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         faultTreeDao.setChangedByContext(context, new Date());
     }
 
+    public List<FaultEventType> getTopFaultEvents(URI systemUri) {
+        return faultEventDao.getTopFaultEvents(systemUri);
+    }
+    public List<FaultEventType> getAllFaultEvents(URI systemUri) {
+        return faultEventDao.getAllFaultEvents(systemUri);
+    }
 }
