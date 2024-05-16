@@ -81,7 +81,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         if(supertypes.isEmpty())
             return;
 
-        inputEvent.setReference(true);
+        inputEvent.setIsReference(true);
 
         if(supertypes.size() > 1)
             log.warn("new event added to event <{}> has multiple supertypes [{}]",
