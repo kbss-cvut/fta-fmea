@@ -35,7 +35,7 @@ public class FaultEvent extends Event {
 
     @Transient
     @OWLDataProperty(iri = Vocabulary.s_p_is_reference)
-    private boolean isReference;
+    private Boolean isReference;
 
     @NotNull(message = "EventType must be defined")
     @ParticipationConstraints(nonEmpty = true)
