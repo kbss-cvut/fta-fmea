@@ -1,9 +1,6 @@
 package cz.cvut.kbss.analysis.service;
 
-import cz.cvut.kbss.analysis.dao.FaultEventScenarioDao;
-import cz.cvut.kbss.analysis.dao.FaultTreeDao;
-import cz.cvut.kbss.analysis.dao.GenericDao;
-import cz.cvut.kbss.analysis.dao.UserDao;
+import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
@@ -39,6 +36,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final IdentifierService identifierService;
 
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
+    private final FaultEventDao faultEventDao;
 
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -48,14 +46,15 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       FunctionRepositoryService functionRepositoryService,
                                       IdentifierService identifierService,
                                       UserDao userDao,
-                                      SecurityUtils securityUtils
-    ) {
+                                      SecurityUtils securityUtils,
+                                      FaultEventDao faultEventDao) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
         this.faultEventRepositoryService = faultEventRepositoryService;
         this.functionRepositoryService = functionRepositoryService;
         this.identifierService = identifierService;
+        this.faultEventDao = faultEventDao;
     }
 
     @Override
@@ -66,7 +65,16 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     @Transactional
     public void createTree(FaultTree faultTree){
         if(faultTree.getManifestingEvent() != null){
-            faultTree.getManifestingEvent().setRectangle(new Rectangle());
+            FaultEvent faultEvent = faultTree.getManifestingEvent();
+            faultEvent.setRectangle(new Rectangle());
+            if(faultEvent.getSupertypes() != null) {
+                Set<Event> managedSupertypes = new HashSet<>();
+                for(Event event : faultEvent.getSupertypes()){
+                    faultEventDao.findEvent(event.getUri())
+                            .ifPresent(managedSupertypes::add);
+                }
+                faultEvent.setSupertypes(managedSupertypes);
+            }
         }
         persist(faultTree);
     }

@@ -2,10 +2,7 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultEventReference;
-import cz.cvut.kbss.analysis.model.FaultEventType;
-import cz.cvut.kbss.analysis.model.FaultEventTypeSummary;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -17,6 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
@@ -75,6 +74,15 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
         }
     }
 
+    public Optional<Event> findEvent(URI id){
+        Objects.requireNonNull(id);
+        try {
+            EntityDescriptor entityDescriptor = getEntityDescriptor(id);
+            return Optional.ofNullable(em.find(Event.class, id, entityDescriptor));
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
 
     public List<FaultEventReference> getFaultEventRootWithSupertype(URI supertype){
         try{

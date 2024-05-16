@@ -59,9 +59,12 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     }
 
     public URI getContext(URI uri){
-        return em.createNativeQuery("SELECT DISTINCT ?context {GRAPH ?context {?uri a ?type}}", URI.class)
+        List<URI> contexts = em.createNativeQuery("SELECT DISTINCT ?context {GRAPH ?context {?uri a ?type}}", URI.class)
                 .setParameter("uri", uri)
-                .getSingleResult();
+                .getResultList();
+        if(contexts.isEmpty())
+            return null;
+        return contexts.get(0);
     }
 
     @Override
