@@ -88,6 +88,10 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
         String configValue = config.getConfig(ConfigParam.SECURITY_SAME_SITE, "");
 
         log.debug("SameSite attribute for set-cookie header configured to {}.", configValue);
+        if (configValue.isBlank()) {
+            log.debug("SameSite attribute for set-cookie header not configured.");
+            return;
+        }
 
         SameSiteValue sameSiteValue = SameSiteValue.getValue(configValue)
                 .orElseThrow(
