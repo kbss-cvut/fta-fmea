@@ -39,7 +39,7 @@ dependencies {
     def jopaVersion = '2.0.0-SNAPSHOT'
     implementation "cz.cvut.kbss.jopa:jopa-impl:$jopaVersion"
     implementation "cz.cvut.kbss.jopa:ontodriver-rdf4j:$jopaVersion"
-    implementation 'cz.cvut.kbss.jsonld:jb4jsonld-jackson:0.13.2'
+    implementation 'cz.cvut.kbss.jsonld:jb4jsonld-jackson:0.14.3'
     implementation 'com.github.ledsoft:jopa-spring-transaction:0.3.0-SNAPSHOT'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
