@@ -21,6 +21,9 @@ public class SNSComponent extends Component {
     @OWLDataProperty(iri = Vocabulary.s_p_quantity)
     private Integer quantity;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_stock, simpleLiteral = true)
+    private String stock;
+
     @OWLDataProperty(iri = Vocabulary.s_p_schematic_designation, simpleLiteral = true)
     private Set<String> schematicDescription;
 

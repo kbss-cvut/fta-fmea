@@ -20,6 +20,4 @@ public class IndependentSNSItem extends Item {
     @OWLDataProperty(iri = Vocabulary.s_p_part_number, simpleLiteral = true)
     private String partNumber;
 
-    @OWLDataProperty(iri = Vocabulary.s_p_stock, simpleLiteral = true)
-    private String stock;
 }
