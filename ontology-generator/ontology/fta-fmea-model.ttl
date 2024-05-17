@@ -84,6 +84,11 @@ fta-fmea:has-estimate rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf fta-fmea:has-general-estimate .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-manual-estimate
+fta-fmea:has-manual-estimate rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf fta-fmea:has-general-estimate .
+
+
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-event-type
 fta-fmea:has-event-type rdf:type owl:ObjectProperty ;
                         rdfs:domain fta-fmea:fha-fault-event ;

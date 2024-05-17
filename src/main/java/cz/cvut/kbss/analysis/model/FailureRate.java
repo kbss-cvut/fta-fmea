@@ -22,4 +22,7 @@ public class FailureRate extends AbstractEntity{
     @OWLObjectProperty(iri = Vocabulary.s_p_has_prediction, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private FailureRateEstimate prediction;
 
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_manual_estimate, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private FailureRateEstimate manual;
+
 }
