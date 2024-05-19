@@ -33,11 +33,16 @@ public class UserDao extends BaseDao<User> {
         try {
             return Optional
                     .of(em
-                            .createNativeQuery("SELECT ?x WHERE { ?x a ?type ; ?hasUsername ?username . }",
+                            .createNativeQuery("""
+                                    SELECT ?x WHERE { 
+                                        ?x a ?type ; ?hasUsername ?val . 
+                                        FILTER(str(?val) = ?username)
+                                    }
+                                    """,
                                     type)
                             .setParameter("type", typeUri)
-                            .setParameter("hasUsername", URI.create(Vocabulary.s_p_username))
-                            .setParameter("username", username, config.getLanguage())
+                            .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName))
+                            .setParameter("username", username)
                             .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
@@ -54,7 +59,7 @@ public class UserDao extends BaseDao<User> {
                                 String.class)
                         .setParameter("type", typeUri)
                         .setParameter("x", uri)
-                        .setParameter("hasUsername", URI.create(Vocabulary.s_p_username))
+                        .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName))
                         .getSingleResult();
         } catch (NoResultException e) {
             return null;
@@ -72,10 +77,15 @@ public class UserDao extends BaseDao<User> {
     public boolean existsWithUsername(String username) {
         Objects.requireNonNull(username);
         return em
-                .createNativeQuery("ASK WHERE { ?x a ?type ; ?hasUsername ?username . }", Boolean.class)
+                .createNativeQuery("""
+                                    ASK WHERE { 
+                                        ?x a ?type ; ?hasUsername ?val . 
+                                        FILTER(str(?val) = ?username)
+                                    }
+                                    """, Boolean.class)
                 .setParameter("type", typeUri)
-                .setParameter("hasUsername", URI.create(Vocabulary.s_p_username))
-                .setParameter("username", username, config.getLanguage())
+                .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName))
+                .setParameter("username", username)
                 .getSingleResult();
     }
 

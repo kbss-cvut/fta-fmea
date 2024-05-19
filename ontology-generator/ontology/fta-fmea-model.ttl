@@ -491,8 +491,8 @@ fta-fmea:severity rdf:type owl:DatatypeProperty ;
                      rdfs:label "severity" .
 
 
-###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/username
-fta-fmea:username rdf:type owl:DatatypeProperty ;
+###  http://xmlns.com/foaf/0.1/accountName
+foaf:accountName rdf:type owl:DatatypeProperty ;
                      rdfs:domain foaf:Person ;
                      rdfs:range xsd:string ;
                      rdfs:label "username" .

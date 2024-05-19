@@ -23,7 +23,7 @@ public class UserReference extends AbstractEntity{
 
 
     @Transient
-    @OWLDataProperty(iri = Vocabulary.s_p_username, fetch = FetchType.EAGER )
+    @OWLDataProperty(iri = Vocabulary.s_p_accountName, fetch = FetchType.EAGER )
     private String username;
 
 }

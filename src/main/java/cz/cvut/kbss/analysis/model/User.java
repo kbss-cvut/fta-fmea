@@ -27,12 +27,10 @@ public class User extends AbstractEntity implements UserDetails {
 
     @NotEmpty(message = "Username must not be empty")
     @ParticipationConstraints(nonEmpty = true)
-    @OWLDataProperty(iri = Vocabulary.s_p_username, simpleLiteral = true)
+    @OWLDataProperty(iri = Vocabulary.s_p_accountName, simpleLiteral = true)
     private String username;
 
-    @NotEmpty(message = "Password must not be empty")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_password, simpleLiteral = true)
     private String password;
 
