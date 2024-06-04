@@ -21,12 +21,6 @@ compileJava {
 
 repositories {
     mavenCentral()
-    maven{
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-        mavenContent {
-            snapshotsOnly()
-        }
-    }
 }
 
 war {
@@ -36,11 +30,11 @@ war {
 sourceSets.main.java.srcDirs += "src/main/generated"
 
 dependencies {
-    def jopaVersion = '2.0.0-SNAPSHOT'
+    def jopaVersion = '2.0.0'
     implementation "cz.cvut.kbss.jopa:jopa-impl:$jopaVersion"
     implementation "cz.cvut.kbss.jopa:ontodriver-rdf4j:$jopaVersion"
     implementation 'cz.cvut.kbss.jsonld:jb4jsonld-jackson:0.14.3'
-    implementation 'com.github.ledsoft:jopa-spring-transaction:0.3.0-SNAPSHOT'
+    implementation 'com.github.ledsoft:jopa-spring-transaction:0.3.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
