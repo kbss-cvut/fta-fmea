@@ -18,4 +18,7 @@ FROM eclipse-temurin:17-jdk-alpine as runtime
 COPY --from=GRADLE /fta-fmea/build/libs/fta-fmea-*.jar /fta-fmea.jar
 
 EXPOSE 8080
-CMD ["java", "-jar", "/fta-fmea.jar"]
+
+ENV JAVA_OPTIONS=""
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTIONS -jar /fta-fmea.jar"]
