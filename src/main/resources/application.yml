@@ -14,7 +14,7 @@ security:
 
 appContext: http://localhost:5173
 oidc.RoleClaim: realm_access.roles
-cors.allowedOrigins:
+cors.allowedOrigins: "http://localhost:5173,http://localhost:4173"
 
 logging:
   pattern:
