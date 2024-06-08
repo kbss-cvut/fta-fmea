@@ -165,6 +165,14 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         log.info("< updateChildrenSequence");
     }
 
+    @Override
+    protected void preUpdate(FaultEvent instance) {
+        if(instance.getSupertypes() != null && !instance.getSupertypes().isEmpty())
+            faultEventDao.loadManagedSupertypes(instance);
+
+        super.preUpdate(instance);
+    }
+
     @Transactional
     public void update(Rectangle rect){
         faultEventDao.update(rect);
