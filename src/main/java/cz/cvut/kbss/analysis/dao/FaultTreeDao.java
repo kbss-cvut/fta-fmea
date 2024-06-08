@@ -12,6 +12,7 @@ import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import cz.cvut.kbss.jopa.model.metamodel.Attribute;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
+import cz.cvut.kbss.jopa.model.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -80,9 +81,30 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
     @Override
     public List<FaultTree> findAllSummaries() {
         try {
-            List<FaultTreeSummary> ret = em.createNativeQuery("""
+            List<FaultTreeSummary> ret = getSummariesQuery()
+                    .getResultList();
+            return ret.stream().map(s -> s.asEntity(type)).toList();
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
+
+    public FaultTree findSummary(URI managedEntityUri) {
+        try {
+            Query query = getSummariesQuery();
+            query.setParameter("_uri", managedEntityUri);
+            FaultTreeSummary ret = (FaultTreeSummary)query.getSingleResult();
+            return ret.asEntity(type);
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
+
+    public Query getSummariesQuery() {
+             return em.createNativeQuery("""
                             PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
-                            SELECT * WHERE { 
+                            SELECT * WHERE {
+                                BIND(?_uri as ?uri) 
                                 ?uri a ?type. 
                                 ?uri ?pName ?name.
                                 OPTIONAL{?uri ?pDescription ?description.} 
@@ -91,35 +113,41 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                 OPTIONAL{?uri ?pCreator ?creator.}
                                 OPTIONAL{?uri ?pLastEditor ?lastEditor.}
                                 OPTIONAL{ 
-                                    ?uri fta:is-manifested-by ?root .
-                                    ?root fta:is-derived-from ?sup.
+                                    ?uri fta:is-manifested-by ?rootEvent .
+                                    ?rootEvent fta:is-derived-from ?rootEventType.
                                     OPTIONAL{
-                                        ?root fta:probability ?calculatedFailureRate.
+                                        ?rootEvent fta:probability ?calculatedFailureRate.
                                     }
                                     OPTIONAL{
-                                        ?sup fta:has-failure-rate ?failureRate.
+                                        ?rootEventType fta:has-failure-rate ?failureRate.
                                         ?failureRate fta:has-requirement ?failureRateRequirement.
                                         ?failureRateRequirement fta:to ?requiredFailureRate.
                                     }
                                     OPTIONAL{
-                                        ?sup fta:is-derived-from ?supsup.
+                                        ?rootEventType fta:is-derived-from ?supsup.
                                         ?supsup fta:has-failure-rate ?fhaFailureRateQ.
                                         ?fhaFailureRateQ fta:has-estimate ?fhaFailureRateP.
                                         ?fhaFailureRateP a fta:failure-rate-estimate;
                                                          fta:value ?fhaBasedFailureRate.
                                     } 
                                     OPTIONAL{
-                                        ?sup fta:is-manifestation-of ?behavior .
-                                        ?behavior fta:has-component ?subsystemUri.
-                                        ?subsystemUri fta:is-derived-from ?subsystemType.
-                                        ?subsystemType fta:name ?subsystemTypeLabel.
-                                        ?subsystemType fta:ata-code ?subsystemTypeCode.
-                                        BIND(CONCAT(str(?subsystemTypeCode), " - ", str(?subsystemTypeLabel)) as ?subsystemName)
-                                        ?subsystemUri fta:is-part-of+ ?systemUri.
+                                        ?rootEventType fta:is-manifestation-of ?behavior .
+                                        ?behavior fta:has-component ?_subsystemUri.
+                                        ?_subsystemUri fta:is-part-of* ?systemUri.
                                         FILTER NOT EXISTS{
-                                            ?systemUri fta:is-part-of ?system2.
+                                          ?systemUri fta:is-part-of ?system2.
                                         }
                                         ?systemUri fta:name ?systemName.
+                                        
+                                        OPTIONAL{
+                                            FILTER(?systemUri != ?_subsystemUri)
+                                            BIND(?_subsystemUri as ?subsystemUri)
+                                            ?subsystemUri fta:is-derived-from ?subsystemType.
+                                            ?subsystemType fta:name ?subsystemTypeLabel.
+                                            ?subsystemType fta:ata-code ?subsystemTypeCode.
+                                            BIND(CONCAT(str(?subsystemTypeCode), " - ", str(?subsystemTypeLabel)) as ?subsystemName)
+                                            ?subsystemUri fta:is-part-of+ ?systemUri.
+                                        }
                                     }
                                 }
                             }""", "FaultTreeSummary")
@@ -129,12 +157,6 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                     .setParameter("pCreated", P_CREATED)
                     .setParameter("pModified", P_MODIFIED)
                     .setParameter("pCreator", P_CREATOR)
-                    .setParameter("pLastEditor", P_LAST_EDITOR)
-                    .getResultList();
-
-            return ret.stream().map(s -> s.asEntity(type)).toList();
-        } catch (RuntimeException e) {
-            throw new PersistenceException(e);
-        }
+                    .setParameter("pLastEditor", P_LAST_EDITOR);
     }
 }

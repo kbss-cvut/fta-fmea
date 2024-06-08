@@ -1,12 +1,14 @@
 package cz.cvut.kbss.analysis.model;
 
 
+import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.net.URI;
+import java.util.HashSet;
 
 
 @SparqlResultSetMappings(
@@ -18,6 +20,12 @@ import java.net.URI;
 @Getter
 @Setter
 public class FaultTreeSummary extends ManagedEntity{
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from)
+    protected URI rootEvent;
+
+    @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from)
+    protected URI rootEventType;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_is_artifact_of)
     protected URI systemUri;
@@ -43,6 +51,17 @@ public class FaultTreeSummary extends ManagedEntity{
 
     public void copyTo(FaultTree faultTree){
         super.copyTo(faultTree);
+        if(this.getRootEvent() != null){
+            FaultEvent root = new FaultEvent();
+            root.setUri(this.getRootEvent());
+            faultTree.setManifestingEvent(root);
+            if(this.getRootEventType() != null){
+                FHAEventType rootType = new FHAEventType();
+                rootType.setUri(this.getRootEventType());
+                root.setSupertypes(new HashSet<>());
+                root.getSupertypes().add(rootType);
+            }
+        }
         if(this.getSystemUri() != null){
             faultTree.setSystem(new System());
             faultTree.getSystem().setUri(this.getSystemUri());
