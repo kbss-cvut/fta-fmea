@@ -20,6 +20,8 @@ import org.springframework.validation.Validator;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -194,7 +196,16 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     public List<FaultEventType> getTopFaultEvents(URI systemUri) {
         return faultEventDao.getTopFaultEvents(systemUri);
     }
-    public List<FaultEventType> getAllFaultEvents(URI systemUri) {
-        return faultEventDao.getAllFaultEvents(systemUri);
+
+    public List<FaultEventType> getAllFaultEvents(URI faultTreeUri) {
+        FaultTree ftSummary = faultTreeDao.findSummary(faultTreeUri);
+        List<FaultEventType> ret = faultEventDao.getAllFaultEvents(ftSummary.getSystem().getUri());
+        Set<URI> typesToRemove = Optional.ofNullable(ftSummary.getManifestingEvent()).map(r -> r.getSupertypes())
+                .filter(s -> s !=null && !s.isEmpty())
+                .map(s -> s.stream().map(t -> t.getUri()).collect(Collectors.toSet()))
+                .orElse(null);
+        return typesToRemove != null
+                ? ret.stream().filter(t -> !typesToRemove.contains(t.getUri())).toList()
+                : ret;
     }
 }
