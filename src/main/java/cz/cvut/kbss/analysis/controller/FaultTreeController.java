@@ -39,7 +39,7 @@ public class FaultTreeController {
     public FaultTree find(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> find - {}", faultTreeFragment);
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
-        return repositoryService.findRequired(faultTreeUri);
+        return repositoryService.findWithDetails(faultTreeUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
