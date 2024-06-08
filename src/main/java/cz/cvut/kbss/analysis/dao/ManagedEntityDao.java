@@ -2,7 +2,8 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
-import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.ManagedEntity;
+import cz.cvut.kbss.analysis.model.UserReference;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -49,7 +50,7 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
                 DELETE{
                     GRAPH ?context{ 
                         ?uri ?pModified ?lastModified. 
-                        ?uri ?pLastEditor ?lastEditor. 
+                        ?uri ?pLastEditor ?lastEditorURI. 
                     }
                 }INSERT{
                     GRAPH ?context{
