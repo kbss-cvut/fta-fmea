@@ -3,6 +3,8 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.System;
+import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
 import cz.cvut.kbss.analysis.model.fta.FTAMinimalCutSetEvaluation;
@@ -65,18 +67,23 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
 
     @Transactional
     public void createTree(FaultTree faultTree){
-        if(faultTree.getManifestingEvent() != null){
-            FaultEvent faultEvent = faultTree.getManifestingEvent();
-            faultEvent.setRectangle(new Rectangle());
-            if(faultEvent.getSupertypes() != null) {
-                Set<Event> managedSupertypes = new HashSet<>();
-                for(Event event : faultEvent.getSupertypes()){
-                    faultEventDao.findEvent(event.getUri())
-                            .ifPresent(managedSupertypes::add);
-                }
-                faultEvent.setSupertypes(managedSupertypes);
-            }
+        // generate fault tree uri
+        faultTree.setUri(identifierService.generateNewInstanceUri(Vocabulary.s_c_fault_tree));
+
+        // set up rectangle
+        FaultEvent faultEvent = faultTree.getManifestingEvent();
+        faultEvent.setRectangle(new Rectangle());
+
+
+        // load and persist supertypes
+        if(faultTree.getManifestingEvent().getSupertypes() == null || faultTree.getManifestingEvent().getSupertypes().isEmpty()) {
+            FHAEventType evt = new FHAEventType();
+            evt.setName(faultTree.getManifestingEvent().getName());
+            faultTree.getManifestingEvent().setSupertypes(Collections.singleton(evt));
         }
+
+        faultEventDao.loadManagedSupertypesOrCreate(faultEvent, (System) faultTree.getSystem(), faultTree.getUri());
+
         persist(faultTree);
     }
 
@@ -114,6 +121,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         return ft;
     }
 
+    @Transactional(readOnly = true)
     public void setReferences(FaultTree faultTree){
         if(faultTree.getManifestingEvent() == null)
             return;

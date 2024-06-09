@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
+import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -13,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
@@ -81,6 +80,55 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
             return Optional.ofNullable(em.find(Event.class, id, entityDescriptor));
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
+        }
+    }
+
+    public void loadManagedSupertypesOrCreate(FaultEvent faultEvent, NamedEntity system, URI context){
+        if(faultEvent.getSupertypes() == null || faultEvent.getSupertypes().isEmpty())
+            return;
+        Set<Event> newSupertypes = new HashSet<>();
+        Set<Event> managedSupertypes = new HashSet<>();
+        Set<Event> unmanagedSupertypes = faultEvent.getSupertypes();
+        faultEvent.setSupertypes(managedSupertypes);
+
+        for(Event event : unmanagedSupertypes){
+            Optional<Event> opt = event.getUri() != null ?
+                    findEvent(event.getUri()) :
+                    Optional.ofNullable(null);
+            if(opt.isPresent())
+                managedSupertypes.add(opt.get());
+            else
+                newSupertypes.add(event);
+        }
+
+        if(newSupertypes.isEmpty())
+            return;
+
+        System managedSystem = em.find(System.class, system.getUri());
+
+        EntityDescriptor entityDescriptor = new EntityDescriptor(context);
+        for(Event evt : newSupertypes){
+            FailureMode fm = new FailureMode();
+            fm.setName(evt.getName() + " failure mode");
+            fm.setItem(managedSystem);
+            evt.setBehavior(fm);
+
+            em.persist(evt, entityDescriptor);
+            managedSupertypes.add(evt);
+        }
+    }
+
+    /**
+     * Replaces the supertypes of the faultEvent argument, if any, with their managed versions
+     * @param faultEvent
+     */
+    public void loadManagedSupertypes(FaultEvent faultEvent){
+        if(faultEvent.getSupertypes() != null) {
+            Set<Event> managedSupertypes = new HashSet<>();
+            for(Event event : faultEvent.getSupertypes()){
+                findEvent(event.getUri()).ifPresent(managedSupertypes::add);
+            }
+            faultEvent.setSupertypes(managedSupertypes);
         }
     }
 
