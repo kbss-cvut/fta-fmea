@@ -1,0 +1,20 @@
+# Replace stock codes
+PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+DELETE {
+    GRAPH ?g {?s ?p ?val .}
+}INSERT{
+    GRAPH ?g {?s ?p ?newVal .}
+}WHERE{
+    SELECT ?g ?s ?p ?stock ?newStock ?val ?newVal where { 
+        GRAPH ?g {
+            ?s ?p ?val.
+			FILTER(contains(str(?val), str(?stock)))
+#        	BIND(concat("stock-",str(?i)) as ?newStock)
+
+			BIND(REPLACE(?val, str(?stock), ?newStock ) as ?newVal)
+        }
+    }ORDER BY ?stock
+    VALUES (?stock ?newStock) {
+      $$VALUES$$
+    }
+}
