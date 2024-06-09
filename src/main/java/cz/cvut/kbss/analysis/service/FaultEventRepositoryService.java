@@ -62,6 +62,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         if(inputEvent.getUri() == null && inputEvent.getRectangle() == null)
             inputEvent.setRectangle(new Rectangle());
 
+        faultEventDao.loadManagedSupertypes(inputEvent);
         currentEvent.addChild(inputEvent);
         update(currentEvent);
 
