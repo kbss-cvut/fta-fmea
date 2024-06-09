@@ -58,6 +58,13 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
         return entity.getContext();
     }
 
+    public void deleteContext(URI context){
+        Objects.requireNonNull(context);
+        em.createNativeQuery("DELETE {GRAPH ?context { ?s ?p ?o}} WHERE {GRAPH ?context { ?s ?p ?o}}")
+                .setParameter("context", context)
+                .executeUpdate();
+    }
+
     public URI getContext(URI uri){
         List<URI> contexts = em.createNativeQuery("SELECT DISTINCT ?context {GRAPH ?context {?uri a ?type}}", URI.class)
                 .setParameter("uri", uri)

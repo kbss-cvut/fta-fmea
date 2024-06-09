@@ -114,4 +114,17 @@ public interface GenericDao<T extends HasIdentifier> {
      * @return {@literal true} if entity exists, {@literal false} otherwise
      */
     boolean existsWithPredicate(String predicate, String value);
+
+    /**
+     * Find the context of the entityUri
+     * @param entityUri
+     * @return
+     */
+    URI getContext(URI entityUri);
+
+    /**
+     * Deletes all triples in provided context
+     * @param context
+     */
+    void deleteContext(URI context);
 }
