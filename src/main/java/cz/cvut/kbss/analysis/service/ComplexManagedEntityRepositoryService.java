@@ -10,6 +10,7 @@ import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,13 @@ public abstract class ComplexManagedEntityRepositoryService<T extends ManagedEnt
         instance.setCreated(new Date());
     }
 
+
+    @Transactional
+    @Override
+    public void remove(@NonNull URI instanceUri) {
+        URI context = getPrimaryDao().getContext(instanceUri);
+        getPrimaryDao().deleteContext(context);
+    }
 
     @Transactional(readOnly = true)
     public List<T> findAllSummaries(){
