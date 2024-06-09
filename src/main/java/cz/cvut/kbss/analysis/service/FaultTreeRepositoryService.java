@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -82,17 +83,31 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     @Transactional(readOnly = true)
     @Override
     public FaultTree findRequired(URI id) {
-        FaultTree ft = super.findRequired(id);
-        // remove component children
-        Set<Item> items = ft.getAllEvents().stream().map(e -> e.getSupertypes())
-                .filter(ts -> ts!= null)
-                .flatMap(ts -> ts.stream())
-                .map(Event::getBehavior)
-                .filter(ts -> ts!= null)
-                .map(Behavior::getItem)
-                .filter(c -> c != null).collect(Collectors.toSet());
-        for(Item i : items){
-            i.setComponents(null);
+        return super.findRequired(id);
+    }
+
+    public FaultTree findWithDetails(URI id) {
+        FaultTree ft = findRequired(id);
+        // remove component children from response
+        for(FaultEvent faultEvent : ft.getAllEvents()){
+            if(faultEvent.getSupertypes() == null)
+                continue;
+            Set<Event> supertypes = faultEvent.getSupertypes().stream()
+                    .flatMap(t -> Stream.concat(
+                            Stream.of(t),
+                            t.getSupertypes() != null ? t.getSupertypes().stream() : Stream.of()))
+                    .collect(Collectors.toSet());
+            for(Event event : supertypes){
+                Behavior behavior = event.getBehavior();
+                if(behavior == null)
+                    continue;
+                Item item = behavior.getItem();
+
+                if(item == null)
+                    continue;
+                item.setComponents(null);
+                Optional.ofNullable(item.getSupertypes()).ifPresent( s -> s.forEach(st -> st.setComponents(null)));
+            }
         }
 
         setReferences(ft);
