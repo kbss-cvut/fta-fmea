@@ -2,9 +2,7 @@ package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.FaultTreeSummary;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -17,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Repository
 public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
@@ -71,11 +69,22 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
         if(faultTreeOpt.isEmpty())
             return faultTreeOpt;
         FaultTree faultTree = faultTreeOpt.get();
-        faultTree.getAllEvents().stream()
-                .map(e -> e.getBehavior()).filter(b -> b!=null).map(b -> b.getItem())
-                .filter(i -> i != null).forEach(i -> i.getName());
-
         return Optional.of(faultTree);
+    }
+
+    public Collection<Event> getRelatedEventTypes(FaultTree faultTree){
+        Set<Event> eventTypes = new HashSet<>();
+
+        for(FaultEvent faultEvent : faultTree.getAllEvents()){
+            if(faultEvent.getSupertypes() == null)
+                continue;
+            faultEvent.getSupertypes().stream()
+                    .flatMap(t -> Stream.concat(
+                            Stream.of(t),
+                            t.getSupertypes() != null ? t.getSupertypes().stream() : Stream.of()))
+                    .forEach(eventTypes::add);
+        }
+        return eventTypes;
     }
 
     @Override
