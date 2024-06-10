@@ -37,3 +37,6 @@ spring:
           issuer-uri: http://localhost/ava/services/auth/realms/record-manager
           jwt-set-uri: http://localhost/ava/services/auth/realms/record-manager/protocol/openid-connect/certs
 
+
+operational.data.filter:
+  min-operational-hours: 200

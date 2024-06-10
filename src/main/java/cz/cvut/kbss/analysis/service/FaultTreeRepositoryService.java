@@ -3,13 +3,13 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
-import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
 import cz.cvut.kbss.analysis.model.fta.FTAMinimalCutSetEvaluation;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
+import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -40,6 +39,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
 
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
     private final FaultEventDao faultEventDao;
+    private final OperationalDataFilterService operationalDataFilterService;
     private final FailureModeDao failureModeDao;
 
     @Autowired
@@ -51,7 +51,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       IdentifierService identifierService,
                                       UserDao userDao,
                                       SecurityUtils securityUtils,
-                                      FaultEventDao faultEventDao, FailureModeDao failureModeDao) {
+                                      FaultEventDao faultEventDao,
+                                      OperationalDataFilterService operationalDataFilterService,
+                                      FailureModeDao failureModeDao) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
@@ -59,6 +61,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.functionRepositoryService = functionRepositoryService;
         this.identifierService = identifierService;
         this.faultEventDao = faultEventDao;
+        this.operationalDataFilterService = operationalDataFilterService;
         this.failureModeDao = failureModeDao;
     }
 
@@ -76,7 +79,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         FaultEvent faultEvent = faultTree.getManifestingEvent();
         faultEvent.setRectangle(new Rectangle());
 
-
         // load and persist supertypes
         if(faultTree.getManifestingEvent().getSupertypes() == null || faultTree.getManifestingEvent().getSupertypes().isEmpty()) {
             FHAEventType evt = new FHAEventType();
@@ -84,18 +86,11 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             faultTree.getManifestingEvent().setSupertypes(Collections.singleton(evt));
         }
 
-        faultEventDao.loadManagedSupertypesOrCreate(faultEvent, (System) faultTree.getSystem(), faultTree.getUri());
+        faultEventDao.loadManagedSupertypesOrCreate(faultEvent, faultTree.getSystem(), faultTree.getUri());
 
         persist(faultTree);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public FaultTree findRequired(URI id) {
-        return super.findRequired(id);
-    }
-
-    @Transactional(readOnly = true)
     protected void setRelatedBehaviors(Collection<Event> events){
         for(Event event : events){
             if(event.getBehavior() == null)
@@ -119,10 +114,32 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         });
 
         setReferences(ft);
+
+        FaultTree summary = findSummary(ft.getUri());
+        ft.setOperationalDataFilter(summary.getOperationalDataFilter());
+
         return ft;
     }
 
-    @Transactional(readOnly = true)
+    public FaultTree findSummary(URI faultTreeUri){
+        FaultTree faultTreeSummary = faultTreeDao.findSummary(faultTreeUri);
+        OperationalDataFilter filter = operationalDataFilterService.getFaultTreeFilter(faultTreeUri, faultTreeSummary.getSystem().getUri());
+        faultTreeSummary.setOperationalDataFilter(filter);
+        return faultTreeSummary;
+    }
+
+    @Override
+    public List<FaultTree> findAllSummaries(){
+        List<FaultTree> summaries = super.findAllSummaries();
+        for(FaultTree faultTreeSummary: summaries){
+            OperationalDataFilter filter = operationalDataFilterService.getFaultTreeFilter(
+                    faultTreeSummary.getUri(),
+                    faultTreeSummary.getSystem().getUri());
+            faultTreeSummary.setOperationalDataFilter(filter);
+        }
+        return summaries;
+    }
+
     public void setReferences(FaultTree faultTree){
         if(faultTree.getManifestingEvent() == null)
             return;
@@ -508,8 +525,12 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     }
 
     @Transactional
-    public FaultTree evaluate(URI faultTreeUri) {
+    public FaultTree evaluate(URI faultTreeUri, OperationalDataFilter filter) {
+        operationalDataFilterService.updateFaultTreeFilter(faultTreeUri, filter);
         FaultTree faultTree = findRequired(faultTreeUri);
+        return evaluate(faultTree);
+    }
+    public FaultTree evaluate(FaultTree faultTree) {
 
         if(faultTree.getFaultEventScenarios() != null) {
             for (FaultEventScenario faultEventScenario : faultTree.getFaultEventScenarios())

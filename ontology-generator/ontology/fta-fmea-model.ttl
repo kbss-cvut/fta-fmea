@@ -342,6 +342,11 @@ fta-fmea:is-artifact-of rdf:type owl:ObjectProperty ;
                   rdfs:label "is artifact of" .
 
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-operational-data-filter
+fta-fmea:has-operational-data-filter rdf:type owl:ObjectProperty .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/has-global-operational-data-filter
+fta-fmea:has-global-operational-data-filter rdf:type owl:ObjectProperty .
 
 
 #################################################################
@@ -526,6 +531,10 @@ fta-fmea:subsystem-name rdf:type owl:DatatypeProperty ;
 fta-fmea:system-name rdf:type owl:DatatypeProperty ;
                   rdfs:label "system name" .
 
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/min-operational-hours
+    fta-fmea:min-operational-hours rdf:type owl:DatatypeProperty ;
+                      rdfs:label "Minimum operational hours" .
 
 #################################################################
 #    Classes
@@ -761,7 +770,11 @@ fta-fmea:verification-method rdf:type owl:Class ;
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/sns-component-failure-type
 fta-fmea:sns-component-failure-type rdf:type owl:Class ;
-                                                                                                 rdfs:subClassOf fta-fmea:fault-event-type .
+   rdfs:subClassOf fta-fmea:fault-event-type .
+
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/operational-data-filter
+fta-fmea:operational-data-filter rdf:type owl:Class ;
+   rdfs:label "Operational data filter"@en .
 
 
 #################################################################

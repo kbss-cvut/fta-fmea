@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.model;
 
+import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,13 +27,18 @@ public class FaultTree extends ManagedEntity {
     @Transient
     @OWLDataProperty(iri = Vocabulary.s_p_required_failure_rate)
     protected Double requiredFailureRate;
+
     @Transient
     @OWLDataProperty(iri = Vocabulary.s_p_calculated_failure_rate)
     protected Double calculatedFailureRate;
+
     @Transient
     @OWLDataProperty(iri = Vocabulary.s_p_fha_based_failure_rate)
     protected Double fhaBasedFailureRate;
 
+    @Transient
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_operational_data_filter)
+    protected OperationalDataFilter operationalDataFilter;
 
     @NotNull(message = "Manifesting event must be chosen")
     @ParticipationConstraints(nonEmpty = true)

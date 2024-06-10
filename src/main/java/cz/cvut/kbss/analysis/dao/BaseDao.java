@@ -37,7 +37,7 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     }
 
     public EntityDescriptor getEntityDescriptor(T entity){
-        EntityDescriptor descriptor = new EntityDescriptor();
+        EntityDescriptor descriptor = new EntityDescriptor(entity.getContext());
         setEntityDescriptor(descriptor);
         return descriptor;
     }
