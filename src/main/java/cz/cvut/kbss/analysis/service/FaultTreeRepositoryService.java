@@ -40,6 +40,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
 
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
     private final FaultEventDao faultEventDao;
+    private final FailureModeDao failureModeDao;
 
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -50,7 +51,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       IdentifierService identifierService,
                                       UserDao userDao,
                                       SecurityUtils securityUtils,
-                                      FaultEventDao faultEventDao) {
+                                      FaultEventDao faultEventDao, FailureModeDao failureModeDao) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
@@ -58,6 +59,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.functionRepositoryService = functionRepositoryService;
         this.identifierService = identifierService;
         this.faultEventDao = faultEventDao;
+        this.failureModeDao = failureModeDao;
     }
 
     @Override
@@ -93,29 +95,28 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         return super.findRequired(id);
     }
 
+    @Transactional(readOnly = true)
+    protected void setRelatedBehaviors(Collection<Event> events){
+        for(Event event : events){
+            if(event.getBehavior() == null)
+                event.setBehavior(failureModeDao.findByEvent(event.getUri()));
+        }
+    }
+
     public FaultTree findWithDetails(URI id) {
         FaultTree ft = findRequired(id);
-        // remove component children from response
-        for(FaultEvent faultEvent : ft.getAllEvents()){
-            if(faultEvent.getSupertypes() == null)
-                continue;
-            Set<Event> supertypes = faultEvent.getSupertypes().stream()
-                    .flatMap(t -> Stream.concat(
-                            Stream.of(t),
-                            t.getSupertypes() != null ? t.getSupertypes().stream() : Stream.of()))
-                    .collect(Collectors.toSet());
-            for(Event event : supertypes){
-                Behavior behavior = event.getBehavior();
-                if(behavior == null)
-                    continue;
-                Item item = behavior.getItem();
 
-                if(item == null)
-                    continue;
-                item.setComponents(null);
-                Optional.ofNullable(item.getSupertypes()).ifPresent( s -> s.forEach(st -> st.setComponents(null)));
-            }
-        }
+        Collection<Event> events = faultTreeDao.getRelatedEventTypes(ft);
+        setRelatedBehaviors(events);
+
+        events.stream().map(e -> e.getBehavior()).forEach(b -> {
+            Item item = b.getItem();
+            if(item == null)
+                return;
+
+            item.setComponents(null);
+            Optional.ofNullable(item.getSupertypes()).ifPresent( s -> s.forEach(st -> st.setComponents(null)));
+        });
 
         setReferences(ft);
         return ft;
