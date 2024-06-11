@@ -8,6 +8,7 @@ import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.System;
+import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     private final SystemDao systemDao;
     private final ComponentRepositoryService componentRepositoryService;
     private final ComponentDao componentDao;
+    private final OperationalDataFilterService operationalDataFilterService;
 
     @Autowired
     public SystemRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -35,13 +37,13 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
                                    ComponentRepositoryService componentRepositoryService,
                                    ComponentDao componentDao,
                                    UserDao userDao,
-                                   SecurityUtils securityUtils
-
-    ) {
+                                   SecurityUtils securityUtils,
+                                   OperationalDataFilterService operationalDataFilterService) {
         super(validator, userDao, securityUtils);
         this.systemDao = systemDao;
         this.componentRepositoryService = componentRepositoryService;
         this.componentDao = componentDao;
+        this.operationalDataFilterService = operationalDataFilterService;
     }
 
     @Override
@@ -106,6 +108,13 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
 
     @Transactional(readOnly = true)
     public List<System> findAllSummaries(){
-        return ((SystemDao)getPrimaryDao()).findAllSummaries();
+        List<System> systems = ((SystemDao)getPrimaryDao()).findAllSummaries();
+        OperationalDataFilter globalFilter = operationalDataFilterService.getDefaultGlobalFilter();
+        for(System system : systems){
+            OperationalDataFilter filter = operationalDataFilterService.getSystemFilter(system.getUri());
+            system.setOperationalDataFilter(filter);
+            system.setGlobalOperationalDataFilter(globalFilter);
+        }
+        return systems;
     }
 }
