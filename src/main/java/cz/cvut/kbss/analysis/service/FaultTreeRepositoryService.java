@@ -41,6 +41,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final FaultEventDao faultEventDao;
     private final OperationalDataFilterService operationalDataFilterService;
     private final FailureModeDao failureModeDao;
+    private final FaultEventTypeService faultEventTypeService;
+    private final FaultEventTypeDao faultEventTypeDao;
 
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -53,7 +55,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       SecurityUtils securityUtils,
                                       FaultEventDao faultEventDao,
                                       OperationalDataFilterService operationalDataFilterService,
-                                      FailureModeDao failureModeDao) {
+                                      FailureModeDao failureModeDao,
+                                      FaultEventTypeService faultEventTypeService,
+                                      FaultEventTypeDao faultEventTypeDao) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
@@ -63,6 +67,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.faultEventDao = faultEventDao;
         this.operationalDataFilterService = operationalDataFilterService;
         this.failureModeDao = failureModeDao;
+        this.faultEventTypeService = faultEventTypeService;
+        this.faultEventTypeDao = faultEventTypeDao;
     }
 
     @Override
@@ -86,7 +92,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             faultTree.getManifestingEvent().setSupertypes(Collections.singleton(evt));
         }
 
-        faultEventDao.loadManagedSupertypesOrCreate(faultEvent, faultTree.getSystem(), faultTree.getUri());
+        faultEventTypeService.loadManagedSupertypesOrCreate(faultEvent, faultTree.getSystem(), faultTree.getUri());
 
         persist(faultTree);
     }
