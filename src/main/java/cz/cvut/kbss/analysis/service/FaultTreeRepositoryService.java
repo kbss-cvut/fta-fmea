@@ -582,9 +582,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             evt.getFailureRate().setContext(faultTreeUri);
             faultEventTypeDao.update(evt);
 
-            if(ft.getSelectedEstimate() != null &&
-                    ft.getSelectedEstimate().getUri() != null &&
-                    ft.getSelectedEstimate().getUri().equals(frEstimate.getUri())) {
+            if(ft.getSelectedEstimate() != null && ft.getSelectedEstimate().equals(frEstimate.getUri())) {
 
                 ft.setProbability(frEstimate.getValue());
 
