@@ -51,6 +51,17 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         return systemDao;
     }
 
+    // TODO check if this works for lazy loading
+    @Transactional
+    @Override
+    public System findRequired(URI id) {
+        System system = super.findRequired(id);
+        // fetch partonomy
+        systemDao.findComponents(id);
+
+        return system;
+    }
+
     @Transactional
     public System rename(System systemRename) {
         log.info("> rename - {}", systemRename);

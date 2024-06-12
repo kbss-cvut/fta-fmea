@@ -19,7 +19,7 @@ public class Item extends DomainEntity<Item> {
     @OWLObjectProperty(iri = Vocabulary.s_p_is_documented_in)
     private Set<Document> documents;
 
-    @OWLObjectProperty(iri = Vocabulary.s_p_has_part_component, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OWLObjectProperty(iri = Vocabulary.s_p_has_part_component, cascade = CascadeType.ALL)
     private Set<Component> components = new HashSet<>();
 
     public void addComponent(Component component) {
