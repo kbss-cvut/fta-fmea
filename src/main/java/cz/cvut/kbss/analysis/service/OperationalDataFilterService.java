@@ -73,7 +73,7 @@ public class OperationalDataFilterService extends BaseRepositoryService<Operatio
 
     @Transactional
     public void updateSystemFilter(URI systemURI, OperationalDataFilter newFilter){
-        URI context = URI.create(systemURI.toString() + "jopa");
+        URI context = URI.create(systemURI.toString() + "-jopa");
         updateFilter(systemURI, newFilter, context);
     }
 
