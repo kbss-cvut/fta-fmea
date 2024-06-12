@@ -6,15 +6,15 @@ import cz.cvut.kbss.analysis.service.OperationalDataFilterService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-@Controller("/operational-data-filter")
+@Controller
+@RequestMapping("/operational-data-filter")
 @Slf4j
 public class OperationalDataFilterController {
 
@@ -31,15 +31,17 @@ public class OperationalDataFilterController {
         filterService.removeFilter();
     }
 
-    @PostMapping(value = "/system/{systemFragment}", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public void updateSystemFilter(@PathVariable(name = "systemFragment") String systemFragment, OperationalDataFilter filter){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(value = "/system/{systemFragment}", consumes = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public void updateSystemFilter(@PathVariable(name = "systemFragment") String systemFragment, @RequestBody OperationalDataFilter filter){
         log.info("> updateSystemFilter - {} to {}", systemFragment, filter);
         URI systemUri = identifierService.composeIdentifier(Vocabulary.s_c_system, systemFragment);
         filterService.updateSystemFilter(systemUri, filter);
     }
 
-    @PostMapping(value = "/fault-tree/{faultTreeFragment}", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
-    public void updateFaultTreeFilter(@PathVariable(name = "faultTreeFragment") String faultTreeFragment, OperationalDataFilter filter){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(value = "/fault-tree/{faultTreeFragment}", consumes = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
+    public void updateFaultTreeFilter(@PathVariable(name = "faultTreeFragment") String faultTreeFragment, @RequestBody OperationalDataFilter filter){
         log.info("> updateFaultTreeFilter - {} to {}", faultTreeFragment, filter);
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
         filterService.updateFaultTreeFilter(faultTreeUri, filter);
