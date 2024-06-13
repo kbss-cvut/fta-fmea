@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.AbstractEntity;
+import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.model.util.EntityToOwlClassMapper;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.jopa.model.EntityManager;
@@ -209,6 +210,30 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
                 .setParameter("predicate", URI.create(predicate))
                 .setParameter("value", value, config.getLanguage())
                 .getSingleResult();
+    }
+
+    /**
+     * Associates new object with subjectURI via property
+     * @param subjectURI
+     * @param object should have non-null uri and context
+     */
+    public void persistObject(URI subjectURI, URI property, AbstractEntity object){
+        Objects.requireNonNull(subjectURI);
+        Objects.requireNonNull(object);
+        Objects.requireNonNull(object.getUri());
+
+        em.createNativeQuery("""
+                INSERT {
+                    GRAPH ?context{
+                        ?subject ?hasOperationalDataFilter ?object.
+                    }
+                }WHERE {}
+                """)
+                .setParameter("context", object.getContext())
+                .setParameter("subject", subjectURI)
+                .setParameter("hasOperationalDataFilter", property)
+                .setParameter("object", object.getUri())
+                .executeUpdate();
     }
 
 }
