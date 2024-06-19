@@ -3,7 +3,6 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.AbstractEntity;
-import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.model.util.EntityToOwlClassMapper;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.jopa.model.EntityManager;
@@ -102,8 +101,7 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     public Optional<T> find(URI id) {
         Objects.requireNonNull(id);
         try {
-            EntityDescriptor entityDescriptor = getEntityDescriptor(id);
-            return Optional.ofNullable(em.find(type, id, entityDescriptor));
+            return Optional.ofNullable(em.find(type, id));
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
@@ -213,27 +211,94 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     }
 
     /**
-     * Associates new object with subjectURI via property
+     * Add triple in the provided context
      * @param subjectURI
-     * @param object should have non-null uri and context
+     * @param property
+     * @param object
+     * @param context
      */
-    public void persistObject(URI subjectURI, URI property, AbstractEntity object){
+    public void persistPropertyInContext(URI subjectURI, URI property, Object object, URI context){
         Objects.requireNonNull(subjectURI);
         Objects.requireNonNull(object);
-        Objects.requireNonNull(object.getUri());
+        Objects.requireNonNull(property);
+        Objects.requireNonNull(subjectURI);
 
         em.createNativeQuery("""
                 INSERT {
                     GRAPH ?context{
-                        ?subject ?hasOperationalDataFilter ?object.
+                        ?subject ?property ?object.
                     }
                 }WHERE {}
                 """)
-                .setParameter("context", object.getContext())
                 .setParameter("subject", subjectURI)
-                .setParameter("hasOperationalDataFilter", property)
-                .setParameter("object", object.getUri())
+                .setParameter("property", property)
+                .setParameter("object", object)
+                .setParameter("context", context)
                 .executeUpdate();
     }
 
+    /**R     *
+     * @param subject
+     * @param property
+     * @param object
+     * @param context
+     */
+    public void addOrReplaceValue(URI subject, URI property, Object object, URI context){
+        Objects.requireNonNull(subject);
+        Objects.requireNonNull(object);
+        Objects.requireNonNull(property);
+        Objects.requireNonNull(subject);
+
+        em.createNativeQuery("""
+                DELETE{
+                    GRAPH ?context{
+                        ?subject ?property ?oldObject.
+                    }
+                }INSERT {
+                    GRAPH ?context{
+                        ?subject ?property ?object.
+                    }
+                }WHERE {
+                    OPTIONAL{
+                        GRAPH ?context{
+                            ?subject ?property ?oldObject.
+                        }
+                    }
+                }
+                """)
+                .setParameter("subject", subject)
+                .setParameter("property", property)
+                .setParameter("object", object)
+                .setParameter("context", context)
+                .executeUpdate();
+    }
+
+
+    /**
+     * Removes all triples with subject subjectURi and property propertyURI in context.
+     * @param subjectURI
+     * @param propertyURI
+     * @param context
+     */
+    public void removeAll(URI subjectURI, URI propertyURI, URI context){
+        Objects.requireNonNull(subjectURI);
+        Objects.requireNonNull(propertyURI);
+        Objects.requireNonNull(subjectURI);
+
+        em.createNativeQuery("""
+                DELETE {
+                    GRAPH ?context{
+                        ?subject ?propertyURI ?object.
+                    }
+                }WHERE {
+                    GRAPH ?context{
+                        ?subject ?propertyURI ?object.
+                    }
+                }
+                """)
+                .setParameter("subject", subjectURI)
+                .setParameter("propertyURI", propertyURI)
+                .setParameter("context", context)
+                .executeUpdate();
+    }
 }
