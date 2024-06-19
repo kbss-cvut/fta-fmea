@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
+ import cz.cvut.kbss.analysis.service.FaultTreeEvaluationService;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -24,6 +25,7 @@ import java.util.List;
 public class FaultTreeController {
 
     private final FaultTreeRepositoryService repositoryService;
+    private final FaultTreeEvaluationService faultTreeEvaluationService;
     private final IdentifierService identifierService;
 
     @GetMapping
@@ -132,8 +134,8 @@ public class FaultTreeController {
     @PutMapping(value = "/{faultTreeFragment}/evaluate")
     public void evaluate(@PathVariable(name = "faultTreeFragment") String faultTreeFragment, @RequestBody OperationalDataFilter filter){
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
-        log.info("> performCutSetAnalysis - {}", faultTreeFragment);
-        repositoryService.evaluate(faultTreeUri, filter);
+        log.info("> evaluate - {}", faultTreeFragment);
+        faultTreeEvaluationService.evaluate(faultTreeUri, filter);
     }
 
 }

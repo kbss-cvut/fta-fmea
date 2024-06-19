@@ -536,18 +536,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         return faultTree;
     }
 
-    @Transactional
-    public FaultTree evaluate(URI faultTreeUri, OperationalDataFilter filter) {
-
-        operationalDataFilterService.updateFaultTreeFilter(faultTreeUri, filter);
-
-        FaultTree faultTree = findWithDetails(faultTreeUri);
-
-        updateFaultTreeOperationalFailureRates(faultTree, filter);
-
-        return evaluate(faultTree);
-    }
-
     /**
      * Updates the provided fault tree sns' failures with operational failure rate calculated based on filter. The update
      * is reflected in the persistent storage and in the input fault tree.
@@ -634,18 +622,25 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
 
         if(faultTree.getFaultEventScenarios() != null) {
             for (FaultEventScenario faultEventScenario : faultTree.getFaultEventScenarios())
-                faultEventScenarioDao.remove(faultEventScenario);
+                faultEventScenarioDao.remove(faultEventScenario.getUri());
+            faultEventScenarioDao.removeScenarios(faultTree.getUri());
             faultTree.setFaultEventScenarios(null);
         }
 
         FTAMinimalCutSetEvaluation evaluator = new FTAMinimalCutSetEvaluation();
         evaluator.evaluate(faultTree);
 
+        for(FaultEvent evt : faultTree.getAllEvents().stream().filter(e -> e.getEventType() != FtaEventType.BASIC).toList()){
+            faultEventDao.setProbability(evt.getUri(), evt.getProbability(), faultTree.getUri());
+        }
+
         if(faultTree.getFaultEventScenarios() != null) {
             for (FaultEventScenario scenario : faultTree.getFaultEventScenarios()) {
+                scenario.setContext(faultTree.getUri());
                 scenario.updateProbability();
+                faultEventScenarioDao.persist(scenario);
+                faultEventScenarioDao.addScenarioToTree(faultTree.getUri(), scenario);
             }
-            getPrimaryDao().update(faultTree);
         }
         return faultTree;
     }
