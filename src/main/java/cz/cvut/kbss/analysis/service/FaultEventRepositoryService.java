@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
+import cz.cvut.kbss.analysis.dao.FaultEventTypeDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
@@ -35,13 +36,17 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     private final FaultEventDao faultEventDao;
     private final ComponentRepositoryService componentRepositoryService;
     private final FaultTreeDao faultTreeDao;
+    private final FaultEventTypeService faultEventTypeService;
+    private final FaultEventTypeDao faultEventTypeDao;
 
     @Autowired
-    public FaultEventRepositoryService(@Qualifier("faultEventValidator") Validator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao) {
+    public FaultEventRepositoryService(@Qualifier("faultEventValidator") Validator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao, FaultEventTypeService faultEventTypeService, FaultEventTypeDao faultEventTypeDao) {
         super(validator);
         this.faultEventDao = faultEventDao;
         this.componentRepositoryService = componentRepositoryService;
         this.faultTreeDao = faultTreeDao;
+        this.faultEventTypeService = faultEventTypeService;
+        this.faultEventTypeDao = faultEventTypeDao;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         if(inputEvent.getUri() == null && inputEvent.getRectangle() == null)
             inputEvent.setRectangle(new Rectangle());
 
-        faultEventDao.loadManagedSupertypes(inputEvent);
+        faultEventTypeService.loadManagedSupertypes(inputEvent);
         currentEvent.addChild(inputEvent);
         update(currentEvent);
 
@@ -93,7 +98,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
                             .collect(Collectors.joining(",")));
 
         Event supertype = supertypes.get(0);
-        List<FaultEventReference> referencedRoots = faultEventDao.getFaultEventRootWithSupertype(supertype.getUri());
+        List<FaultEventReference> referencedRoots = faultEventTypeDao.getFaultEventRootWithSupertype(supertype.getUri());
 
         if(referencedRoots == null || referencedRoots.isEmpty())
             return;
@@ -169,7 +174,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Override
     protected void preUpdate(FaultEvent instance) {
         if(instance.getSupertypes() != null && !instance.getSupertypes().isEmpty())
-            faultEventDao.loadManagedSupertypes(instance);
+            faultEventTypeService.loadManagedSupertypes(instance);
 
         super.preUpdate(instance);
     }
@@ -203,12 +208,12 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     }
 
     public List<FaultEventType> getTopFaultEvents(URI systemUri) {
-        return faultEventDao.getTopFaultEvents(systemUri);
+        return faultEventTypeDao.getTopFaultEvents(systemUri);
     }
 
     public List<FaultEventType> getAllFaultEvents(URI faultTreeUri) {
         FaultTree ftSummary = faultTreeDao.findSummary(faultTreeUri);
-        List<FaultEventType> ret = faultEventDao.getAllFaultEvents(ftSummary.getSystem().getUri());
+        List<FaultEventType> ret = faultEventTypeDao.getAllFaultEvents(ftSummary.getSystem().getUri());
         Set<URI> typesToRemove = Optional.ofNullable(ftSummary.getManifestingEvent()).map(r -> r.getSupertypes())
                 .filter(s -> s !=null && !s.isEmpty())
                 .map(s -> s.stream().map(t -> t.getUri()).collect(Collectors.toSet()))
