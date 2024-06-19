@@ -17,6 +17,8 @@ import java.net.URI;
 @Repository
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
 
+    public static final URI PROBABILITY_PROP = URI.create(Vocabulary.s_p_probability);
+
     @Autowired
     protected FaultEventDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
         super(FaultEvent.class, em, config, identifierService);
@@ -50,6 +52,10 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
         entityDescriptor.addAttributeContext(fe.getAttribute("behavior"), null);
 
         return entityDescriptor;
+    }
+
+    public void setProbability(URI faultEventUri, Double probability, URI context){
+        addOrReplaceValue(faultEventUri, PROBABILITY_PROP, probability, context);
     }
 
     public EntityDescriptor getRectangleDescriptor(URI uri){

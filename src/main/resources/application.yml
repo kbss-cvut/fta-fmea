@@ -40,3 +40,5 @@ spring:
 
 operational.data.filter:
   min-operational-hours: 200
+
+operationalFailureRateService: https://kbss.onto.fel.cvut.cz/ava/services/ava-analytics/stats/failire-rate

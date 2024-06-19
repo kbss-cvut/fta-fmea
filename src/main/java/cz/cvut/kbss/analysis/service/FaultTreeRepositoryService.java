@@ -3,13 +3,16 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.ava.ATASystem;
 import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.CutSetExtractor;
 import cz.cvut.kbss.analysis.model.fta.FTAMinimalCutSetEvaluation;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
+import cz.cvut.kbss.analysis.model.opdata.ItemFailureRate;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
+import cz.cvut.kbss.analysis.service.external.OperationalDataService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
@@ -41,8 +44,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final FaultEventDao faultEventDao;
     private final OperationalDataFilterService operationalDataFilterService;
     private final FailureModeDao failureModeDao;
+    private final OperationalDataService operationalDataService;
     private final FaultEventTypeService faultEventTypeService;
-    private final FaultEventTypeDao faultEventTypeDao;
+    private final FailureRateEstimateDao failureRateEstimateDao;
 
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -56,8 +60,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       FaultEventDao faultEventDao,
                                       OperationalDataFilterService operationalDataFilterService,
                                       FailureModeDao failureModeDao,
+                                      OperationalDataService operationalDataService,
                                       FaultEventTypeService faultEventTypeService,
-                                      FaultEventTypeDao faultEventTypeDao) {
+                                      FailureRateEstimateDao failureRateEstimateDao) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
@@ -67,8 +72,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.faultEventDao = faultEventDao;
         this.operationalDataFilterService = operationalDataFilterService;
         this.failureModeDao = failureModeDao;
+        this.operationalDataService = operationalDataService;
         this.faultEventTypeService = faultEventTypeService;
-        this.faultEventTypeDao = faultEventTypeDao;
+        this.failureRateEstimateDao = failureRateEstimateDao;
     }
 
     @Override
@@ -532,10 +538,98 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
 
     @Transactional
     public FaultTree evaluate(URI faultTreeUri, OperationalDataFilter filter) {
+
         operationalDataFilterService.updateFaultTreeFilter(faultTreeUri, filter);
-        FaultTree faultTree = findRequired(faultTreeUri);
+
+        FaultTree faultTree = findWithDetails(faultTreeUri);
+
+        updateFaultTreeOperationalFailureRates(faultTree, filter);
+
         return evaluate(faultTree);
     }
+
+    /**
+     * Updates the provided fault tree sns' failures with operational failure rate calculated based on filter. The update
+     * is reflected in the persistent storage and in the input fault tree.
+     *
+     * The procedure can be summarized as follows:
+     * 1. Extracts sns failures from input fault tree
+     * 2. Fetches operational failure rate taking based on provided filter for sns failures in the supplied faultTree
+     * 3. Updates operational estimates of sns failures in the provided tree
+     * 4. Updates fault event probabilities of sns fault events which have selected operational failure rate.
+     *
+     * @param faultTree
+     * @param filter
+     */
+    @Transactional
+    public void updateFaultTreeOperationalFailureRates(FaultTree faultTree, OperationalDataFilter filter) {
+        URI faultTreeUri = faultTree.getUri();
+        // fetch get map between SNS component uris and fault events which will store the calculated failure rate
+        Map<URI, Pair<FaultEvent, Event>> map = new HashMap<>();
+        faultTree.getAllEvents().stream()
+                .filter(e -> e.getEventType() == FtaEventType.BASIC && e.getSupertypes() != null && !e.getSupertypes().isEmpty())
+                .flatMap(e -> e.getSupertypes().stream().map(t -> {
+                    Event type = null;
+
+                    if(t.getSupertypes() != null) {
+                        type = t.getSupertypes().stream()
+                                .filter(st -> Optional.ofNullable(st.getBehavior())
+                                        .map(b -> b.getItem() instanceof ATASystem)
+                                        .isPresent()).findFirst().orElse(null);
+                    }
+
+                    // TODO - workaround - using system specific event when general ROLE event is missing.
+                    if(type == null)
+                        type = t;
+
+                    return Pair.of(e, type);
+                })).forEach(p -> {
+                    URI componentURI = Optional.ofNullable(p.getSecond().getBehavior())
+                            .map(b -> b.getItem())
+                            .map(i -> i.getUri())
+                            .orElse(null);
+                    if(componentURI != null)
+                        map.put(componentURI, p);
+                });
+
+        if (map.isEmpty())
+            return;
+
+        ItemFailureRate[] operationalFailureRateEstimates = operationalDataService.fetchFailureRates(filter, map.keySet());
+
+        URI systemContext = getToolContext(faultTree.getSystem().getUri());
+        for(ItemFailureRate estimate : operationalFailureRateEstimates){
+            if(estimate.getFailureRate() == null)
+                continue;
+            Pair<FaultEvent, Event> p = map.get(estimate.getUri());
+            FaultEvent ft = p.getFirst();
+            FailureRate fr = ((FaultEventType)p.getSecond()).getFailureRate();
+
+            updateOperationalFailureRate(systemContext, faultTreeUri, estimate, ft, fr);
+        }
+    }
+
+    protected void updateOperationalFailureRate(URI systemContext, URI faultTreeUri, ItemFailureRate estimate, FaultEvent ft, FailureRate fr){
+        FailureRateEstimate frEstimate = fr.getEstimate();
+        if(frEstimate == null) {
+            frEstimate = new FailureRateEstimate();
+            frEstimate.setValue(estimate.getFailureRate());
+            frEstimate.setContext(systemContext);
+            failureRateEstimateDao.persist(frEstimate);
+            failureRateEstimateDao.setHasEstimate(fr.getUri(), frEstimate, systemContext);
+            fr.setEstimate(frEstimate);
+        }else{
+            frEstimate.setValue(estimate.getFailureRate());
+            failureRateEstimateDao.setValue(frEstimate.getUri(), estimate.getFailureRate(), systemContext);
+        }
+
+        if(ft.getSelectedEstimate() != null && ft.getSelectedEstimate().equals(frEstimate.getUri())) {
+            ft.setProbability(frEstimate.getValue());
+            faultEventDao.setProbability(ft.getUri(), frEstimate.getValue(), faultTreeUri);
+        }
+    }
+
+    @Transactional
     public FaultTree evaluate(FaultTree faultTree) {
 
         if(faultTree.getFaultEventScenarios() != null) {

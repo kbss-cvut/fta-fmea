@@ -9,7 +9,6 @@ import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
-import java.util.Objects;
 
 @Repository
 public class OperationalDataFilterDao extends BaseDao<OperationalDataFilter> {
@@ -35,23 +34,7 @@ public class OperationalDataFilterDao extends BaseDao<OperationalDataFilter> {
      * @param filter should have non-null uri and context
      */
     public void persistHasFilter(URI entityURI, OperationalDataFilter filter){
-
-        Objects.requireNonNull(entityURI);
-        Objects.requireNonNull(filter);
-        Objects.requireNonNull(filter.getUri());
-
-        em.createNativeQuery("""
-                INSERT {
-                    GRAPH ?context{
-                        ?entity ?hasOperationalDataFilter ?filter.
-                    }
-                }WHERE {}
-                """)
-                .setParameter("context", filter.getContext())
-                .setParameter("entity", entityURI)
-                .setParameter("hasOperationalDataFilter", HAS_OPERATIONAL_DATA_FILTER_PROP)
-                .setParameter("filter", filter.getUri())
-                .executeUpdate();
+        addOrReplaceValue(entityURI, HAS_OPERATIONAL_DATA_FILTER_PROP, filter, filter.getContext());
     }
 
     @Override

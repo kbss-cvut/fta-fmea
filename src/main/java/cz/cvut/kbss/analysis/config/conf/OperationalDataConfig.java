@@ -17,5 +17,10 @@ import org.springframework.core.env.Environment;
 public class OperationalDataConfig {
 
     protected Double minOperationalHours;
+    protected String operationalFailureRateService;
 
+    @Autowired
+    public OperationalDataConfig(Environment env) {
+        operationalFailureRateService = env.getProperty("operationalFailureRateService");
+    }
 }
