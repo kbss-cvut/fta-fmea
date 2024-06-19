@@ -271,4 +271,11 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
         }
     }
 
+    public URI getToolContext(URI uri){
+        return getToolContext(uri.toString());
+    }
+
+    public URI getToolContext(String uri){
+        return URI.create(uri + "-jopa");
+    }
 }
