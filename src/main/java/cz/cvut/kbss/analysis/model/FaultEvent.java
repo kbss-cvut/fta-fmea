@@ -52,7 +52,7 @@ public class FaultEvent extends Event {
     private Double probability;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_selected_estimation, fetch = FetchType.EAGER)
-    private FailureRateEstimate selectedEstimate;
+    private URI selectedEstimate;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_has_child, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<FaultEvent> children = new HashSet<>();
