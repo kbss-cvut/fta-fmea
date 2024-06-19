@@ -43,7 +43,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
     private final FaultEventDao faultEventDao;
     private final OperationalDataFilterService operationalDataFilterService;
-    private final FailureModeDao failureModeDao;
     private final OperationalDataService operationalDataService;
     private final FaultEventTypeService faultEventTypeService;
     private final FailureRateEstimateDao failureRateEstimateDao;
@@ -59,7 +58,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       SecurityUtils securityUtils,
                                       FaultEventDao faultEventDao,
                                       OperationalDataFilterService operationalDataFilterService,
-                                      FailureModeDao failureModeDao,
                                       OperationalDataService operationalDataService,
                                       FaultEventTypeService faultEventTypeService,
                                       FailureRateEstimateDao failureRateEstimateDao) {
@@ -71,7 +69,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.identifierService = identifierService;
         this.faultEventDao = faultEventDao;
         this.operationalDataFilterService = operationalDataFilterService;
-        this.failureModeDao = failureModeDao;
         this.operationalDataService = operationalDataService;
         this.faultEventTypeService = faultEventTypeService;
         this.failureRateEstimateDao = failureRateEstimateDao;
@@ -103,34 +100,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         persist(faultTree);
     }
 
-    protected void setRelatedBehaviors(Collection<Event> events){
-        for(Event event : events){
-            if(event.getBehavior() == null)
-                event.setBehavior(failureModeDao.findByEvent(event.getUri()));
-        }
-    }
-
-    public FaultTree findWithDetails(URI id) {
-        FaultTree ft = findRequired(id);
-
-        Collection<Event> events = faultTreeDao.getRelatedEventTypes(ft);
-        setRelatedBehaviors(events);
-
-        events.stream().map(e -> e.getBehavior()).forEach(b -> {
-            Item item = b.getItem();
-            if(item == null)
-                return;
-
-            item.setComponents(null);
-            Optional.ofNullable(item.getSupertypes()).ifPresent( s -> s.forEach(st -> st.setComponents(null)));
-        });
-
-        setReferences(ft);
-
-        FaultTree summary = findSummary(ft.getUri());
-        ft.setOperationalDataFilter(summary.getOperationalDataFilter());
-
-        return ft;
+    @Transactional
+    public FaultTree findRequired(URI id) {
+        return super.findRequired(id);
     }
 
     public FaultTree findSummary(URI faultTreeUri){
@@ -150,22 +122,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             faultTreeSummary.setOperationalDataFilter(filter);
         }
         return summaries;
-    }
-
-    public void setReferences(FaultTree faultTree){
-        if(faultTree.getManifestingEvent() == null)
-            return;
-
-        Stack<Pair<URI,FaultEvent>> stack = new Stack<>();
-        stack.add(Pair.of(null,faultTree.getManifestingEvent()));
-        while(!stack.isEmpty()){
-            Pair<URI,FaultEvent> p = stack.pop();
-            FaultEvent fe = p.getSecond();
-            faultEventRepositoryService.setExternalReference(p.getFirst(), fe);
-            if(fe.getChildren() == null)
-                continue;
-            fe.getChildren().forEach(c -> stack.push(Pair.of(fe.getUri(), c)));
-        }
     }
 
     @Transactional
@@ -536,18 +492,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         return faultTree;
     }
 
-    @Transactional
-    public FaultTree evaluate(URI faultTreeUri, OperationalDataFilter filter) {
-
-        operationalDataFilterService.updateFaultTreeFilter(faultTreeUri, filter);
-
-        FaultTree faultTree = findWithDetails(faultTreeUri);
-
-        updateFaultTreeOperationalFailureRates(faultTree, filter);
-
-        return evaluate(faultTree);
-    }
-
     /**
      * Updates the provided fault tree sns' failures with operational failure rate calculated based on filter. The update
      * is reflected in the persistent storage and in the input fault tree.
@@ -634,18 +578,25 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
 
         if(faultTree.getFaultEventScenarios() != null) {
             for (FaultEventScenario faultEventScenario : faultTree.getFaultEventScenarios())
-                faultEventScenarioDao.remove(faultEventScenario);
+                faultEventScenarioDao.remove(faultEventScenario.getUri());
+            faultEventScenarioDao.removeScenarios(faultTree.getUri());
             faultTree.setFaultEventScenarios(null);
         }
 
         FTAMinimalCutSetEvaluation evaluator = new FTAMinimalCutSetEvaluation();
         evaluator.evaluate(faultTree);
 
+        for(FaultEvent evt : faultTree.getAllEvents().stream().filter(e -> e.getEventType() != FtaEventType.BASIC).toList()){
+            faultEventDao.setProbability(evt.getUri(), evt.getProbability(), faultTree.getUri());
+        }
+
         if(faultTree.getFaultEventScenarios() != null) {
             for (FaultEventScenario scenario : faultTree.getFaultEventScenarios()) {
+                scenario.setContext(faultTree.getUri());
                 scenario.updateProbability();
+                faultEventScenarioDao.persist(scenario);
+                faultEventScenarioDao.addScenarioToTree(faultTree.getUri(), scenario);
             }
-            getPrimaryDao().update(faultTree);
         }
         return faultTree;
     }
