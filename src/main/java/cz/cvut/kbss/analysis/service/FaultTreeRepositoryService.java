@@ -43,7 +43,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final ThreadLocal<Set<Behavior>> visitedBehaviors = new ThreadLocal<>();
     private final FaultEventDao faultEventDao;
     private final OperationalDataFilterService operationalDataFilterService;
-    private final FailureModeDao failureModeDao;
     private final OperationalDataService operationalDataService;
     private final FaultEventTypeService faultEventTypeService;
     private final FailureRateEstimateDao failureRateEstimateDao;
@@ -59,7 +58,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       SecurityUtils securityUtils,
                                       FaultEventDao faultEventDao,
                                       OperationalDataFilterService operationalDataFilterService,
-                                      FailureModeDao failureModeDao,
                                       OperationalDataService operationalDataService,
                                       FaultEventTypeService faultEventTypeService,
                                       FailureRateEstimateDao failureRateEstimateDao) {
@@ -71,7 +69,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.identifierService = identifierService;
         this.faultEventDao = faultEventDao;
         this.operationalDataFilterService = operationalDataFilterService;
-        this.failureModeDao = failureModeDao;
         this.operationalDataService = operationalDataService;
         this.faultEventTypeService = faultEventTypeService;
         this.failureRateEstimateDao = failureRateEstimateDao;
@@ -103,34 +100,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         persist(faultTree);
     }
 
-    protected void setRelatedBehaviors(Collection<Event> events){
-        for(Event event : events){
-            if(event.getBehavior() == null)
-                event.setBehavior(failureModeDao.findByEvent(event.getUri()));
-        }
-    }
-
-    public FaultTree findWithDetails(URI id) {
-        FaultTree ft = findRequired(id);
-
-        Collection<Event> events = faultTreeDao.getRelatedEventTypes(ft);
-        setRelatedBehaviors(events);
-
-        events.stream().map(e -> e.getBehavior()).forEach(b -> {
-            Item item = b.getItem();
-            if(item == null)
-                return;
-
-            item.setComponents(null);
-            Optional.ofNullable(item.getSupertypes()).ifPresent( s -> s.forEach(st -> st.setComponents(null)));
-        });
-
-        setReferences(ft);
-
-        FaultTree summary = findSummary(ft.getUri());
-        ft.setOperationalDataFilter(summary.getOperationalDataFilter());
-
-        return ft;
+    @Transactional
+    public FaultTree findRequired(URI id) {
+        return super.findRequired(id);
     }
 
     public FaultTree findSummary(URI faultTreeUri){
@@ -150,22 +122,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             faultTreeSummary.setOperationalDataFilter(filter);
         }
         return summaries;
-    }
-
-    public void setReferences(FaultTree faultTree){
-        if(faultTree.getManifestingEvent() == null)
-            return;
-
-        Stack<Pair<URI,FaultEvent>> stack = new Stack<>();
-        stack.add(Pair.of(null,faultTree.getManifestingEvent()));
-        while(!stack.isEmpty()){
-            Pair<URI,FaultEvent> p = stack.pop();
-            FaultEvent fe = p.getSecond();
-            faultEventRepositoryService.setExternalReference(p.getFirst(), fe);
-            if(fe.getChildren() == null)
-                continue;
-            fe.getChildren().forEach(c -> stack.push(Pair.of(fe.getUri(), c)));
-        }
     }
 
     @Transactional

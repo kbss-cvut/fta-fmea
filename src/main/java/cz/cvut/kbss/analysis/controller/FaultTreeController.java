@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
  import cz.cvut.kbss.analysis.service.FaultTreeEvaluationService;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
+import cz.cvut.kbss.analysis.service.FaultTreeService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
@@ -27,6 +28,7 @@ public class FaultTreeController {
     private final FaultTreeRepositoryService repositoryService;
     private final FaultTreeEvaluationService faultTreeEvaluationService;
     private final IdentifierService identifierService;
+    private final FaultTreeService faultTreeService;
 
     @GetMapping
     public List<FaultTree> findAll() {
@@ -42,7 +44,7 @@ public class FaultTreeController {
     public FaultTree find(@PathVariable(name = "faultTreeFragment") String faultTreeFragment) {
         log.info("> find - {}", faultTreeFragment);
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
-        return repositoryService.findWithDetails(faultTreeUri);
+        return faultTreeService.findWithDetails(faultTreeUri);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
