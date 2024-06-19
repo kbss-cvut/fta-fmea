@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.net.URI;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -169,6 +166,26 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         update(faultEvent);
 
         log.info("< updateChildrenSequence");
+    }
+
+    @Transactional
+    @Override
+    public FaultEvent update(FaultEvent instance) {
+        Objects.requireNonNull(instance);
+        preUpdate(instance);
+        FaultEvent managedInstance = faultEventDao.find(instance.getUri()).orElse( null);
+        assert managedInstance != null;
+        managedInstance.setName(instance.getName());
+        managedInstance.setGateType(instance.getGateType());
+        managedInstance.setEventType(instance.getEventType());
+        managedInstance.setProbability(instance.getProbability());
+        managedInstance.setSupertypes(instance.getSupertypes());
+        managedInstance.setChildrenSequence(instance.getChildrenSequence());
+        managedInstance.setSelectedEstimate(instance.getSelectedEstimate());
+        faultEventDao.getContext(managedInstance);
+        faultEventDao.update(managedInstance);
+        postUpdate(managedInstance);
+        return managedInstance;
     }
 
     @Override
