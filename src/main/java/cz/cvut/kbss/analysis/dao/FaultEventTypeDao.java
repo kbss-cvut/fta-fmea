@@ -52,17 +52,16 @@ public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
                         SELECT ?uri ?name ?componentName ?eventType {
                             ?uri a fta:fha-fault-event ;
                                 fta:name ?name ;
-                                fta:is-manifestation-of/fta:has-component/((^fta:has-part-component)+) ?system ;
-                                fta:is-derived-from ?generalEvent .
+                                fta:is-manifestation-of/fta:has-component ?c.
+                            
+                            ?system fta:has-part-component+ ?c.
+                            ?c fta:is-derived-from ?generalComponent .
                             
                             FILTER NOT EXISTS{
                                 ?system1 fta:has-part-component ?system.
                             }
-                         
-                            ?generalEvent fta:is-manifestation-of ?fm .
-                            ?fm fta:has-component ?component .
-                            
-                            ?component fta:name ?componentLabel ;
+                    
+                            ?generalComponent fta:name ?componentLabel ;
                                          fta:ata-code ?code .
                             BIND(CONCAT(str(?code), " - ", str(?componentLabel)) as ?componentName)
                             BIND("INTERMEDIATE" as ?eventType)       
@@ -84,23 +83,22 @@ public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
                         SELECT ?uri ?name ?componentName ?eventType {
                             ?uri a ?eventClass.
                             FILTER(?eventClass in (fta:fha-fault-event, fta:fault-event-type))
+                            
                             ?uri fta:name ?name ;
-                                 fta:is-manifestation-of/fta:has-component/((^fta:has-part-component)+) ?system ;
-                                 fta:is-derived-from ?generalEvent .
-                                
+                                fta:is-manifestation-of/fta:has-component ?c.
                             
+                            ?system fta:has-part-component+ ?c.
+                            ?c fta:is-derived-from ?generalComponent .
+                                                                                               
                             FILTER NOT EXISTS{
-                                ?system1 fta:has-part-component ?system.
+                               ?system1 fta:has-part-component ?system.
                             }
-                         
-                            ?generalEvent fta:is-manifestation-of ?fm .
-                            ?fm fta:has-component ?component .
                             
-                            ?component fta:name ?componentLabel ;
-                                         fta:ata-code ?code .
+                            ?generalComponent fta:name ?componentLabel ;
+                                fta:ata-code ?code .
                             BIND(CONCAT(str(?code), " - ", str(?componentLabel)) as ?componentName)
                             
-                            BIND(IF(?eventClass = fta:fha-fault-event, "INTERMEDIATE", "BASIC") as ?eventType)       
+                            BIND(IF(?eventClass = fta:fha-fault-event, "INTERMEDIATE", "BASIC") as ?eventType)
                         }
                     """, "FaultEventSummary")
                     .setParameter("system", systemUri)
