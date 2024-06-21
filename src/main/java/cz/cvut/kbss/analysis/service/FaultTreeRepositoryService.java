@@ -540,6 +540,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             return;
 
         ItemFailureRate[] operationalFailureRateEstimates = operationalDataService.fetchFailureRates(filter, map.keySet());
+        if(operationalFailureRateEstimates == null)
+            return;
 
         URI systemContext = getToolContext(faultTree.getSystem().getUri());
         for(ItemFailureRate estimate : operationalFailureRateEstimates){

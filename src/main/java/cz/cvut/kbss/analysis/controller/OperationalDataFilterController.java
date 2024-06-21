@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.controller;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.OperationalDataFilterService;
+import cz.cvut.kbss.analysis.service.external.OperationalDataService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,12 @@ public class OperationalDataFilterController {
 
     private final OperationalDataFilterService filterService;
     private final IdentifierService identifierService;
+    private final OperationalDataService operationalDataService;
 
-    public OperationalDataFilterController(OperationalDataFilterService filterService, IdentifierService identifierService) {
+    public OperationalDataFilterController(OperationalDataFilterService filterService, IdentifierService identifierService, OperationalDataService operationalDataService) {
         this.filterService = filterService;
         this.identifierService = identifierService;
+        this.operationalDataService = operationalDataService;
     }
 
     @PutMapping(path="reset", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
@@ -45,5 +48,10 @@ public class OperationalDataFilterController {
         log.info("> updateFaultTreeFilter - {} to {}", faultTreeFragment, filter);
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
         filterService.updateFaultTreeFilter(faultTreeUri, filter);
+    }
+
+    @GetMapping(value = "/check-service", produces = {MediaType.TEXT_PLAIN_VALUE})
+    public String checkOperationalDataService(){
+        return operationalDataService.checkConnection();
     }
 }

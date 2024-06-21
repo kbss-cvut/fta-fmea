@@ -1,6 +1,5 @@
 package cz.cvut.kbss.analysis.config.conf;
 
-import cz.cvut.kbss.analysis.util.ConfigParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,14 @@ import org.springframework.core.env.Environment;
 public class OperationalDataConfig {
 
     protected Double minOperationalHours;
+     protected String operationalDataServer;
+    protected String operationaDataServerCheck;
     protected String operationalFailureRateService;
 
     @Autowired
     public OperationalDataConfig(Environment env) {
-        operationalFailureRateService = env.getProperty("operationalFailureRateService");
+        operationalDataServer = env.getProperty("operationalDataServer");
+        operationaDataServerCheck = env.getProperty("operationaDataServerCheck", "check");
+        operationalFailureRateService = env.getProperty("operationalFailureRateService", "failure-rate");
     }
 }
