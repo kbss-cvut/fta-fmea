@@ -29,10 +29,41 @@ public class OperationalDataService {
         this.restTemplate = restTemplate;
     }
 
+    protected String getApi(String api){
+        String serverUri = operationalDataConfig.getOperationalDataServer();
+        return api == null || serverUri == null ? null : serverUri + api;
+    }
+
+
+    protected String getCheckApi(){
+        return getApi(operationalDataConfig.getOperationaDataServerCheck());
+    }
+
+    protected String getFailureRateApi(){
+        return getApi(operationalDataConfig.getOperationalFailureRateService());
+    }
+
+    public String checkConnection(){
+        String apiURI = getCheckApi();
+        if(apiURI == null) return "not connected";
+        try {
+            return restTemplate.getForObject(apiURI, String.class);
+        } catch (Exception e){
+            log.warn("Failed to fetch failure rates from " + apiURI, e);
+        }
+        return "not working";
+    }
+
     public ItemFailureRate[] fetchFailureRates(OperationalDataFilter filter, Collection<URI> components){
-        String apiURI = operationalDataConfig.getOperationalFailureRateService();
-        Map<String, Object> uriParams = new HashMap<>();
-        uriParams.put("minOperationalTime", filter.getMinOperationalHours());
-        return restTemplate.postForObject(apiURI, components, ItemFailureRate[].class, uriParams);
+        String apiURI = getFailureRateApi();
+        if(apiURI == null) return null;
+        try {
+            Map<String, Object> uriParams = new HashMap<>();
+            uriParams.put("minOperationalTime", filter.getMinOperationalHours());
+            return restTemplate.postForObject(apiURI, components, ItemFailureRate[].class, uriParams);
+        } catch (Exception e){
+            log.warn("Failed to fetch failure rates from \"{}\" \nerror message: {}", apiURI, e.getMessage());
+        }
+        return null;
     }
 }
