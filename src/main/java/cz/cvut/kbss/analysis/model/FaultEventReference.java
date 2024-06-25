@@ -7,13 +7,9 @@ import lombok.Setter;
 
 import java.net.URI;
 
-@SparqlResultSetMapping(name = "FaultEventReference", classes =
-@ConstructorResult(targetClass=FaultEventReference.class, variables={
-        @VariableResult(name="faultEvent"),
-        @VariableResult(name="faultTree")
-})
+@SparqlResultSetMapping(name = "FaultEventReference", entities =
+        {@EntityResult(entityClass=FaultEventReference.class)}
 )
-
 @OWLClass(iri = Vocabulary.s_c_fault_event)
 @Getter
 @Setter
@@ -30,7 +26,12 @@ public class FaultEventReference {
     @Id
     protected URI faultEvent;
 
-    @Transient
     @OWLDataProperty(iri = Vocabulary.s_p_is_part_of)
     protected URI faultTree;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_probability)
+    protected Double probability;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_status)
+    protected String status;
 }
