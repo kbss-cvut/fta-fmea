@@ -2,10 +2,8 @@ package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.FailureModeDao;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
-import cz.cvut.kbss.analysis.model.Event;
-import cz.cvut.kbss.analysis.model.FaultEvent;
-import cz.cvut.kbss.analysis.model.FaultTree;
-import cz.cvut.kbss.analysis.model.Item;
+import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,12 +21,16 @@ public class FaultTreeService{
     private final FailureModeDao failureModeDao;
     private final FaultTreeRepositoryService faultTreeRepositoryService;
     private final FaultTreeDao faultTreeDao;
+    private final OperationalDataFilterService operationalDataFilterService;
+    private final SystemRepositoryService systemRepositoryService;
 
-    public FaultTreeService(FaultEventRepositoryService faultEventRepositoryService, FailureModeDao failureModeDao, FaultTreeRepositoryService faultTreeRepositoryService, FaultTreeDao faultTreeDao) {
+    public FaultTreeService(FaultEventRepositoryService faultEventRepositoryService, FailureModeDao failureModeDao, FaultTreeRepositoryService faultTreeRepositoryService, FaultTreeDao faultTreeDao, OperationalDataFilterService operationalDataFilterService, SystemRepositoryService systemRepositoryService) {
         this.faultEventRepositoryService = faultEventRepositoryService;
         this.failureModeDao = failureModeDao;
         this.faultTreeRepositoryService = faultTreeRepositoryService;
         this.faultTreeDao = faultTreeDao;
+        this.operationalDataFilterService = operationalDataFilterService;
+        this.systemRepositoryService = systemRepositoryService;
     }
 
     public FaultTree findWithDetails(URI id) {
@@ -49,8 +51,12 @@ public class FaultTreeService{
 
         FaultTree summary = faultTreeRepositoryService.findSummary(ft.getUri());
         ft.setOperationalDataFilter(summary.getOperationalDataFilter());
-        ft.setSystem(summary.getSystem());
+        ft.setSystem(Optional.ofNullable(summary).map(s -> s.getSystem()).map(s -> s.getUri())
+                .map(u -> systemRepositoryService.findAllSummary(u)).orElse( null)
+        );
         ft.setSubsystem(summary.getSubsystem());
+        if(ft.getSystem() != null)
+            faultTreeRepositoryService.setInferStatus(ft);
 
         return ft;
     }
@@ -76,5 +82,13 @@ public class FaultTreeService{
             if(event.getBehavior() == null)
                 event.setBehavior(failureModeDao.findByEvent(event.getUri()));
         }
+    }
+
+    public void updateFilter(URI faultTreeURI, OperationalDataFilter newFilter){
+        FaultTree summary = faultTreeRepositoryService.findSummary(faultTreeURI);
+        operationalDataFilterService.updateFaultTreeFilter(faultTreeURI, newFilter);
+        summary.setOperationalDataFilter(newFilter);
+        Status status = faultTreeRepositoryService.getInferedStatus(summary);
+        faultTreeDao.updateStatus(summary.getUri(), status);
     }
 }

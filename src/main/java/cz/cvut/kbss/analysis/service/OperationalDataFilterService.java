@@ -20,11 +20,14 @@ public class OperationalDataFilterService extends BaseRepositoryService<Operatio
 
     private final OperationalDataConfig defaultFilter;
     private final OperationalDataFilterDao filterDao;
+    private final OperationalDataFilter globalFilter;
 
     public OperationalDataFilterService(OperationalDataConfig defaultFilter, OperationalDataFilterDao filterDao) {
         super(null);
         this.defaultFilter = defaultFilter;
         this.filterDao = filterDao;
+        globalFilter = new OperationalDataFilter();
+        globalFilter.setMinOperationalHours(defaultFilter.getMinOperationalHours());
     }
 
     /**
@@ -32,9 +35,7 @@ public class OperationalDataFilterService extends BaseRepositoryService<Operatio
      * @return default global filter configured by deployment parameters
      */
     public OperationalDataFilter getDefaultGlobalFilter(){
-        OperationalDataFilter filter = new OperationalDataFilter();
-        filter.setMinOperationalHours(defaultFilter.getMinOperationalHours());
-        return filter;
+        return globalFilter;
     }
 
     /**

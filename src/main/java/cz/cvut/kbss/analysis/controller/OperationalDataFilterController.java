@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
+import cz.cvut.kbss.analysis.service.FaultTreeService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.OperationalDataFilterService;
 import cz.cvut.kbss.analysis.service.external.OperationalDataService;
@@ -22,11 +23,13 @@ public class OperationalDataFilterController {
     private final OperationalDataFilterService filterService;
     private final IdentifierService identifierService;
     private final OperationalDataService operationalDataService;
+    private final FaultTreeService faultTreeService;
 
-    public OperationalDataFilterController(OperationalDataFilterService filterService, IdentifierService identifierService, OperationalDataService operationalDataService) {
+    public OperationalDataFilterController(OperationalDataFilterService filterService, IdentifierService identifierService, OperationalDataService operationalDataService, FaultTreeService faultTreeService) {
         this.filterService = filterService;
         this.identifierService = identifierService;
         this.operationalDataService = operationalDataService;
+        this.faultTreeService = faultTreeService;
     }
 
     @PutMapping(path="reset", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
@@ -47,7 +50,7 @@ public class OperationalDataFilterController {
     public void updateFaultTreeFilter(@PathVariable(name = "faultTreeFragment") String faultTreeFragment, @RequestBody OperationalDataFilter filter){
         log.info("> updateFaultTreeFilter - {} to {}", faultTreeFragment, filter);
         URI faultTreeUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_tree, faultTreeFragment);
-        filterService.updateFaultTreeFilter(faultTreeUri, filter);
+        faultTreeService.updateFilter(faultTreeUri, filter);
     }
 
     @GetMapping(value = "/check-service", produces = {MediaType.TEXT_PLAIN_VALUE})

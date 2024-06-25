@@ -120,12 +120,22 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     @Transactional(readOnly = true)
     public List<System> findAllSummaries(){
         List<System> systems = ((SystemDao)getPrimaryDao()).findAllSummaries();
-        OperationalDataFilter globalFilter = operationalDataFilterService.getDefaultGlobalFilter();
-        for(System system : systems){
-            OperationalDataFilter filter = operationalDataFilterService.getSystemFilter(system.getUri());
-            system.setOperationalDataFilter(filter);
-            system.setGlobalOperationalDataFilter(globalFilter);
-        }
+        for(System system : systems)
+            setOperationalDataFilter(system);
         return systems;
     }
+
+    @Transactional(readOnly = true)
+    public System findAllSummary(URI systemUri){
+        System system = ((SystemDao)getPrimaryDao()).findSummary(systemUri);
+        setOperationalDataFilter(system);
+        return system;
+    }
+
+    protected void setOperationalDataFilter(System system) {
+        OperationalDataFilter filter = operationalDataFilterService.getSystemFilter(system.getUri());
+        system.setOperationalDataFilter(filter);
+        system.setGlobalOperationalDataFilter(operationalDataFilterService.getDefaultGlobalFilter());
+    }
+
 }
