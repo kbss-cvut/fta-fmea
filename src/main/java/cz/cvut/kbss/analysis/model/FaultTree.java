@@ -40,6 +40,9 @@ public class FaultTree extends ManagedEntity {
     @OWLObjectProperty(iri = Vocabulary.s_p_has_operational_data_filter)
     protected OperationalDataFilter operationalDataFilter;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_status)
+    protected Status status;
+
     @NotNull(message = "Manifesting event must be chosen")
     @ParticipationConstraints(nonEmpty = true)
     @OWLObjectProperty(iri = Vocabulary.s_p_is_manifested_by, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)

@@ -536,6 +536,11 @@ fta-fmea:system-name rdf:type owl:DatatypeProperty ;
     fta-fmea:min-operational-hours rdf:type owl:DatatypeProperty ;
                       rdfs:label "Minimum operational hours" .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/status
+    fta-fmea:status rdf:type owl:DatatypeProperty ;
+                      rdfs:label "status" .
+
+
 #################################################################
 #    Classes
 #################################################################

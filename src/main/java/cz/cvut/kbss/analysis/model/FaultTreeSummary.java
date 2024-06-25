@@ -21,6 +21,9 @@ import java.util.HashSet;
 @Setter
 public class FaultTreeSummary extends ManagedEntity{
 
+    @OWLDataProperty(iri = Vocabulary.s_p_status)
+    protected Status status;
+
     @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from)
     protected URI rootEvent;
 
@@ -72,6 +75,7 @@ public class FaultTreeSummary extends ManagedEntity{
             faultTree.getSubsystem().setUri(this.getSubsystemUri());
             faultTree.getSubsystem().setName(this.getSubsystemName());
         }
+        faultTree.setStatus(this.getStatus());
         faultTree.setRequiredFailureRate(this.getRequiredFailureRate());
         faultTree.setCalculatedFailureRate(this.getCalculatedFailureRate());
         faultTree.setFhaBasedFailureRate(this.getFhaBasedFailureRate());
