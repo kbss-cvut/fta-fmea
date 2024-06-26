@@ -19,6 +19,9 @@ public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
     public final static URI DERIVED_FROM_PROP = URI.create(Vocabulary.s_p_is_derived_from);
     public final static URI FTA_EVENT_TYPE_PROP = URI.create(Vocabulary.s_p_fault_event_type);
     public final static URI IS_MANIFESTED_BY_PROP = URI.create(Vocabulary.s_p_is_manifested_by);
+    public final static URI PROBABILITY_PROP = URI.create(Vocabulary.s_p_probability);
+    public final static URI STATUS_PROP = URI.create(Vocabulary.s_p_status);
+    public final static URI FAULT_EVENT_TYPE = URI.create(Vocabulary.s_c_fault_event);
 
     public FaultEventTypeDao(EntityManager em, PersistenceConf config, IdentifierService identifierService) {
         super(FaultEventType.class, em, config, identifierService);
@@ -28,16 +31,20 @@ public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
         try{
             return em.createNativeQuery(
                             """
-                                    SELECT DISTINCT ?faultEvent ?faultTree WHERE{
+                                    SELECT DISTINCT ?faultEvent ?faultTree ?probability ?status WHERE{
                                         ?faultEvent ?derivedFrom ?supertype.
                                         ?faultEvent ?ftaEventTypeProp ?ftaEventType.
+                                        OPTIONAL{ ?faultEvent ?probabilityProp ?probability. }
                                         ?faultEvent a ?type.
-                                        ?faultTree ?isManifestedByProp ?faultEvent
+                                        ?faultTree ?isManifestedByProp ?faultEvent.
+                                        OPTIONAL{ ?faultTree ?statusProp ?status. }
                                     }""", "FaultEventReference")
                     .setParameter("derivedFrom", DERIVED_FROM_PROP)
                     .setParameter("supertype", supertype)
                     .setParameter("ftaEventTypeProp", FTA_EVENT_TYPE_PROP)
-                    .setParameter("type", this.typeUri)
+                    .setParameter("probabilityProp", PROBABILITY_PROP)
+                    .setParameter("statusProp", STATUS_PROP)
+                    .setParameter("type", FAULT_EVENT_TYPE)
                     .setParameter("isManifestedByProp", IS_MANIFESTED_BY_PROP)
                     .getResultList();
         }catch (RuntimeException e){

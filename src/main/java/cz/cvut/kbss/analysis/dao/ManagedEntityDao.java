@@ -11,6 +11,7 @@ import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import cz.cvut.kbss.jopa.model.metamodel.Attribute;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
+import cz.cvut.kbss.jopa.model.query.Query;
 import cz.cvut.kbss.jopa.vocabulary.DC;
 
 import java.net.URI;
@@ -75,23 +76,7 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
 
     public List<T> findAllSummaries(){
         try {
-            List<ManagedEntity> ret = em.createNativeQuery("""
-                            SELECT * WHERE {
-                                ?uri a ?type.
-                                ?uri ?pName ?name.
-                                OPTIONAL{?uri ?pDescription ?description.}
-                                OPTIONAL{?uri ?pCreated ?created.}
-                                OPTIONAL{?uri ?pModified ?modified.}
-                                OPTIONAL{?uri ?pCreator ?creator.}
-                                OPTIONAL{?uri ?pLastEditor ?lastEditor.}
-                            }""", "ManagedEntitySummary")
-                    .setParameter("type", typeUri)
-                    .setParameter("pName", P_HAS_NAME)
-                    .setParameter("pDescription", P_HAS_DESCRIPTION)
-                    .setParameter("pCreated", P_CREATED)
-                    .setParameter("pModified", P_MODIFIED)
-                    .setParameter("pCreator", P_CREATOR)
-                    .setParameter("pLastEditor", P_LAST_EDITOR)
+            List<ManagedEntity> ret = getSummariesQuery()
                     .getResultList();
 
             return ret.stream().map(s -> s.asEntity(type)).toList();
@@ -100,6 +85,36 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
         }
     }
 
+    public T findSummary(URI managedEntityUri){
+        try {
+            ManagedEntity ret = (ManagedEntity)getSummariesQuery()
+                    .setParameter("_uri", managedEntityUri)
+                    .getSingleResult();
+            return ret.asEntity(type);
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
 
+    public Query getSummariesQuery(){
+        return em.createNativeQuery("""
+                            SELECT * WHERE {
+                                BIND(?_uri as ?uri)
+                                ?uri a ?type.
+                                ?uri ?pName ?name.
+                                OPTIONAL{?uri ?pDescription ?description.}
+                                OPTIONAL{?uri ?pCreated ?created.}
+                                OPTIONAL{?uri ?pModified ?modified.}
+                                OPTIONAL{?uri ?pCreator ?creator.}
+                                OPTIONAL{?uri ?pLastEditor ?lastEditor.}
+                            }""", "ManagedEntitySummary")
+                .setParameter("type", typeUri)
+                .setParameter("pName", P_HAS_NAME)
+                .setParameter("pDescription", P_HAS_DESCRIPTION)
+                .setParameter("pCreated", P_CREATED)
+                .setParameter("pModified", P_MODIFIED)
+                .setParameter("pCreator", P_CREATOR)
+                .setParameter("pLastEditor", P_LAST_EDITOR);
+    }
 
 }

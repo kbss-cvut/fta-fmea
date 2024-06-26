@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
+import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.model.ava.ATASystem;
 import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
@@ -46,6 +47,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final OperationalDataService operationalDataService;
     private final FaultEventTypeService faultEventTypeService;
     private final FailureRateEstimateDao failureRateEstimateDao;
+    private final SystemDao systemDao;
+    private final SystemRepositoryService systemRepositoryService;
 
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -60,7 +63,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       OperationalDataFilterService operationalDataFilterService,
                                       OperationalDataService operationalDataService,
                                       FaultEventTypeService faultEventTypeService,
-                                      FailureRateEstimateDao failureRateEstimateDao) {
+                                      FailureRateEstimateDao failureRateEstimateDao, SystemDao systemDao, SystemRepositoryService systemRepositoryService) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
@@ -72,6 +75,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.operationalDataService = operationalDataService;
         this.faultEventTypeService = faultEventTypeService;
         this.failureRateEstimateDao = failureRateEstimateDao;
+        this.systemDao = systemDao;
+        this.systemRepositoryService = systemRepositoryService;
     }
 
     @Override
@@ -115,11 +120,20 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     @Override
     public List<FaultTree> findAllSummaries(){
         List<FaultTree> summaries = super.findAllSummaries();
+        Map<URI, System> systemMap = new HashMap<>();
         for(FaultTree faultTreeSummary: summaries){
             OperationalDataFilter filter = operationalDataFilterService.getFaultTreeFilter(
                     faultTreeSummary.getUri(),
                     faultTreeSummary.getSystem().getUri());
             faultTreeSummary.setOperationalDataFilter(filter);
+            if(faultTreeSummary.getSystem().getUri() == null)
+                continue;
+            System system = systemMap.computeIfAbsent(
+                    faultTreeSummary.getSystem().getUri(),
+                    uri -> systemRepositoryService.findAllSummary(uri)
+            );
+            faultTreeSummary.setSystem(system);
+            setInferStatus(faultTreeSummary);
         }
         return summaries;
     }
@@ -136,6 +150,18 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         update(faultTree);
 
         return faultTree;
+    }
+
+    public void setInferStatus(FaultTree faultTree){
+        if(faultTree.getStatus() == null)
+            faultTree.setStatus(getInferedStatus(faultTree));
+    }
+
+    public Status getInferedStatus(FaultTree faultTree ){
+        return !((System)faultTree.getSystem()).getOperationalDataFilter().getMinOperationalHours()
+                .equals(faultTree.getOperationalDataFilter().getMinOperationalHours())
+                ? Status.outOfSync
+                : Status.ok;
     }
 
     public FaultTree update(FaultTree instance) {

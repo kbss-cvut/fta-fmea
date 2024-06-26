@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 @Repository
 public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
 
+    public static final URI STATUS_PROP = URI.create(Vocabulary.s_p_status);
+
     @Autowired
     protected FaultTreeDao(EntityManager em, PersistenceConf config, IdentifierService identifierService, SecurityUtils securityUtils) {
         super(FaultTree.class, em, config, identifierService, securityUtils);
@@ -167,5 +169,9 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                     .setParameter("pModified", P_MODIFIED)
                     .setParameter("pCreator", P_CREATOR)
                     .setParameter("pLastEditor", P_LAST_EDITOR);
+    }
+
+    public void updateStatus(URI faultTree, Status status){
+        super.addOrReplaceValue(faultTree, STATUS_PROP, status, faultTree);
     }
 }
