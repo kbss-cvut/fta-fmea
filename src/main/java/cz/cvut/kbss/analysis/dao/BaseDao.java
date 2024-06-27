@@ -101,7 +101,8 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
     public Optional<T> find(URI id) {
         Objects.requireNonNull(id);
         try {
-            return Optional.ofNullable(em.find(type, id));
+            EntityDescriptor entityDescriptor = getEntityDescriptor(id);
+            return Optional.ofNullable(em.find(type, id, entityDescriptor));
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }

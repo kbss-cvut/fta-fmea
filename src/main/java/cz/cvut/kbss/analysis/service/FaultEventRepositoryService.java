@@ -173,8 +173,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     public FaultEvent update(FaultEvent instance) {
         Objects.requireNonNull(instance);
         preUpdate(instance);
-        FaultEvent managedInstance = faultEventDao.find(instance.getUri()).orElse( null);
-        assert managedInstance != null;
+        FaultEvent managedInstance = findRequired(instance.getUri());
         managedInstance.setName(instance.getName());
         managedInstance.setGateType(instance.getGateType());
         managedInstance.setEventType(instance.getEventType());

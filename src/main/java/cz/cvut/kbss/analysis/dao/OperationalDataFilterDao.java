@@ -9,6 +9,7 @@ import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
+import java.util.Optional;
 
 @Repository
 public class OperationalDataFilterDao extends BaseDao<OperationalDataFilter> {
@@ -20,12 +21,14 @@ public class OperationalDataFilterDao extends BaseDao<OperationalDataFilter> {
     }
 
     public OperationalDataFilter findByEntity(URI entity) {
-        return em.createNativeQuery("""
+         Optional<URI> optUri = em.createNativeQuery("""
                 SELECT ?uri WHERE {?entity ?hasOperationalDataFilter ?uri } LIMIT 1
-                """, OperationalDataFilter.class)
+                """, URI.class)
                 .setParameter("hasOperationalDataFilter", HAS_OPERATIONAL_DATA_FILTER_PROP)
                 .setParameter("entity", entity)
-                .getResultList().stream().findAny().orElse(null);
+                .getResultList().stream().findAny();
+
+        return optUri.map( u -> find(u).orElse(null)).orElse(null);
     }
 
     /**
@@ -39,6 +42,9 @@ public class OperationalDataFilterDao extends BaseDao<OperationalDataFilter> {
 
     @Override
     public EntityDescriptor getEntityDescriptor(URI uri) {
-        return super.getEntityDescriptor(uri);
+        EntityDescriptor entityDescriptor = super.getEntityDescriptor(uri);
+        URI context = getContext(uri);
+        entityDescriptor.addContext(context);
+        return entityDescriptor;
     }
 }
