@@ -105,9 +105,22 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         persist(faultTree);
     }
 
-    @Transactional
-    public FaultTree findRequired(URI id) {
-        return super.findRequired(id);
+    @Transactional(readOnly = true)
+    public FaultTree findWithRelatedEventTypes(URI id) {
+        FaultTree faultTree = findRequired(id);
+        for( FaultEvent fe  : faultTree.getAllEvents()) {
+            FaultEventType supertype = faultEventRepositoryService.getFaultEventSupertype(fe.getUri());
+            if(supertype == null)
+                continue;
+            Set<Event> supertypes = fe.getSupertypes();
+            if(supertypes == null) {
+                supertypes = new HashSet<>();
+                fe.setSupertypes(supertypes);
+            }
+            fe.getSupertypes().remove(supertype);
+            fe.getSupertypes().add(supertype);
+        }
+        return faultTree;
     }
 
     public FaultTree findSummary(URI faultTreeUri){

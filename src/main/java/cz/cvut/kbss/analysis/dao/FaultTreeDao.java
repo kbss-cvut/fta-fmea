@@ -8,7 +8,6 @@ import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
-import cz.cvut.kbss.jopa.model.metamodel.Attribute;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
 import cz.cvut.kbss.jopa.model.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +49,6 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
         EntityDescriptor entityDescriptor = new EntityDescriptor(uri);
         super.setEntityDescriptor(entityDescriptor);
         EntityType<FaultTree> ft = em.getMetamodel().entity(type);
-        EntityType<FaultEvent> fe = em.getMetamodel().entity(FaultEvent.class);
-        Attribute manifestingEvent = ft.getAttribute("manifestingEvent");
-        Attribute children = fe.getAttribute("children");
-
-        entityDescriptor.addAttributeContext(manifestingEvent, uri);
-        entityDescriptor.getAttributeDescriptor(manifestingEvent)
-                .addAttributeContext(fe.getAttribute("supertypes"), null)
-                .addAttributeContext(children, uri).getAttributeDescriptor(children)
-                        .addAttributeContext(fe.getAttribute("supertypes"), null);
-
         entityDescriptor.addAttributeContext(ft.getAttribute("failureModesTable"), null);
 
         return entityDescriptor;
