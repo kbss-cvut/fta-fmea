@@ -34,7 +34,7 @@ public class FaultTreeService{
     }
 
     public FaultTree findWithDetails(URI id) {
-        FaultTree ft = faultTreeRepositoryService.findRequired(id);
+        FaultTree ft = faultTreeRepositoryService.findWithRelatedEventTypes(id);
         Collection<Event> events = faultTreeDao.getRelatedEventTypes(ft);
         setRelatedBehaviors(events);
 

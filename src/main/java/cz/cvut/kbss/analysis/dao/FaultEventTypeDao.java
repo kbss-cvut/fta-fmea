@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
@@ -116,5 +117,17 @@ public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
         }catch (RuntimeException e){
             throw new PersistenceException(e);
         }
+    }
+
+    public FaultEventType getFaultEventSupertype(URI faultEventUri){
+        Optional<URI> optUri = em.createNativeQuery("""
+                SELECT ?uri {
+                    ?faultEventUri ?isDerivedFromProp ?uri.
+                }
+                """,URI.class)
+                .setParameter("isDerivedFromProp", DERIVED_FROM_PROP)
+                .setParameter("faultEventUri", faultEventUri)
+                .getResultStream().limit(1).findAny();
+        return optUri.map(u -> find(u).orElse(null)).orElse(null);
     }
 }

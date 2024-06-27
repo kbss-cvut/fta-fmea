@@ -238,4 +238,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
                 ? ret.stream().filter(t -> !typesToRemove.contains(t.getUri())).toList()
                 : ret;
     }
+
+    public FaultEventType getFaultEventSupertype(URI faultEventUri) {
+        return faultEventTypeDao.getFaultEventSupertype(faultEventUri);
+    }
 }
