@@ -41,6 +41,4 @@ spring:
 operational.data.filter:
   min-operational-hours: 200
 
-operationalDataServer: https://kbss.felk.cvut.cz/ava/services/ava-analytics/stats/
-operationaDataServerCheck: check
-operationalFailureRateService: failure-rate
+operationalFailureRateService: http://localhost:9998/stats/failure-rate

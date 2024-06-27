@@ -1,9 +1,11 @@
 package cz.cvut.kbss.analysis.service.external;
 
 import cz.cvut.kbss.analysis.config.conf.OperationalDataConfig;
+import cz.cvut.kbss.analysis.exception.ExternalServiceException;
 import cz.cvut.kbss.analysis.model.opdata.ItemFailureRate;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.OperationalDataFilterService;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,44 +24,44 @@ public class OperationalDataService {
     private final OperationalDataFilterService service;
     private final RestTemplate restTemplate;
 
-
     public OperationalDataService(OperationalDataConfig operationalDataConfig, OperationalDataFilterService service, @Qualifier("customRestTemplate") RestTemplate restTemplate) {
         this.operationalDataConfig = operationalDataConfig;
         this.service = service;
         this.restTemplate = restTemplate;
     }
 
-    protected String getApi(String api){
-        String serverUri = operationalDataConfig.getOperationalDataServer();
-        return api == null || serverUri == null ? null : serverUri + api;
-    }
-
-
-    protected String getCheckApi(){
-        return getApi(operationalDataConfig.getOperationaDataServerCheck());
+    @PostConstruct
+    public void checkConnectionOnStartUp(){
+        checkConnection();
     }
 
     protected String getFailureRateApi(){
-        return getApi(operationalDataConfig.getOperationalFailureRateService());
+        String path = operationalDataConfig.getOperationalFailureRateService();
+        if(path == null)
+            throw new ExternalServiceException("Configuration parameter operationalFailureRateService not set.");
+        return path;
     }
 
     public String checkConnection(){
-        String apiURI = getCheckApi();
-        if(apiURI == null) return "not connected";
+        String apiURI = null;
         try {
-            return restTemplate.getForObject(apiURI, String.class);
+            apiURI = getFailureRateApi();
+            restTemplate.headForHeaders(apiURI);
+            log.warn("connection to {} available", apiURI);
+            return "ok";
         } catch (Exception e){
-            log.warn("Failed to fetch failure rates from " + apiURI, e);
+            log.warn("checkConnection failed - {} ", e.getMessage());
         }
-        return "not working";
+        return apiURI != null ? "bad configuration " : "connection not working";
     }
 
     public ItemFailureRate[] fetchFailureRates(OperationalDataFilter filter, Collection<URI> components){
-        String apiURI = getFailureRateApi();
-        if(apiURI == null) return null;
+        String apiURI = null;
         try {
+            apiURI = getFailureRateApi();
+
             Map<String, Object> uriParams = new HashMap<>();
-            uriParams.put("minOperationalTime", filter.getMinOperationalHours());
+            uriParams.put(OperationalDataConfig.MIN_OPERATIONAL_TIME_PARAM, filter.getMinOperationalHours());
             return restTemplate.postForObject(apiURI, components, ItemFailureRate[].class, uriParams);
         } catch (Exception e){
             log.warn("Failed to fetch failure rates from \"{}\" \nerror message: {}", apiURI, e.getMessage());

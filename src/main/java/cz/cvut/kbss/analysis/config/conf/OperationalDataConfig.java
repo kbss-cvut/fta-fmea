@@ -15,15 +15,13 @@ import org.springframework.core.env.Environment;
 @ConfigurationProperties("operational.data.filter")
 public class OperationalDataConfig {
 
+    public static final String MIN_OPERATIONAL_TIME_PARAM = "minOperationalTime";
+
     protected Double minOperationalHours;
-     protected String operationalDataServer;
-    protected String operationaDataServerCheck;
     protected String operationalFailureRateService;
 
     @Autowired
     public OperationalDataConfig(Environment env) {
-        operationalDataServer = env.getProperty("operationalDataServer");
-        operationaDataServerCheck = env.getProperty("operationaDataServerCheck", "check");
-        operationalFailureRateService = env.getProperty("operationalFailureRateService", "failure-rate");
+        operationalFailureRateService = env.getProperty("operationalFailureRateService");
     }
 }
