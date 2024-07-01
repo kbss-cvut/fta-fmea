@@ -47,8 +47,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final OperationalDataService operationalDataService;
     private final FaultEventTypeService faultEventTypeService;
     private final FailureRateEstimateDao failureRateEstimateDao;
-    private final SystemDao systemDao;
     private final SystemRepositoryService systemRepositoryService;
+    private final FailureRateDao failureRateDao;
 
     @Autowired
     public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
@@ -63,7 +63,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                                       OperationalDataFilterService operationalDataFilterService,
                                       OperationalDataService operationalDataService,
                                       FaultEventTypeService faultEventTypeService,
-                                      FailureRateEstimateDao failureRateEstimateDao, SystemDao systemDao, SystemRepositoryService systemRepositoryService) {
+                                      FailureRateEstimateDao failureRateEstimateDao, SystemRepositoryService systemRepositoryService, FailureRateDao failureRateDao) {
         super(validator, userDao, securityUtils);
         this.faultTreeDao = faultTreeDao;
         this.faultEventScenarioDao = faultEventScenarioDao;
@@ -75,8 +75,8 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         this.operationalDataService = operationalDataService;
         this.faultEventTypeService = faultEventTypeService;
         this.failureRateEstimateDao = failureRateEstimateDao;
-        this.systemDao = systemDao;
         this.systemRepositoryService = systemRepositoryService;
+        this.failureRateDao = failureRateDao;
     }
 
     @Override
@@ -581,15 +581,21 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         ItemFailureRate[] operationalFailureRateEstimates = operationalDataService.fetchFailureRates(filter, map.keySet());
         if(operationalFailureRateEstimates == null)
             return;
-
-        URI systemContext = getToolContext(faultTree.getSystem().getUri());
+        URI systemContext = systemRepositoryService.getToolContextForGeneralSystem(faultTree.getSystem().getUri());
         for(ItemFailureRate estimate : operationalFailureRateEstimates){
             if(estimate.getFailureRate() == null)
                 continue;
             Pair<FaultEvent, Event> p = map.get(estimate.getUri());
             FaultEvent ft = p.getFirst();
-            FailureRate fr = ((FaultEventType)p.getSecond()).getFailureRate();
-
+            FaultEventType ftt = (FaultEventType)p.getSecond();
+            FailureRate fr = ftt.getFailureRate();
+            if(fr == null){
+                fr = new FailureRate();
+                fr.setContext(systemContext);
+                failureRateDao.persist(fr);
+                failureRateDao.setFailureRate(ftt.getUri(), fr, systemContext);
+                ftt.setFailureRate(fr);
+            }
             updateOperationalFailureRate(systemContext, faultTreeUri, estimate, ft, fr);
         }
     }
