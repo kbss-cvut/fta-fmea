@@ -10,6 +10,7 @@ import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,8 @@ import java.util.Set;
 @Service
 @Slf4j
 public class SystemRepositoryService extends ComplexManagedEntityRepositoryService<System> {
+
+    public static final URI GENERAL_SYSTEM_CONTEXT = URI.create(Vocabulary.s_c_ata_system + "/tool-context");
 
     private final SystemDao systemDao;
     private final ComponentRepositoryService componentRepositoryService;
@@ -136,6 +139,10 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         OperationalDataFilter filter = operationalDataFilterService.getSystemFilter(system.getUri());
         system.setOperationalDataFilter(filter);
         system.setGlobalOperationalDataFilter(operationalDataFilterService.getDefaultGlobalFilter());
+    }
+
+    public URI getToolContextForGeneralSystem(URI uri){
+        return GENERAL_SYSTEM_CONTEXT;
     }
 
 }
