@@ -531,6 +531,40 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         return faultTree;
     }
 
+    @Transactional
+    public void updateFailureRates(FaultTree faultTree, OperationalDataFilter filter){
+        updateFHABasedOperationalFailureRates(faultTree, filter);
+        updateFaultTreeOperationalFailureRates(faultTree, filter);
+    }
+
+    @Transactional
+    public void updateFHABasedOperationalFailureRates(FaultTree faultTree, OperationalDataFilter filter) {
+        FaultEventType fhaEvent = (FaultEventType)Optional.ofNullable(faultTree.getManifestingEvent())
+                .map(e -> e.getSupertypes())
+                .map(l -> l.stream().findFirst().orElse(null))
+                .orElse(null);
+
+        if(fhaEvent == null)
+            return;
+
+        ItemFailureRate[] estimates = operationalDataService
+                .fetchFhaFailureRates(filter, Collections.singleton(fhaEvent.getUri()));
+
+        if(estimates == null || estimates.length == 0)
+            return;
+        URI systemContext = systemRepositoryService.getToolContext(faultTree.getSystem().getUri());
+        FailureRate fr = fhaEvent.getFailureRate();
+        if(fr == null){
+            fr = new FailureRate();
+            fr.setContext(systemContext);
+            failureRateDao.persist(fr);
+            failureRateDao.setFailureRate(fhaEvent.getUri(), fr, systemContext);
+            fhaEvent.setFailureRate(fr);
+        }
+        updateOperationalFailureRate(systemContext, faultTree.getUri(), estimates[0],
+                faultTree.getManifestingEvent(), fr);
+    }
+
     /**
      * Updates the provided fault tree sns' failures with operational failure rate calculated based on filter. The update
      * is reflected in the persistent storage and in the input fault tree.

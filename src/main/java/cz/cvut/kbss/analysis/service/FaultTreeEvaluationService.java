@@ -31,7 +31,7 @@ public class FaultTreeEvaluationService
 
         FaultTree faultTree = faultTreeService.findWithDetails(faultTreeUri);
 
-        faultTreeRepositoryService.updateFaultTreeOperationalFailureRates(faultTree, filter);
+        faultTreeRepositoryService.updateFailureRates(faultTree, filter);
 
         faultTree = faultTreeRepositoryService.evaluate(faultTree);
 

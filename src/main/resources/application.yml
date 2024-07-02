@@ -42,3 +42,4 @@ operational.data.filter:
   min-operational-hours: 200
 
 operationalFailureRateService: http://localhost:9998/stats/failure-rate
+fhaBasedoperationalFailureRateService: http://localhost:9998/stats/fha-failure-rate
