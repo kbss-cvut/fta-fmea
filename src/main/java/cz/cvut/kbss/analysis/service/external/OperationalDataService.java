@@ -10,11 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,17 +35,24 @@ public class OperationalDataService {
         checkConnection();
     }
 
-    protected String getFailureRateApi(){
-        String path = operationalDataConfig.getOperationalFailureRateService();
+    protected String getFailureRateApi(String path){
         if(path == null)
             throw new ExternalServiceException("Configuration parameter operationalFailureRateService not set.");
         return path;
     }
 
+    protected String getOperationalFailureRateService(){
+        return getFailureRateApi(operationalDataConfig.getOperationalFailureRateService());
+    }
+
+    protected String getFhaBasedOperationalFailureRateService(){
+        return getFailureRateApi(operationalDataConfig.getFhaBasedoperationalFailureRateService());
+    }
+
     public String checkConnection(){
         String apiURI = null;
         try {
-            apiURI = getFailureRateApi();
+            apiURI = getOperationalFailureRateService();
             restTemplate.headForHeaders(apiURI);
             log.warn("connection to {} available", apiURI);
             return "ok";
@@ -58,13 +65,31 @@ public class OperationalDataService {
     public ItemFailureRate[] fetchFailureRates(OperationalDataFilter filter, Collection<URI> components){
         String apiURI = null;
         try {
-            apiURI = getFailureRateApi();
+            apiURI = getOperationalFailureRateService();
 
-            Map<String, Object> uriParams = new HashMap<>();
-            uriParams.put(OperationalDataConfig.MIN_OPERATIONAL_TIME_PARAM, filter.getMinOperationalHours());
-            return restTemplate.postForObject(apiURI, components, ItemFailureRate[].class, uriParams);
+            apiURI = UriComponentsBuilder.fromHttpUrl(apiURI)
+                    .queryParam(OperationalDataConfig.MIN_OPERATIONAL_TIME_PARAM, filter.getMinOperationalHours())
+                    .toUriString();
+            return restTemplate.postForObject(apiURI, components, ItemFailureRate[].class);
         } catch (Exception e){
             log.warn("Failed to fetch failure rates from \"{}\" \nerror message: {}", apiURI, e.getMessage());
+        }
+        return null;
+    }
+
+    public ItemFailureRate[] fetchFhaFailureRates(OperationalDataFilter filter, Collection<URI> fhaTypes){
+        String apiURI = null;
+        try {
+            apiURI = getFhaBasedOperationalFailureRateService();
+
+            apiURI = UriComponentsBuilder.fromHttpUrl(apiURI)
+                    .queryParam(OperationalDataConfig.MIN_OPERATIONAL_TIME_PARAM, filter.getMinOperationalHours())
+                    .queryParam(OperationalDataConfig.FHA_TYPES_PARAM, fhaTypes)
+                    .toUriString();
+
+            return restTemplate.getForObject(apiURI, ItemFailureRate[].class);
+        } catch (Exception e){
+            log.warn("Failed to fetch fha based failure rates from \"{}\" \nerror message: {}", apiURI, e.getMessage());
         }
         return null;
     }
