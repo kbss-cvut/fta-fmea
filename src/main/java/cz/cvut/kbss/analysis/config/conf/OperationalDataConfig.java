@@ -16,12 +16,15 @@ import org.springframework.core.env.Environment;
 public class OperationalDataConfig {
 
     public static final String MIN_OPERATIONAL_TIME_PARAM = "minOperationalTime";
+    public static final String FHA_TYPES_PARAM = "fha";
 
     protected Double minOperationalHours;
     protected String operationalFailureRateService;
+    protected String fhaBasedoperationalFailureRateService;
 
     @Autowired
     public OperationalDataConfig(Environment env) {
         operationalFailureRateService = env.getProperty("operationalFailureRateService");
+        fhaBasedoperationalFailureRateService = env.getProperty("fhaBasedoperationalFailureRateService");
     }
 }
