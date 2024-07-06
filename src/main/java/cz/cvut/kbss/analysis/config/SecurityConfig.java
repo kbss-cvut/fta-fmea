@@ -38,7 +38,7 @@ import java.net.URL;
 import java.util.*;
 
 
-@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "internal")
 @Configuration
 @EnableWebSecurity
 @Slf4j
