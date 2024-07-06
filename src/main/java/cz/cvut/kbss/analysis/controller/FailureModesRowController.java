@@ -1,12 +1,14 @@
 package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.dto.update.FailureModesRowRpnUpdateDTO;
+import cz.cvut.kbss.analysis.security.SecurityConstants;
 import cz.cvut.kbss.analysis.service.FailureModesRowRepositoryService;
 import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/failureModesRow")
+@PreAuthorize("hasRole('" + SecurityConstants.ROLE_USER + "')")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FailureModesRowController {

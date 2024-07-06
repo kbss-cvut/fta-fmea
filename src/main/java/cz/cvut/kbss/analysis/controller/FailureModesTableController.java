@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.controller;
 import cz.cvut.kbss.analysis.dto.table.FailureModesTableDataDTO;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
+import cz.cvut.kbss.analysis.security.SecurityConstants;
 import cz.cvut.kbss.analysis.service.FailureModesTableRepositoryService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/failureModesTable")
+@PreAuthorize("hasRole('" + SecurityConstants.ROLE_USER + "')")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FailureModesTableController {
