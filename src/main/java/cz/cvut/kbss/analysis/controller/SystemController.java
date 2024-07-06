@@ -2,6 +2,7 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.System;
+import cz.cvut.kbss.analysis.security.SecurityConstants;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.SystemRepositoryService;
 import cz.cvut.kbss.analysis.service.external.AnnotatorService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -21,6 +23,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/systems")
+@PreAuthorize("hasRole('" + SecurityConstants.ROLE_USER + "')")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class SystemController {

@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
+import cz.cvut.kbss.analysis.security.SecurityConstants;
 import cz.cvut.kbss.analysis.service.FaultTreeService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.OperationalDataFilterService;
@@ -10,6 +11,7 @@ import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ import java.net.URI;
 
 @Controller
 @RequestMapping("/operational-data-filter")
+@PreAuthorize("hasRole('" + SecurityConstants.ROLE_USER + "')")
 @Slf4j
 public class OperationalDataFilterController {
 

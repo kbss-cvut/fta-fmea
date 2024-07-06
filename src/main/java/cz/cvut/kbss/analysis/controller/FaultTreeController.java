@@ -2,7 +2,8 @@ package cz.cvut.kbss.analysis.controller;
 
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
- import cz.cvut.kbss.analysis.service.FaultTreeEvaluationService;
+import cz.cvut.kbss.analysis.security.SecurityConstants;
+import cz.cvut.kbss.analysis.service.FaultTreeEvaluationService;
 import cz.cvut.kbss.analysis.service.FaultTreeRepositoryService;
 import cz.cvut.kbss.analysis.service.FaultTreeService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -21,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/faultTrees")
+@PreAuthorize("hasRole('" + SecurityConstants.ROLE_USER + "')")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FaultTreeController {
