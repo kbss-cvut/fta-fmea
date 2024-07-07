@@ -62,6 +62,10 @@ public class FaultEventTypeDao extends  NamedEntityDao<FaultEventType> {
                                 fta:name ?name ;
                                 fta:is-manifestation-of/fta:has-component ?c.
                             
+                            FILTER NOT EXISTS {
+                                ?faultTree fta:is-manifested-by/fta:is-derived-from ?uri.
+                            }
+                            
                             ?system fta:has-part-component+ ?c.
                             ?c fta:is-derived-from ?generalComponent .
                             
