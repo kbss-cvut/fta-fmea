@@ -1,5 +1,9 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.controller.event.PaginatedResultRetrievedEvent;
+import cz.cvut.kbss.analysis.controller.util.FaultTreeFilterMapper;
+import cz.cvut.kbss.analysis.controller.util.PagingUtils;
+import cz.cvut.kbss.analysis.dao.util.FaultTreeFilterParams;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.security.SecurityConstants;
@@ -9,13 +13,18 @@ import cz.cvut.kbss.analysis.service.FaultTreeService;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jsonld.JsonLd;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,6 +41,7 @@ public class FaultTreeController {
     private final FaultTreeEvaluationService faultTreeEvaluationService;
     private final IdentifierService identifierService;
     private final FaultTreeService faultTreeService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @GetMapping
     public List<FaultTree> findAll() {
@@ -39,8 +49,12 @@ public class FaultTreeController {
     }
 
     @GetMapping("/summaries")
-    public List<FaultTree> summaries() {
-        return repositoryService.findAllSummaries();
+    public List<FaultTree> summaries(@RequestParam(required = false) MultiValueMap<String, String> params,
+                                     UriComponentsBuilder uriBuilder, HttpServletResponse response) {
+        FaultTreeFilterParams filterParams = FaultTreeFilterMapper.constructFaultTreeFilter(params);
+        Page<FaultTree> result = repositoryService.findAllSummaries(filterParams, PagingUtils.resolvePaging(params));
+        eventPublisher.publishEvent(new PaginatedResultRetrievedEvent(this, uriBuilder, response, result));
+        return result.getContent();
     }
 
     @GetMapping(value = "/{faultTreeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
