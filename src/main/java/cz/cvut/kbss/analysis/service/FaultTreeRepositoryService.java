@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.service;
 
+import cz.cvut.kbss.analysis.controller.util.PagingUtils;
 import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.dao.util.FaultTreeFilterParams;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
@@ -23,6 +24,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -131,9 +135,23 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         return faultTreeSummary;
     }
 
-    public List<FaultTree> findAllSummaries(FaultTreeFilterParams filterParams){
-        List<FaultTree> summaries = findAllSummaries();
-        return summaries.stream().filter(filterParams::matches).toList();
+    public Page<FaultTree> findAllSummaries(FaultTreeFilterParams filterParams, Pageable pageSpec){
+        List<FaultTree> allSummaries = findAllSummaries();
+        Comparator<FaultTree> comparator = PagingUtils.comparator(pageSpec.getSort());
+        List<FaultTree> matchingSummaries = allSummaries.stream()
+                .filter(filterParams::matches)
+                .sorted(comparator)
+                .toList();
+
+        List<FaultTree> result = matchingSummaries;
+        long totalCount = result.size();
+        if(pageSpec.isPaged()) {
+            result = matchingSummaries.stream()
+                    .skip(pageSpec.getOffset())
+                    .limit(pageSpec.getPageSize())
+                    .toList();
+        }
+        return new PageImpl<FaultTree>(result, pageSpec, totalCount);
     }
 
     @Override
