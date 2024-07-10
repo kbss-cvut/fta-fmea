@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.service;
 
 import cz.cvut.kbss.analysis.dao.*;
+import cz.cvut.kbss.analysis.dao.util.FaultTreeFilterParams;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.System;
@@ -128,6 +129,11 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         OperationalDataFilter filter = operationalDataFilterService.getFaultTreeFilter(faultTreeUri, faultTreeSummary.getSystem().getUri());
         faultTreeSummary.setOperationalDataFilter(filter);
         return faultTreeSummary;
+    }
+
+    public List<FaultTree> findAllSummaries(FaultTreeFilterParams filterParams){
+        List<FaultTree> summaries = findAllSummaries();
+        return summaries.stream().filter(filterParams::matches).toList();
     }
 
     @Override

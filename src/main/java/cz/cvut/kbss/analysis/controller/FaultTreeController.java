@@ -1,5 +1,7 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.controller.util.FaultTreeFilterMapper;
+import cz.cvut.kbss.analysis.dao.util.FaultTreeFilterParams;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.security.SecurityConstants;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -39,8 +42,9 @@ public class FaultTreeController {
     }
 
     @GetMapping("/summaries")
-    public List<FaultTree> summaries() {
-        return repositoryService.findAllSummaries();
+    public List<FaultTree> summaries(@RequestParam(required = false) MultiValueMap<String, String> params) {
+        FaultTreeFilterParams filterParams = FaultTreeFilterMapper.constructFaultTreeFilter(params);
+        return repositoryService.findAllSummaries(filterParams);
     }
 
     @GetMapping(value = "/{faultTreeFragment}", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
