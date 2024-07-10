@@ -175,6 +175,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         preUpdate(instance);
         FaultEvent managedInstance = findRequired(instance.getUri());
         managedInstance.setName(instance.getName());
+        managedInstance.setDescription(instance.getDescription());
         managedInstance.setGateType(instance.getGateType());
         managedInstance.setEventType(instance.getEventType());
         managedInstance.setProbability(instance.getProbability());
