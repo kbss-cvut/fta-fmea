@@ -48,7 +48,6 @@ public class FaultTreeController {
         return repositoryService.findAll();
     }
 
-    @PreAuthorize("permitAll()")
     @GetMapping("/summaries")
     public List<FaultTree> summaries(@RequestParam(required = false) MultiValueMap<String, String> params,
                                      UriComponentsBuilder uriBuilder, HttpServletResponse response) {
