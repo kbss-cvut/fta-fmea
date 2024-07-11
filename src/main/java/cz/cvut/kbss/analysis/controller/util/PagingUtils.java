@@ -90,9 +90,9 @@ public class PagingUtils {
                         Stream.of(t.getModified(), t.getCreated())
                     .filter(d -> d != null).findFirst().orElse(new Date(0)));
             case Constants.SORT_BY_LABEL_PARAM -> Comparator.comparing((FaultTree t) ->
-                    Optional.ofNullable(t.getSubsystem()).map(i -> i.getName()).orElse(""));
-            case Constants.SORT_BY_SNS_LABEL_PARAM -> Comparator.comparing((FaultTree t) ->
                     Optional.ofNullable(t.getName()).orElse(""));
+            case Constants.SORT_BY_SNS_LABEL_PARAM -> Comparator.comparing((FaultTree t) ->
+                    Optional.ofNullable(t.getSubsystem()).map(i -> i.getName()).orElse(""));
             default -> null;
         };
 
