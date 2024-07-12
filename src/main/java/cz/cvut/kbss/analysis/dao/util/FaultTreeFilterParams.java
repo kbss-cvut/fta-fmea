@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.dao.util;
 
 import cz.cvut.kbss.analysis.model.FaultTree;
+import cz.cvut.kbss.analysis.service.util.Pair;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -39,13 +40,14 @@ public class FaultTreeFilterParams {
 
     public boolean matches(FaultTree ft) {
         return Stream.of(
-                Optional.ofNullable(ft.getName()).filter(n -> matches(n, label)),
-                Optional.ofNullable(ft.getSubsystem()).map(i -> i.getName()).filter(n -> matches(n, snsLabel))
-                ).allMatch(Optional::isPresent);
+                Pair.of(ft.getName(), label),
+                Pair.of(Optional.ofNullable(ft.getSubsystem()).map(i -> i.getName()).orElse(null), snsLabel)
+                )
+                .allMatch(p -> this.matches(p.getFirst(), p.getSecond()));
     }
 
     protected boolean matches(String val, String pattern){
-        return pattern == null || pattern.isBlank() || val.contains(pattern.trim());
+        return pattern == null || pattern.isBlank() || (val != null && val.contains(pattern.trim()));
     }
 
     @Override
