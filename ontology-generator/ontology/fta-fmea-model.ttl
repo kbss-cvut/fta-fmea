@@ -540,6 +540,9 @@ fta-fmea:system-name rdf:type owl:DatatypeProperty ;
     fta-fmea:status rdf:type owl:DatatypeProperty ;
                       rdfs:label "status" .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/auxiliary
+    fta-fmea:auxiliary rdf:type owl:DatatypeProperty ;
+                      rdfs:label "auxiliary" .
 
 #################################################################
 #    Classes
