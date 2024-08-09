@@ -21,6 +21,9 @@ public class FaultEventType extends Event{
     @OWLDataProperty(iri = Vocabulary.s_p_fault_event_type)
     private String eventType;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_auxiliary)
+    private Boolean auxiliary;
+
     @Override
     public void setAs(NamedEntity namedEntity) {
         if(namedEntity instanceof FaultEventTypeSummary)

@@ -51,6 +51,8 @@ public class FaultTreeSummary extends ManagedEntity{
     @OWLDataProperty(iri = Vocabulary.s_p_fha_based_failure_rate)
     protected Double fhaBasedFailureRate;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_auxiliary)
+    protected Boolean auxiliary;
 
     public void copyTo(FaultTree faultTree){
         super.copyTo(faultTree);
@@ -63,6 +65,7 @@ public class FaultTreeSummary extends ManagedEntity{
                 rootType.setUri(this.getRootEventType());
                 root.setSupertypes(new HashSet<>());
                 root.getSupertypes().add(rootType);
+                rootType.setAuxiliary(auxiliary);
             }
         }
         if(this.getSystemUri() != null){

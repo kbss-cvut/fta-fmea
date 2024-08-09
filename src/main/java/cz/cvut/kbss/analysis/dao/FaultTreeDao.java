@@ -119,6 +119,9 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                         ?rootEvent fta:probability ?calculatedFailureRate.
                                     }
                                     OPTIONAL{
+                                        ?rootEventType fta:auxiliary ?auxiliary.
+                                    }
+                                    OPTIONAL{
                                         ?rootEventType fta:has-failure-rate ?failureRate.
                                         ?failureRate fta:has-requirement ?failureRateRequirement.
                                         ?failureRateRequirement fta:to ?requiredFailureRate.
