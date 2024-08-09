@@ -101,6 +101,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         // load and persist supertypes
         if(faultTree.getManifestingEvent().getSupertypes() == null || faultTree.getManifestingEvent().getSupertypes().isEmpty()) {
             FHAEventType evt = new FHAEventType();
+            evt.setAuxiliary(true);
             evt.setName(faultTree.getManifestingEvent().getName());
             faultTree.getManifestingEvent().setSupertypes(Collections.singleton(evt));
         }
@@ -202,14 +203,19 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     }
 
     public FaultTree update(FaultTree instance) {
-        if(instance.getManifestingEvent() == null && instance.getUri() != null){
-            FaultTree managedInstance = getPrimaryDao().find(instance.getUri()).orElse(null);
-            if(managedInstance == null)
-                throw EntityNotFoundException.create("Could find instance to update", instance.getUri());
-            managedInstance.setName(instance.getName());
-            instance = managedInstance;
-        }
-        return super.update(instance);
+        if(instance.getUri() == null)
+            throw new IllegalArgumentException("Cannot updated fault tree, fault tree uri is not set.");
+        if(!Optional.ofNullable(instance.getManifestingEvent())
+                .map(e -> e.getSupertypes())
+                .filter(s -> !s.isEmpty()).map(s -> s.iterator().next()).map(et -> ((FaultEventType)et).getAuxiliary()).orElse(false))
+            throw new IllegalArgumentException("Cannot updated name of fault tree connected to FHA event type.");
+        
+        FaultTree managedInstance = getPrimaryDao().find(instance.getUri()).orElse(null);
+        if(managedInstance == null)
+            throw EntityNotFoundException.create("Could find instance to update", instance.getUri());
+        managedInstance.setName(instance.getName());
+
+        return super.update(managedInstance);
     }
 
     @Override
