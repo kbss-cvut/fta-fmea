@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.controller.util;
 
 import cz.cvut.kbss.analysis.dto.error.ErrorInfo;
+import cz.cvut.kbss.analysis.exception.CalculationException;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.exception.ValidationException;
@@ -53,4 +54,10 @@ public class RestExceptionHandler {
         return new ErrorInfo(errorMessage, request.getRequestURI());
     }
 
+    @ExceptionHandler(CalculationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorInfo handleEvaluationException(HttpServletRequest request, CalculationException e) {
+        log.warn("> handleEvaluationException - {}", request.getRequestURI());
+        return new ErrorInfo(e.getMessage(), request.getRequestURI());
+    }
 }

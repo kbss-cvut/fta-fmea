@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.model.fta;
 
+import cz.cvut.kbss.analysis.exception.CalculationException;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultEventScenario;
 import cz.cvut.kbss.analysis.model.FaultTree;
@@ -27,6 +28,17 @@ public class FTAMinimalCutSetEvaluation {
      * @param faultTree
      */
     public void evaluate(FaultTree faultTree){
+        List<FaultEvent> fe = faultTree.getAllEvents().stream()
+                .filter(e -> e.isLeafEvent())
+                .filter(e -> e.getProbability() == null)
+                .toList();
+        if(!fe.isEmpty()){
+            String message =
+                    fe.stream().map(e -> "'%s'".formatted(e.getName()))
+                            .collect(Collectors.joining("\n"  , "The following leaf events do not have specified probability: [\n", "]"));
+
+            throw new CalculationException(message);
+        }
         minScenarios = null;
         evaluate(faultTree.getManifestingEvent());
 
@@ -44,7 +56,7 @@ public class FTAMinimalCutSetEvaluation {
      * @return a pair where left is true if faultEvent contains dependent events, false otherwise. Right contains the set of all basic events in the subtree of faultEvent.
      */
     public Pair<Boolean, Set<FaultEvent>> evaluate(FaultEvent faultEvent){
-        if(faultEvent.getEventType() == FtaEventType.BASIC || faultEvent.getChildren() == null || faultEvent.getChildren().isEmpty())
+        if(faultEvent.isLeafEvent())
             return Pair.of(false, Collections.singleton(faultEvent));
 
         List<Pair<Boolean, Set<FaultEvent>>> l = faultEvent.getChildren().stream().map(this::evaluate).collect(Collectors.toList());// RECURSION !for()
