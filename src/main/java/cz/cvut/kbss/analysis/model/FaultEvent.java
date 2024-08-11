@@ -101,6 +101,11 @@ public class FaultEvent extends Event {
         return result;
     }
 
+    public boolean isLeafEvent(){
+        return getEventType() == FtaEventType.BASIC || getChildren() == null || getChildren().isEmpty();
+    }
+
+
     @Override
     public String toString() {
         return "FaultEvent <" + getUri() + "/>";
