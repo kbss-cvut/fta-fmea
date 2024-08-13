@@ -212,7 +212,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         
         FaultTree managedInstance = getPrimaryDao().find(instance.getUri()).orElse(null);
         if(managedInstance == null)
-            throw EntityNotFoundException.create("Could find instance to update", instance.getUri());
+            throw EntityNotFoundException.create("Could not find instance to update", instance.getUri());
         managedInstance.setName(instance.getName());
 
         return super.update(managedInstance);
