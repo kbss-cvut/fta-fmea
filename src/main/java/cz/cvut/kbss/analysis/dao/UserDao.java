@@ -3,6 +3,7 @@ package cz.cvut.kbss.analysis.dao;
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
 import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.model.UserReference;
 import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.exceptions.NoResultException;
@@ -30,22 +31,37 @@ public class UserDao extends BaseDao<User> {
      */
     public Optional<User> findByUsername(String username) {
         Objects.requireNonNull(username);
+        URI userUri = findUriByUsername(username);
+        return userUri == null
+                ? Optional.empty()
+                : find(userUri);
+    }
+
+    public UserReference findUserReferenceByUsername(String username) {
+        URI uri = findUriByUsername(username);
+        if(uri == null)
+            return null;
+        UserReference userReference = new UserReference();
+        userReference.setUsername(username);
+        userReference.setUri(uri);
+        return userReference;
+    }
+
+    public URI findUriByUsername(String username) {
         try {
-            return Optional
-                    .of(em
-                            .createNativeQuery("""
+            return em.createNativeQuery("""
                                     SELECT ?x WHERE { 
                                         ?x a ?type ; ?hasUsername ?val . 
                                         FILTER(str(?val) = ?username)
                                     }
                                     """,
-                                    type)
-                            .setParameter("type", typeUri)
-                            .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName))
-                            .setParameter("username", username)
-                            .getSingleResult());
+                        URI.class)
+                .setParameter("type", typeUri)
+                .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName))
+                .setParameter("username", username)
+                .getSingleResult();
         } catch (NoResultException e) {
-            return Optional.empty();
+            return null;
         } catch (RuntimeException e) {
             throw new PersistenceException(e);
         }
