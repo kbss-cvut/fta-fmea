@@ -39,4 +39,22 @@ public class NamedEntityDao<T extends NamedEntity> extends BaseDao<T> {
         }
     }
 
+    public List<URI> findUriByName(String name){
+        try {
+            return em.createNativeQuery("""
+                                    SELECT ?x WHERE {
+                                        ?x a ?type ; ?hasName ?val .
+                                        FILTER(str(?val) = ?name)
+                                    }
+                                    """,
+                            URI.class)
+                    .setParameter("type", typeUri)
+                    .setParameter("hasName", URI.create(Vocabulary.s_p_name))
+                    .setParameter("name", name)
+                    .getResultList();
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
+    }
+
 }

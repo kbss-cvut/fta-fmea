@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.dao.UserDao;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Item;
@@ -62,6 +63,18 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         // fetch partonomy
         systemDao.findComponents(id);
 
+        return system;
+    }
+
+    @Transactional
+    public System create(System system){
+        List<URI> existingSystems = systemDao.findUriByName(system.getName());
+        if(!existingSystems.isEmpty())
+            throw new LogicViolationException((
+                    "Cannot create system with name \"%s\", " +
+                            "the name is already assigned by other system.")
+                    .formatted(system.getName()));
+        this.persist(system);
         return system;
     }
 
