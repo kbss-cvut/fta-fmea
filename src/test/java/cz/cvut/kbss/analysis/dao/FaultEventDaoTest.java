@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.dao;
 
+import cz.cvut.kbss.analysis.config.conf.SecurityConf;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {FaultEventDao.class})
+@ContextConfiguration(classes = {FaultEventDao.class, UserDao.class, SecurityConf.class})
 class FaultEventDaoTest extends BaseDaoTestRunner{
 
     @Autowired

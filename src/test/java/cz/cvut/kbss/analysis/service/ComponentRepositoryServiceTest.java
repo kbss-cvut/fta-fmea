@@ -10,7 +10,6 @@ import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapdb.Fun;
 import org.mockito.*;
 
 import java.util.Optional;
@@ -121,13 +120,17 @@ class ComponentRepositoryServiceTest {
         Mockito.when(componentDao.find(eq(linkComponent.getUri()))).thenReturn(Optional.of(linkComponent));
 
         Mockito.when(componentDao.exists(eq(component.getUri()))).thenReturn(true);
+        Mockito.when(componentDao.exists(eq(linkComponent.getUri()))).thenReturn(true);
         Mockito.when(componentValidator.supports(any())).thenReturn(true);
         Mockito.when(componentDao.update(eq(component))).thenReturn(component);
+        Mockito.when(componentDao.update(eq(linkComponent))).thenReturn(linkComponent);
 
         repositoryService.linkComponents(component.getUri(), linkComponent.getUri());
 
-        Mockito.verify(componentDao).update(component);
-        Assertions.assertEquals(linkComponent.getUri(), component.getParentComponent());
+        Assertions.assertEquals(linkComponent, component.getParentComponent());
+        Assertions.assertTrue(linkComponent.getComponents() != null );
+        Assertions.assertTrue(linkComponent.getComponents().size() == 1);
+        Assertions.assertTrue(linkComponent.getComponents().contains( component));
     }
 
     @Test

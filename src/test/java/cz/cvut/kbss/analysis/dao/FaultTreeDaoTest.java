@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.dao;
 
+import cz.cvut.kbss.analysis.config.conf.SecurityConf;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultTree;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@ContextConfiguration(classes = {FaultTreeDao.class, FaultEventDao.class})
+@ContextConfiguration(classes = {FaultTreeDao.class, FaultEventDao.class, UserDao.class, SecurityConf.class})
 class FaultTreeDaoTest extends BaseDaoTestRunner {
 
     @Autowired
@@ -96,21 +97,28 @@ class FaultTreeDaoTest extends BaseDaoTestRunner {
         transactional(() -> faultTreeDao.update(tree)); // probabilities propagation update (simulation)
 
         // create subtree
-        FaultEvent X = createEvent("X");
-        FaultEvent Y = createEvent("Y");
-        FaultEvent Z = createEvent("Z");
-        X.addChild(Y);
-        X.addChild(Z);
-        transactional(() -> faultEventDao.persist(X));
+        FaultEvent BX = createEvent("X");
+        FaultEvent BY = createEvent("Y");
+        FaultEvent BZ = createEvent("Z");
+        BX.addChild(BY);
+        BX.addChild(BZ);
+
+        FaultEvent CX = createEvent("X");
+        FaultEvent CY = createEvent("Y");
+        FaultEvent CZ = createEvent("Z");
+        CX.addChild(CY);
+        CX.addChild(CZ);
+        transactional(() -> faultEventDao.persist(BX));
+        transactional(() -> faultEventDao.persist(CX));
         transactional(() -> faultTreeDao.update(tree)); // probabilities propagation update (simulation)
 
         // add subtree below B
-        B.addChild(X);
+        B.addChild(BX);
         transactional(() -> faultEventDao.update(B));
         transactional(() -> faultTreeDao.update(tree)); // probabilities propagation update (simulation)
 
         // add subtree below C
-        C.addChild(X);
+        C.addChild(CX);
         transactional(() -> faultEventDao.update(C));
         transactional(() -> faultTreeDao.update(tree)); // probabilities propagation update (simulation)
 

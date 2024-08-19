@@ -7,6 +7,7 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.exception.UsernameNotAvailableException;
 import cz.cvut.kbss.analysis.model.User;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +30,8 @@ class UserRepositoryServiceTest {
     Validator validator;
     @InjectMocks
     UserRepositoryService repositoryService;
+    @Mock
+    SecurityUtils securityUtils;
 
     @BeforeEach
     void setUp() {
@@ -70,7 +73,9 @@ class UserRepositoryServiceTest {
         UserUpdateDTO updateDTO = new UserUpdateDTO();
         updateDTO.setUri(user.getUri());
 
+        Mockito.when(securityUtils.getCurrentUser()).thenReturn(user);
         Mockito.when(passwordEncoder.matches(updateDTO.getPassword(), user.getPassword())).thenReturn(false);
+
 
         assertThrows(LogicViolationException.class, () -> repositoryService.updateCurrent(updateDTO));
     }
@@ -85,6 +90,7 @@ class UserRepositoryServiceTest {
         updateDTO.setNewPassword("oldPassword");
         updateDTO.setUri(user.getUri());
 
+        Mockito.when(securityUtils.getCurrentUser()).thenReturn(user);
         Mockito.when(passwordEncoder.matches(updateDTO.getPassword(), user.getPassword())).thenReturn(true);
         Mockito.when(userDao.exists(user.getUri())).thenReturn(true);
         Mockito.when(validator.supports(any())).thenReturn(true);

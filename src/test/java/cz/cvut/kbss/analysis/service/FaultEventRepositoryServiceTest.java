@@ -7,7 +7,10 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.UserReference;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
+import cz.cvut.kbss.analysis.util.Vocabulary;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.net.URI;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,6 +38,12 @@ public class FaultEventRepositoryServiceTest {
     @Mock
     FaultTreeDao faultTreeDao;
 
+    @Mock
+    SecurityUtils securityUtils;
+
+    @Mock
+    FaultEventTypeService faultEventTypeService;
+
     @InjectMocks
     FaultEventRepositoryService repositoryService;
 
@@ -42,18 +52,29 @@ public class FaultEventRepositoryServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    protected void setUserReference(){
+        UserReference user = new UserReference();
+        user.setUri(URI.create(Vocabulary.s_c_Person + "/test-user"));
+        Mockito.when(securityUtils.getCurrentUserReference()).thenReturn(user);
+    }
+
     @Test
     void update_shouldCallPreUpdate() {
+
+
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
 
+        Mockito.when(faultEventDao.find(event.getUri())).thenReturn(Optional.of(event));
         Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
         Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
         Mockito.when(faultEventDao.update(eq(event))).thenReturn(event);
+        setUserReference();
 
         repositoryService.update(event);
 
         Mockito.verify(faultEventValidator).validate(eq(event), any());
+//        Mockito.verify(repositoryService).preUpdate(event);
     }
 
     @Test
@@ -71,6 +92,7 @@ public class FaultEventRepositoryServiceTest {
         FaultEvent event = new FaultEvent();
         event.setUri(Generator.generateUri());
 
+        setUserReference();
         Mockito.when(faultTreeDao.isRootEvent(eq(event.getUri()))).thenReturn(false);
 
         repositoryService.remove(event);
@@ -86,7 +108,7 @@ public class FaultEventRepositoryServiceTest {
         FaultEvent parentEvent = new FaultEvent();
         parentEvent.setUri(Generator.generateUri());
 
-
+        setUserReference();
         Mockito.when(faultEventDao.find(eq(parentEvent.getUri()))).thenReturn(Optional.of(parentEvent));
         Mockito.when(faultEventDao.exists(parentEvent.getUri())).thenReturn(true);
         Mockito.when(faultEventValidator.supports(any())).thenReturn(true);
@@ -132,6 +154,7 @@ public class FaultEventRepositoryServiceTest {
         component.setUri(Generator.generateUri());
         failureMode.setItem(component);
 
+        setUserReference();
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
         Mockito.when(componentRepositoryService.findRequired(eq(failureMode.getItem().getUri()))).thenReturn(component);
         Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
@@ -156,6 +179,7 @@ public class FaultEventRepositoryServiceTest {
         failureMode.setUri(Generator.generateUri());
         event.setBehavior(failureMode);
 
+        setUserReference();
         Mockito.when(faultEventDao.find(eq(event.getUri()))).thenReturn(Optional.of(event));
         Mockito.when(faultEventDao.exists(event.getUri())).thenReturn(true);
         Mockito.when(faultEventValidator.supports(any())).thenReturn(true);

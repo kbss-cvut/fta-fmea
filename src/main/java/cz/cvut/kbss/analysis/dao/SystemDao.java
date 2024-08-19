@@ -7,6 +7,7 @@ import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
+import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,20 @@ public class SystemDao extends ManagedEntityDao<System> {
     @Autowired
     protected SystemDao(EntityManager em, PersistenceConf config, IdentifierService identifierService, SecurityUtils securityUtils) {
         super(System.class, em, config, identifierService, securityUtils);
+    }
+
+    @Override
+    public EntityDescriptor getEntityDescriptor(System entity) {
+        if(entity.getUri() == null)
+            entity.setUri(identifierService.generateNewInstanceUri(typeUri.toString()));
+        EntityDescriptor entityDescriptor = getEntityDescriptor(entity.getUri());
+        return entityDescriptor;
+    }
+
+    public EntityDescriptor getEntityDescriptor(URI uri){
+        EntityDescriptor descriptor = new EntityDescriptor(uri);
+        setEntityDescriptor(descriptor);
+        return descriptor;
     }
 
     public List<Component> findComponents(URI systemURI){

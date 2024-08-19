@@ -3,7 +3,9 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FaultTreeDao;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import cz.cvut.kbss.analysis.model.FaultEventType;
 import cz.cvut.kbss.analysis.model.FaultTree;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,9 @@ class FaultTreeRepositoryServiceTest {
     @InjectMocks
     FaultTreeRepositoryService repositoryService;
 
+    @Mock
+    SecurityUtils securityUtils;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -42,6 +48,10 @@ class FaultTreeRepositoryServiceTest {
         FaultTree tree = new FaultTree();
         tree.setUri(Generator.generateUri());
         tree.setManifestingEvent(new FaultEvent());
+        FaultEventType fet = new FaultEventType();
+        fet.setAuxiliary(true);
+        tree.getManifestingEvent().setSupertypes(new HashSet<>());
+        tree.getManifestingEvent().getSupertypes().add(fet);
 
         Mockito.when(faultTreeDao.find(tree.getUri())).thenReturn(Optional.of(tree));
         Mockito.when(faultTreeDao.exists(tree.getUri())).thenReturn(true);

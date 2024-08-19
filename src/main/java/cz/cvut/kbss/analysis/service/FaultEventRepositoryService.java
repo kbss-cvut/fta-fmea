@@ -8,6 +8,7 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
+import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.NonNull;
@@ -35,15 +36,17 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     private final FaultTreeDao faultTreeDao;
     private final FaultEventTypeService faultEventTypeService;
     private final FaultEventTypeDao faultEventTypeDao;
+    private final SecurityUtils securityUtils;
 
     @Autowired
-    public FaultEventRepositoryService(@Qualifier("faultEventValidator") Validator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao, FaultEventTypeService faultEventTypeService, FaultEventTypeDao faultEventTypeDao) {
+    public FaultEventRepositoryService(@Qualifier("faultEventValidator") Validator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao, FaultEventTypeService faultEventTypeService, FaultEventTypeDao faultEventTypeDao, SecurityUtils securityUtils) {
         super(validator);
         this.faultEventDao = faultEventDao;
         this.componentRepositoryService = componentRepositoryService;
         this.faultTreeDao = faultTreeDao;
         this.faultEventTypeService = faultEventTypeService;
         this.faultEventTypeDao = faultEventTypeDao;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -221,7 +224,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     protected void setChange(FaultEvent instance){
         URI context = faultEventDao.getContext(instance);
-        faultTreeDao.setChangedByContext(context, new Date());
+        UserReference userReference = securityUtils.getCurrentUserReference();
+        faultTreeDao.setChangedByContext(context, new Date(), userReference.getUri());
     }
 
     public List<FaultEventType> getTopFaultEvents(URI systemUri) {

@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.dao;
 
+import cz.cvut.kbss.analysis.config.conf.SecurityConf;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.Optional;
 import java.util.UUID;
 
-@ContextConfiguration(classes = {UserDao.class})
+@ContextConfiguration(classes = {UserDao.class, SecurityConf.class})
 class UserDaoTest extends BaseDaoTestRunner {
 
     @Autowired
