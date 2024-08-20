@@ -60,8 +60,7 @@ public class SystemController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public System create(@RequestBody System system) {
         log.info("> create - {}", system);
-        repositoryService.persist(system);
-        return system;
+        return repositoryService.create(system);
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})

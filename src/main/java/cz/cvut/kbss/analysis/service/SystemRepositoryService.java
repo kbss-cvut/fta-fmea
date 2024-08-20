@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.ComponentDao;
 import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.SystemDao;
 import cz.cvut.kbss.analysis.dao.UserDao;
+import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Item;
@@ -11,6 +12,7 @@ import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,6 +65,32 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         systemDao.findComponents(id);
 
         return system;
+    }
+
+    @Transactional
+    public System create(System system){
+        List<URI> existingSystems = systemDao.findUriByName(system.getName());
+        if(!existingSystems.isEmpty())
+            throw new LogicViolationException((
+                    "Cannot create system with name \"%s\", " +
+                            "the name is already assigned by other system.")
+                    .formatted(system.getName()));
+        this.persist(system);
+        return system;
+    }
+
+    @Override
+    public void remove(@NonNull URI instanceUri) {
+        System system = findAllSummary(instanceUri);
+        List<URI> faultTrees = systemDao.findSystemsFaultTrees(instanceUri);
+        if(!faultTrees.isEmpty()) {
+
+            throw new LogicViolationException((
+                    "Cannot delete system \"%s\" (<%s>), " +
+                            "the system has fault %d trees.")
+                    .formatted(system.getName(), instanceUri, faultTrees.size()));
+        }
+        super.remove(instanceUri);
     }
 
     @Transactional

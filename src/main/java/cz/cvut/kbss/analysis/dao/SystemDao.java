@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.dao;
 
 import cz.cvut.kbss.analysis.config.conf.PersistenceConf;
+import cz.cvut.kbss.analysis.exception.PersistenceException;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.service.IdentifierService;
@@ -47,5 +48,29 @@ public class SystemDao extends ManagedEntityDao<System> {
                 .setParameter("systemURI", systemURI)
                 .setParameter("hasComponentPartProp", HAS_COMPONENT_PART)
                 .getResultList();
+    }
+
+    public List<URI> findSystemsFaultTrees(URI uri){
+        try {
+            return em.createNativeQuery("""
+                                    PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+                                    
+                                    SELECT DISTINCT ?ftUri WHERE {
+                                        ?uri a ?type.
+                                        ?_subsystemUri fta:is-part-of* ?uri.
+                                        ?behavior fta:has-component ?_subsystemUri.
+                                        ?rootEventType fta:is-manifestation-of ?behavior .
+                                        ?rootEvent fta:is-derived-from ?rootEventType.
+                                        ?ftUri fta:is-manifested-by ?rootEvent .
+                                        ?ftUri a fta:fault-tree.
+                                    }
+                                    """,
+                            URI.class)
+                    .setParameter("uri", uri)
+                    .setParameter("type", typeUri)
+                    .getResultList();
+        } catch (RuntimeException e) {
+            throw new PersistenceException(e);
+        }
     }
 }
