@@ -63,12 +63,12 @@ public class UserRepositoryService extends BaseRepositoryService<User> {
         User currentUser = getCurrentUser();
         if (!currentUser.getUri().equals(userUpdate.getUri())) {
             log.warn("< updateCurrent - URIs do not match! {} != {}", currentUser.getUri(), userUpdate.getUri());
-            throw new LogicViolationException("User update uri does not match current user!");
+            throw new LogicViolationException("error.user.update.uriMismatch","User update uri does not match current user!");
         }
 
         if (!passwordEncoder.matches(userUpdate.getPassword(), currentUser.getPassword())) {
             log.warn("< updateCurrent - Old password incorrect!");
-            throw new LogicViolationException("Old password incorrect!");
+            throw new LogicViolationException("error.user.update.incorrectOldPassword","Old password incorrect!");
         }
 
         User user = userUpdate.asUser();
