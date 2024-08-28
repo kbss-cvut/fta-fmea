@@ -73,7 +73,7 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         if(!existingSystems.isEmpty())
             throw new LogicViolationException((
                     "Cannot create system with name \"%s\", " +
-                            "the name is already assigned by other system.")
+                            "the name is already assigned to another system.")
                     .formatted(system.getName()));
         this.persist(system);
         return system;
@@ -96,6 +96,12 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     @Transactional
     public System rename(System systemRename) {
         log.info("> rename - {}", systemRename);
+        List<URI> existingSystems = systemDao.findUriByName(systemRename.getName());
+        if(!existingSystems.isEmpty())
+            throw new LogicViolationException((
+                    "Cannot rename system to \"%s\", " +
+                            "the name is already assigned to another system.")
+                    .formatted(systemRename.getName()));
 
         System system = findRequired(systemRename.getUri());
         system.setName(systemRename.getName());
