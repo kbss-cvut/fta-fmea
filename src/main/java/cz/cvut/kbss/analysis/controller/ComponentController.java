@@ -36,7 +36,7 @@ public class ComponentController {
 
     @Operation(summary = "Retrieve all components")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved all components")
+            @ApiResponse(responseCode = "200", description = "Retrieved all components")
     })
     @GetMapping(produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
     public List<Component> findAll() {
@@ -46,7 +46,7 @@ public class ComponentController {
 
     @Operation(summary = "Create a new component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Component created successfully"),
+            @ApiResponse(responseCode = "201", description = "Component created"),
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
@@ -58,7 +58,7 @@ public class ComponentController {
 
     @Operation(summary = "Update an existing component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Component updated successfully"),
+            @ApiResponse(responseCode = "200", description = "Component updated"),
     })
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Component update(@RequestBody ComponentUpdateDTO componentUpdate) {
@@ -68,7 +68,7 @@ public class ComponentController {
 
     @Operation(summary = "Delete a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Component deleted successfully"),
+            @ApiResponse(responseCode = "204", description = "Component deleted"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -82,7 +82,7 @@ public class ComponentController {
 
     @Operation(summary = "Retrieve functions of a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Functions retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Functions retrieved"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @GetMapping(value = "/{componentFragment}/functions", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
@@ -94,7 +94,7 @@ public class ComponentController {
 
     @Operation(summary = "Retrieve failure modes of a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Failure modes retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Failure modes retrieved"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @GetMapping(value = "/{componentFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE})
@@ -105,10 +105,9 @@ public class ComponentController {
     }
 
 
-    @Operation(summary = "Add a failure mode to a component")
+    @Operation(summary = "Add new failure mode to a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Failure mode added successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "201", description = "Failure mode added"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
@@ -117,12 +116,12 @@ public class ComponentController {
         log.info("> addFailureMode - {}, {}", componentFragment, failureMode);
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
 
-        return repositoryService.addFailureMode(componentUri,failureMode);
+        return repositoryService.addFailureMode(componentUri, failureMode);
     }
 
     @Operation(summary = "Add a failure mode by URI to a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Failure mode added by URI successfully"),
+            @ApiResponse(responseCode = "201", description = "Failure mode added"),
             @ApiResponse(responseCode = "404", description = "Component or failure mode not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
@@ -136,7 +135,7 @@ public class ComponentController {
 
     @Operation(summary = "Delete a failure mode from a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Failure mode deleted successfully"),
+            @ApiResponse(responseCode = "204", description = "Failure mode deleted "),
             @ApiResponse(responseCode = "404", description = "Component or failure mode not found")
     })
     @DeleteMapping(value = "/{componentFragment}/failureModes/{failureModeFragment}")
@@ -151,8 +150,7 @@ public class ComponentController {
 
     @Operation(summary = "Add a function to a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Function added successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "201", description = "Function added"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
@@ -164,19 +162,25 @@ public class ComponentController {
         return repositoryService.addFunction(componentUri, function);
     }
 
+
+    @Operation(summary = "Add function by URI to a component")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Function added to the component"),
+            @ApiResponse(responseCode = "404", description = "Component or Function not found"),
+    })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{componentFragment}/functions/{functionFragment}", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public Function addFunctionByURI(@PathVariable(name = "componentFragment") String componentFragment, @PathVariable(name = "functionFragment") String functionFragment) {
         log.info("> addFunction - {}, {}", componentFragment, functionFragment);
         URI componentUri = identifierService.composeIdentifier(Vocabulary.s_c_component, componentFragment);
         URI functionUri = identifierService.composeIdentifier(Vocabulary.s_c_function, functionFragment);
-        
+
         return repositoryService.addFunctionByURI(componentUri, functionUri);
     }
 
     @Operation(summary = "Add a function by URI to a component")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Function added by URI successfully"),
+            @ApiResponse(responseCode = "201", description = "Function added by URI"),
             @ApiResponse(responseCode = "404", description = "Component or function not found")
     })
     @DeleteMapping(value = "/{componentFragment}/functions/{functionFragment}")
@@ -191,7 +195,7 @@ public class ComponentController {
 
     @Operation(summary = "Link two components")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Components linked successfully"),
+            @ApiResponse(responseCode = "200", description = "Components linked"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @PostMapping(value = "/{componentFragment}/linkComponent/{linkFragment}")
@@ -207,7 +211,7 @@ public class ComponentController {
 
     @Operation(summary = "Unlink a component from its linked components")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Component unlinked successfully"),
+            @ApiResponse(responseCode = "204", description = "Component unlinked"),
             @ApiResponse(responseCode = "404", description = "Component not found")
     })
     @DeleteMapping(value = "/{componentFragment}/linkComponent")
@@ -221,12 +225,12 @@ public class ComponentController {
 
     @Operation(summary = "Merge two components into one")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Components merged successfully"),
+            @ApiResponse(responseCode = "204", description = "Components merged"),
             @ApiResponse(responseCode = "404", description = "One or both components not found")
     })
     @PostMapping(value = "/mergeComponents/{sourceFragment}/{targetFragment}")
     public void mergeComponents(@PathVariable(name = "sourceFragment") String sourceFragment
-            ,@PathVariable(name = "targetFragment") String targetFragment){
+            , @PathVariable(name = "targetFragment") String targetFragment) {
         log.info("> mergeComponents - {} {}", sourceFragment, targetFragment);
 
         URI sourceUri = identifierService.composeIdentifier(Vocabulary.s_c_component, sourceFragment);
