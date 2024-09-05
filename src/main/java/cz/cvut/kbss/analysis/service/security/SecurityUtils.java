@@ -15,8 +15,6 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
  * Handle user session-related functions.
  */
@@ -56,12 +54,8 @@ public class SecurityUtils {
     }
 
     public UserReference getCurrentUserReference() {
-        String username = Optional.ofNullable(SecurityContextHolder.getContext())
-                .map(c -> c.getAuthentication())
-                .map(a -> a.getName()).orElse(null);
-        if(username == null)
-            return null;
-        return userDao.findUserReferenceByUsername(username);
+        User user = getCurrentUser();
+        return new UserReference(user);
     }
 
     //    TODO map role, but I am not sure which changes in the model when be required if I add addRole method to User
