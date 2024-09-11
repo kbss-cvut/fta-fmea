@@ -38,7 +38,7 @@ public class SecurityUtils {
      * If the user is impersonating another user, the impersonated user is returned.
      * Otherwise, the currently authenticated user is returned.
      *
-     * @return
+     * @return the instance of the User class representing the currently authenticated user
      */
     public User getCurrentUser() {
         final SecurityContext context = SecurityContextHolder.getContext();
@@ -53,9 +53,21 @@ public class SecurityUtils {
         }
     }
 
+    public String getCurrentUsername(){
+        final SecurityContext context = SecurityContextHolder.getContext();
+        assert context != null;
+        final Object principal = context.getAuthentication().getPrincipal();
+        if (principal instanceof Jwt) {
+            final OidcUserInfo userInfo = new OidcUserInfo(((Jwt)principal).getClaims());
+            return userInfo.getPreferredUsername();
+        } else {
+            return context.getAuthentication().getName();
+        }
+    }
+
     public UserReference getCurrentUserReference() {
-        User user = getCurrentUser();
-        return new UserReference(user);
+        String username = getCurrentUsername();
+        return userDao.findUserReferenceByUsername(username);
     }
 
     //    TODO map role, but I am not sure which changes in the model when be required if I add addRole method to User
