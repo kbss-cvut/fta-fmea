@@ -108,7 +108,13 @@ public class ComponentController {
     @Operation(summary = "Add new failure mode to a component")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Failure mode added"),
-            @ApiResponse(responseCode = "404", description = "Component not found")
+            @ApiResponse(responseCode = "400", description = """
+    Invalid Invalid failureMode, e.g.
+    - The uri should be null or unique
+    - Duplicate entity name
+    - Name must not be empty
+    """),
+            @ApiResponse(responseCode = "404", description = "Component identified by <.../componentFragment> not found.")
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{componentFragment}/failureModes", produces = {JsonLd.MEDIA_TYPE, MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
