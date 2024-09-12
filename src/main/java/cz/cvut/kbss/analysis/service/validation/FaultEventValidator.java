@@ -1,43 +1,36 @@
 package cz.cvut.kbss.analysis.service.validation;
 
+import cz.cvut.kbss.analysis.dao.BaseDao;
 import cz.cvut.kbss.analysis.dao.FaultEventDao;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
-import cz.cvut.kbss.analysis.util.Vocabulary;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 @Qualifier("faultEventValidator")
 @Slf4j
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class FaultEventValidator implements Validator {
+public class FaultEventValidator extends NamedEntityValidator<FaultEvent> {
 
     private final FaultEventDao faultEventDao;
-    private final SpringValidatorAdapter validatorAdapter;
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return FaultEvent.class.isAssignableFrom(clazz);
+    public FaultEventValidator(SpringValidatorAdapter validatorAdapter, FaultEventDao faultEventDao) {
+        super(FaultEvent.class, validatorAdapter);
+        this.faultEventDao = faultEventDao;
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
-        validatorAdapter.validate(target, errors);
+    protected BaseDao<FaultEvent> getPrimaryDao() {
+        return faultEventDao;
+    }
 
+    protected void customValidation(Object target, Errors errors, Object... validationHints ){
+        super.customValidation(target, errors, validationHints);
         FaultEvent instance = (FaultEvent) target;
-
-        boolean duplicate = faultEventDao.existsWithPredicate(Vocabulary.s_p_name, instance.getName());
-        if(instance.getUri() == null && duplicate) {
-            errors.rejectValue("name", "name.duplicate");
-        }
 
         if (instance.getEventType() == FtaEventType.INTERMEDIATE && (instance.getGateType() == null || instance.getGateType() == GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
