@@ -114,6 +114,6 @@ public class OperationalDataFilterService extends BaseRepositoryService<Operatio
     }
 
     @Override
-    protected void validate(OperationalDataFilter instance) {
+    public void validate(OperationalDataFilter instance, Object ... groups) {
     }
 }

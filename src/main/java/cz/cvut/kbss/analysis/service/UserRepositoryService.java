@@ -7,13 +7,13 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.exception.UsernameNotAvailableException;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class UserRepositoryService extends BaseRepositoryService<User> {
     private final SecurityUtils securityUtils;
 
     @Autowired
-    public UserRepositoryService(@Qualifier("defaultValidator") Validator validator, UserDao userDao, PasswordEncoder passwordEncoder, SecurityUtils securityUtils) {
+    public UserRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator, UserDao userDao, PasswordEncoder passwordEncoder, SecurityUtils securityUtils) {
         super(validator);
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;

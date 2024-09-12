@@ -10,6 +10,7 @@ import cz.cvut.kbss.analysis.model.diagram.Rectangle;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.strategy.DirectFtaEvaluation;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.*;
@@ -39,7 +39,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     private final SecurityUtils securityUtils;
 
     @Autowired
-    public FaultEventRepositoryService(@Qualifier("faultEventValidator") Validator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao, FaultEventTypeService faultEventTypeService, FaultEventTypeDao faultEventTypeDao, SecurityUtils securityUtils) {
+    public FaultEventRepositoryService(@Qualifier("faultEventValidator") EntityValidator validator, FaultEventDao faultEventDao, ComponentRepositoryService componentRepositoryService, FaultTreeDao faultTreeDao, FaultEventTypeService faultEventTypeService, FaultEventTypeDao faultEventTypeDao, SecurityUtils securityUtils) {
         super(validator);
         this.faultEventDao = faultEventDao;
         this.componentRepositoryService = componentRepositoryService;
@@ -62,6 +62,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     @Transactional
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
+        validateNew(inputEvent);
         FaultEvent currentEvent = findRequired(eventUri);
 
         if(inputEvent.getUri() == null && inputEvent.getRectangle() == null)

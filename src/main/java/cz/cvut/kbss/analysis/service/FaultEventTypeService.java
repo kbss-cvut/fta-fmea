@@ -84,6 +84,6 @@ public class FaultEventTypeService extends BaseRepositoryService<FaultEventType>
     }
 
     @Override
-    protected void validate(FaultEventType instance) {
+    public void validate(FaultEventType instance, Object ... groups) {
     }
 }

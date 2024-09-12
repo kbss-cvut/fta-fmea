@@ -5,12 +5,12 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dto.update.FailureModesRowRpnUpdateDTO;
 import cz.cvut.kbss.analysis.model.FailureModesRow;
 import cz.cvut.kbss.analysis.model.Mitigation;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 
@@ -22,8 +22,8 @@ public class FailureModesRowRepositoryService extends BaseRepositoryService<Fail
     private final MitigationRepositoryService mitigationRepositoryService;
 
     @Autowired
-    public FailureModesRowRepositoryService(@Qualifier("defaultValidator") Validator validator, FailureModesRowDao failureModesRowDao
-            ,MitigationRepositoryService mitigationRepositoryService) {
+    public FailureModesRowRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator, FailureModesRowDao failureModesRowDao
+            , MitigationRepositoryService mitigationRepositoryService) {
         super(validator);
         this.failureModesRowDao = failureModesRowDao;
         this.mitigationRepositoryService = mitigationRepositoryService;

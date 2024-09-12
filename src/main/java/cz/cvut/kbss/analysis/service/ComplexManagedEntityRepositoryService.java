@@ -6,9 +6,9 @@ import cz.cvut.kbss.analysis.dao.UserDao;
 import cz.cvut.kbss.analysis.model.ManagedEntity;
 import cz.cvut.kbss.analysis.model.UserReference;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ public abstract class ComplexManagedEntityRepositoryService<T extends ManagedEnt
     protected final UserDao userDao;
     protected final SecurityUtils securityUtils;
 
-    public ComplexManagedEntityRepositoryService(Validator validator, UserDao userDao, SecurityUtils securityUtils) {
+    public ComplexManagedEntityRepositoryService(EntityValidator validator, UserDao userDao, SecurityUtils securityUtils) {
         super(validator);
         this.userDao = userDao;
         this.securityUtils = securityUtils;

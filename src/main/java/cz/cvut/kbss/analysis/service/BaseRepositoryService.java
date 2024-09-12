@@ -12,11 +12,12 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
 import cz.cvut.kbss.analysis.exception.ValidationException;
 import cz.cvut.kbss.analysis.model.util.HasIdentifier;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
+import cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
-import org.springframework.validation.Validator;
 
 
 /**
@@ -42,9 +43,9 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      */
     protected abstract GenericDao<T> getPrimaryDao();
 
-    private final Validator validator;
+    private final EntityValidator validator;
 
-    protected BaseRepositoryService(Validator validator) {
+    protected BaseRepositoryService(EntityValidator validator) {
         this.validator = validator;
     }
 
@@ -137,7 +138,7 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      * @param instance The instance to be persisted, not {@code null}
      */
     protected void prePersist(@NonNull T instance) {
-        validate(instance);
+        validate(instance, ValidationScopes.Create.class);
     }
 
     protected void postPersist(@NonNull T instance) {
@@ -173,7 +174,7 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
         if (!exists(instance.getUri())) {
             throw EntityNotFoundException.create(instance.getClass().getSimpleName(), instance.getUri());
         }
-        validate(instance);
+        validate(instance, ValidationScopes.Update.class);
     }
 
     /**
@@ -260,15 +261,23 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      * @param instance The instance to validate
      * @throws ValidationException In case the instance is not valid
      */
-    protected void validate(T instance) {
+    public void validate(T instance, Object ... groups) {
         DataBinder binder = new DataBinder(instance);
         binder.setValidator(validator);
         BindingResult bindingResult = binder.getBindingResult();
 
-        validator.validate(instance, bindingResult);
+        validator.validate(instance, bindingResult, groups);
         if(bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.getAllErrors());
         }
+    }
+
+    public void validateNew(T instance){
+        validate(instance, ValidationScopes.Create.class);
+    }
+
+    public void validateUpdate(T instance){
+        validate(instance, ValidationScopes.Update.class);
     }
 
     public URI getToolContext(URI uri){
