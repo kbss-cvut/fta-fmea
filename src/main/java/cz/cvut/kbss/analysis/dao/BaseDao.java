@@ -302,4 +302,9 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
                 .setParameter("context", context)
                 .executeUpdate();
     }
+
+    @Override
+    public Class<T> getType() {
+        return type;
+    }
 }

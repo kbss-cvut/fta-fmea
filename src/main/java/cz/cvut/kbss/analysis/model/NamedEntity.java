@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class NamedEntity extends AbstractEntity{
 
-    @NotEmpty(message = "Name must not be empty")
+    @NotEmpty(message = "name is empty.")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_name)
     private String name;

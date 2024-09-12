@@ -262,7 +262,8 @@ public abstract class BaseRepositoryService<T extends HasIdentifier> {
      * @throws ValidationException In case the instance is not valid
      */
     public void validate(T instance, Object ... groups) {
-        DataBinder binder = new DataBinder(instance);
+        DataBinder binder = new DataBinder(instance, getPrimaryDao().getType().getSimpleName());
+
         binder.setValidator(validator);
         BindingResult bindingResult = binder.getBindingResult();
 
