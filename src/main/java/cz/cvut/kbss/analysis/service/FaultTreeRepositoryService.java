@@ -4,8 +4,8 @@ import cz.cvut.kbss.analysis.controller.util.PagingUtils;
 import cz.cvut.kbss.analysis.dao.*;
 import cz.cvut.kbss.analysis.dao.util.FaultTreeFilterParams;
 import cz.cvut.kbss.analysis.exception.EntityNotFoundException;
-import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.System;
+import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.model.ava.ATASystem;
 import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.model.diagram.Rectangle;
@@ -19,6 +19,7 @@ import cz.cvut.kbss.analysis.service.external.OperationalDataService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -56,7 +56,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final FailureRateDao failureRateDao;
 
     @Autowired
-    public FaultTreeRepositoryService(@Qualifier("defaultValidator") Validator validator,
+    public FaultTreeRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator,
                                       FaultTreeDao faultTreeDao,
                                       FaultEventScenarioDao faultEventScenarioDao,
                                       FaultEventRepositoryService faultEventRepositoryService,

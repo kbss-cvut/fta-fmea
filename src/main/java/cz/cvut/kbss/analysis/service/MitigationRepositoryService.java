@@ -4,12 +4,12 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.dao.MitigationDao;
 import cz.cvut.kbss.analysis.dto.update.MitigationUpdateDTO;
 import cz.cvut.kbss.analysis.model.Mitigation;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 
@@ -17,10 +17,10 @@ import java.net.URI;
 @Service
 public class MitigationRepositoryService extends BaseRepositoryService<Mitigation> {
 
-    private MitigationDao mitigationDao;
+    private final MitigationDao mitigationDao;
 
     @Autowired
-    public MitigationRepositoryService(@Qualifier("defaultValidator") Validator validator, MitigationDao mitigationDao) {
+    public MitigationRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator, MitigationDao mitigationDao) {
         super(validator);
         this.mitigationDao = mitigationDao;
     }

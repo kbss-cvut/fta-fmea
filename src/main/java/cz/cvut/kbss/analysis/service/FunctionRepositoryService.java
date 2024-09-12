@@ -6,15 +6,18 @@ import cz.cvut.kbss.analysis.dao.GenericDao;
 import cz.cvut.kbss.analysis.model.Behavior;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -24,7 +27,7 @@ public class FunctionRepositoryService extends BaseRepositoryService<Function> {
     private final FailureModeDao failureModeDao;
 
     @Autowired
-    public FunctionRepositoryService(@Qualifier("functionValidator") Validator validator, FunctionDao functionDao, FailureModeDao failureModeDao) {
+    public FunctionRepositoryService(@Qualifier("functionValidator") EntityValidator validator, FunctionDao functionDao, FailureModeDao failureModeDao) {
         super(validator);
         this.functionDao = functionDao;
         this.failureModeDao = failureModeDao;

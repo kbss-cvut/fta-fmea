@@ -11,6 +11,7 @@ import cz.cvut.kbss.analysis.model.Item;
 import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.model.opdata.OperationalDataFilter;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     private final OperationalDataFilterService operationalDataFilterService;
 
     @Autowired
-    public SystemRepositoryService(@Qualifier("defaultValidator") Validator validator,
+    public SystemRepositoryService(@Qualifier("systemValidator") EntityValidator validator,
                                    SystemDao systemDao,
                                    ComponentRepositoryService componentRepositoryService,
                                    ComponentDao componentDao,
@@ -69,12 +69,6 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
 
     @Transactional
     public System create(System system){
-        List<URI> existingSystems = systemDao.findUriByName(system.getName());
-        if(!existingSystems.isEmpty())
-            throw new LogicViolationException((
-                    "Cannot create system with name \"%s\", " +
-                            "the name is already assigned to another system.")
-                    .formatted(system.getName()));
         this.persist(system);
         return system;
     }
@@ -96,12 +90,6 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     @Transactional
     public System rename(System systemRename) {
         log.info("> rename - {}", systemRename);
-        List<URI> existingSystems = systemDao.findUriByName(systemRename.getName());
-        if(!existingSystems.isEmpty())
-            throw new LogicViolationException((
-                    "Cannot rename system to \"%s\", " +
-                            "the name is already assigned to another system.")
-                    .formatted(systemRename.getName()));
 
         System system = findRequired(systemRename.getUri());
         system.setName(systemRename.getName());

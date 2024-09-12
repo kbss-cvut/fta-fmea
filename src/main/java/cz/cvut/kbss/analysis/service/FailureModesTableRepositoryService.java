@@ -9,13 +9,13 @@ import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.model.*;
 import cz.cvut.kbss.analysis.service.util.FaultTreeTraversalUtils;
 import cz.cvut.kbss.analysis.service.util.Pair;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.io.StringWriter;
 import java.net.URI;
@@ -33,7 +33,7 @@ public class FailureModesTableRepositoryService extends BaseRepositoryService<Fa
     private final FunctionRepositoryService functionRepositoryService;
 
     @Autowired
-    public FailureModesTableRepositoryService(@Qualifier("defaultValidator") Validator validator,
+    public FailureModesTableRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator,
                                               FailureModesTableDao failureModesTableDao,
                                               FaultEventRepositoryService faultEventRepositoryService,
                                               FunctionRepositoryService functionRepositoryService) {

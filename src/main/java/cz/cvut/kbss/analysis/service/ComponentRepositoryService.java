@@ -6,12 +6,12 @@ import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.Function;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
     private final FunctionRepositoryService functionService;
 
     @Autowired
-    public ComponentRepositoryService(@Qualifier("componentValidator") Validator validator, ComponentDao componentDao
+    public ComponentRepositoryService(@Qualifier("componentValidator") EntityValidator validator, ComponentDao componentDao
             , FailureModeRepositoryService failureModeRepositoryService, FunctionRepositoryService functionService) {
         super(validator);
         this.componentDao = componentDao;
@@ -113,6 +113,8 @@ public class ComponentRepositoryService extends BaseRepositoryService<Component>
     @Transactional
     public FailureMode addFailureMode(URI componentUri, FailureMode failureMode) {
         log.info("> addFailureMode - {}, {}", componentUri, failureMode);
+
+        failureModeRepositoryService.validateNew(failureMode);
 
         Component component = findRequired(componentUri);
         component.addFailureMode(failureMode);
