@@ -29,8 +29,15 @@ public class FaultEventValidator extends NamedEntityValidator<FaultEvent> {
     }
 
     protected void customValidation(Object target, Errors errors, Object... validationHints ){
-        super.customValidation(target, errors, validationHints);
+        ConstraintGroupsAdapter groups = new ConstraintGroupsAdapter(validationHints);
         FaultEvent instance = (FaultEvent) target;
+
+        if(groups.isCreateGroup() && exists(instance)){
+            errors.rejectValue("uri", "uri.exists", "The uri should be null or unique");
+        }
+        if(groups.isUpdateGroup() && !exists(instance)){
+            errors.rejectValue("uri", "uri.not-exists", "Uri does not refer to an existing entity");
+        }
 
         if (instance.getEventType() == FtaEventType.INTERMEDIATE && (instance.getGateType() == null || instance.getGateType() == GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
