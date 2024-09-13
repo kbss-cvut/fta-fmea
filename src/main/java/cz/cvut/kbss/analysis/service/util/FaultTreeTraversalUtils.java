@@ -46,7 +46,7 @@ public class FaultTreeTraversalUtils {
                     if (child.getEventType() == FtaEventType.INTERMEDIATE) {
                         String message = "Intermediate event must not be the end of the path!";
                         log.warn(message);
-                        throw new LogicViolationException(message);
+                        throw new LogicViolationException("error.faultTree.intermediateEventAsLeaf",message);
                     }
 
                     path.add(child);

@@ -57,7 +57,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Override
     protected void preRemove(FaultEvent instance) {
         boolean isRootEvent = faultTreeDao.isRootEvent(instance.getUri());
-        if (isRootEvent) throw new LogicViolationException("Root event of tree mustn't be deleted!");
+        if (isRootEvent) throw new LogicViolationException("error.faultTree.rootEvent.deleteViolation","Root event of tree mustn't be deleted!");
     }
 
     @Transactional

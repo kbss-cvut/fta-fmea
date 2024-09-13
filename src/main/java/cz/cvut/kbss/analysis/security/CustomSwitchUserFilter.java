@@ -16,7 +16,7 @@ public class CustomSwitchUserFilter extends SwitchUserFilter {
     protected Authentication attemptSwitchUser(HttpServletRequest request) throws AuthenticationException {
         final Authentication switchTo = super.attemptSwitchUser(request);
         if (switchTo.getAuthorities().stream().anyMatch(a -> SecurityConstants.ROLE_ADMIN.equals(a.getAuthority()))) {
-            throw new BadRequestException("Cannot impersonate admin.");
+            throw new BadRequestException("error.user.impersonation.adminImpersonation","Cannot impersonate admin.");
         }
         return switchTo;
     }
