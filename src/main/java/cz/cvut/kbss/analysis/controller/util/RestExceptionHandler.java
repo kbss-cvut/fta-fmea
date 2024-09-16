@@ -86,4 +86,16 @@ public class RestExceptionHandler {
                 .requestUri(request.getRequestURI())
                 .build();
     }
+
+    @ExceptionHandler(UsernameNotAvailableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorInfo handleUsernameNotAvailableException(HttpServletRequest request, UsernameNotAvailableException e) {
+        log.warn("> handleUsernameNotAvailableException - {}", request.getRequestURI());
+        return ErrorInfo.builder()
+                .message(e.getMessage())
+                .requestUri(request.getRequestURI())
+                .messageId(e.getMessageId())
+                .messageArguments(e.getMessageArguments())
+                .build();
+    }
 }
