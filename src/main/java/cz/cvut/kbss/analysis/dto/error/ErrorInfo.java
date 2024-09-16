@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,5 +18,7 @@ public class ErrorInfo {
     private String messageId;
 
     private String requestUri;
+
+    private Map<String, String> messageArguments;
 
 }

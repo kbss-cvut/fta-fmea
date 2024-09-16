@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -68,7 +69,13 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     }
 
     @Transactional
-    public System create(System system){
+    public System create(System system) {
+        List<URI> existingSystems = systemDao.findUriByName(system.getName());
+        if (!existingSystems.isEmpty())
+            throw new LogicViolationException("error.system.nameExists",
+                    ("System with name\"%s\" already exists")
+                    .formatted(system.getName()),
+                    Map.of("systemName", system.getName()));
         this.persist(system);
         return system;
     }
@@ -77,12 +84,15 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     public void remove(@NonNull URI instanceUri) {
         System system = findAllSummary(instanceUri);
         List<URI> faultTrees = systemDao.findSystemsFaultTrees(instanceUri);
-        if(!faultTrees.isEmpty()) {
-
-            throw new LogicViolationException((
-                    "Cannot delete system \"%s\" (<%s>), " +
-                            "the system has fault %d trees.")
-                    .formatted(system.getName(), instanceUri, faultTrees.size()));
+        if (!faultTrees.isEmpty()) {
+            throw new LogicViolationException("error.system.removeWithFaultTrees", (
+                    "System \"%s\" (<%s>), " +
+                            "has %d fault trees.")
+                    .formatted(system.getName(), instanceUri, faultTrees.size()),
+                    Map.of(
+                            "systemName", system.getName(),
+                            "instanceUri", instanceUri.toString(),
+                            "faultTreeCount", String.valueOf(faultTrees.size())));
         }
         super.remove(instanceUri);
     }
@@ -128,7 +138,7 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     public Set<FailureMode> getAllFailureModes(URI systemUri) {
         System system = findRequired(systemUri);
         Set<FailureMode> failureModes = new HashSet<>();
-        for(Item comp: system.getComponents()) {
+        for (Item comp : system.getComponents()) {
             failureModes.addAll(comp.getFailureModes());
         }
         return failureModes;
@@ -143,16 +153,16 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
     }
 
     @Transactional(readOnly = true)
-    public List<System> findAllSummaries(){
-        List<System> systems = ((SystemDao)getPrimaryDao()).findAllSummaries();
-        for(System system : systems)
+    public List<System> findAllSummaries() {
+        List<System> systems = ((SystemDao) getPrimaryDao()).findAllSummaries();
+        for (System system : systems)
             setOperationalDataFilter(system);
         return systems;
     }
 
     @Transactional(readOnly = true)
-    public System findAllSummary(URI systemUri){
-        System system = ((SystemDao)getPrimaryDao()).findSummary(systemUri);
+    public System findAllSummary(URI systemUri) {
+        System system = ((SystemDao) getPrimaryDao()).findSummary(systemUri);
         setOperationalDataFilter(system);
         return system;
     }
@@ -163,7 +173,7 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         system.setGlobalOperationalDataFilter(operationalDataFilterService.getDefaultGlobalFilter());
     }
 
-    public URI getToolContextForGeneralSystem(URI uri){
+    public URI getToolContextForGeneralSystem(URI uri) {
         return GENERAL_SYSTEM_CONTEXT;
     }
 
