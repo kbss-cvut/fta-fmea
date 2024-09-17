@@ -1,25 +1,39 @@
 package cz.cvut.kbss.analysis.exception;
 
 import cz.cvut.kbss.analysis.model.FaultEvent;
+import lombok.Getter;
 
+import java.util.Map;
+
+@Getter
 public class CalculationException extends RuntimeException{
-    public CalculationException() {
-    }
+
+    private final String messageId;
+    private Map<String, String> messageArguments;
+
 
     public CalculationException(String message) {
         super(message);
+        messageId = null;
+    }
+
+    public CalculationException(String messageId, String message, Map<String, String> args){
+        super(message);
+        this.messageId = messageId;
+        this.messageArguments = args;
     }
 
     public CalculationException(String message, Throwable cause) {
         super(message, cause);
+        this.messageId = null;
     }
 
     public static CalculationException childProbabilityNotSet(FaultEvent event){
-        return new CalculationException(childProbabilityNotSetMessage(event));
+        return new CalculationException("error.faultEvent.childProbabilityNotSet",childProbabilityNotSetMessage(event), Map.of("event", event.getName(), "uri", event.getUri().toString()));
     }
 
     public static CalculationException probabilityNotSet(FaultEvent event){
-        return new CalculationException(probabilityNotSetMessage(event));
+        return new CalculationException("error.faultEvent.probabilityNotSet",probabilityNotSetMessage(event), Map.of("event", event.getName(), "uri", event.getUri().toString()));
     }
 
     public static String probabilityNotSetMessage(FaultEvent event){

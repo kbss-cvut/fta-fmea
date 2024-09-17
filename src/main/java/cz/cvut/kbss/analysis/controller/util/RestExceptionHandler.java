@@ -83,7 +83,9 @@ public class RestExceptionHandler {
         log.warn("> handleEvaluationException - {}", request.getRequestURI());
         return ErrorInfo.builder()
                 .message(e.getMessage())
+                .messageId(e.getMessageId())
                 .requestUri(request.getRequestURI())
+                .messageArguments(e.getMessageArguments())
                 .build();
     }
 

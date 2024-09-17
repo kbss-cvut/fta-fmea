@@ -73,8 +73,8 @@ public class SystemRepositoryService extends ComplexManagedEntityRepositoryServi
         List<URI> existingSystems = systemDao.findUriByName(system.getName());
         if (!existingSystems.isEmpty())
             throw new LogicViolationException("error.system.nameExists",
-                    ("System with name\"%s\" already exists")
-                    .formatted(system.getName()),
+                    ("System with name \"%s\" already exists")
+                            .formatted(system.getName()),
                     Map.of("systemName", system.getName()));
         this.persist(system);
         return system;

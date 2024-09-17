@@ -33,11 +33,13 @@ public class FTAMinimalCutSetEvaluation {
                 .filter(e -> e.getProbability() == null)
                 .toList();
         if(!fe.isEmpty()){
-            String message =
+            String leafEvents =
                     fe.stream().map(e -> "'%s'".formatted(e.getName()))
-                            .collect(Collectors.joining("\n"  , "The following leaf events do not have specified probability: [\n", "]"));
+                            .collect(Collectors.joining("\n"));
 
-            throw new CalculationException(message);
+            String message = String.format("The following leaf events do not have specified probability:[\n%s]", leafEvents);
+
+            throw new CalculationException("error.faultTree.leafEvents.noProbability", message, Map.of("leafEvents", leafEvents));
         }
         minScenarios = null;
         evaluate(faultTree.getManifestingEvent());
