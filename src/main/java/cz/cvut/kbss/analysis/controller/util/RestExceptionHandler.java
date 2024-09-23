@@ -29,11 +29,13 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorInfo handleNotFoundError(HttpServletRequest request, Throwable t) {
+    public ErrorInfo handleNotFoundError(HttpServletRequest request, EntityNotFoundException e) {
         log.warn("> handleNotFoundError - {}", request.getRequestURI());
         return ErrorInfo.builder()
-                .message(t.getMessage())
+                .message(e.getMessage())
+                .messageId(e.getMessageId())
                 .requestUri(request.getRequestURI())
+                .messageArguments(e.getMessageArguments())
                 .build();
     }
 
@@ -45,6 +47,7 @@ public class RestExceptionHandler {
                 .message(e.getMessage())
                 .messageId(e.getMessageId())
                 .requestUri(request.getRequestURI())
+                .messageArguments(e.getMessageArguments())
                 .build();
     }
 
@@ -80,7 +83,21 @@ public class RestExceptionHandler {
         log.warn("> handleEvaluationException - {}", request.getRequestURI());
         return ErrorInfo.builder()
                 .message(e.getMessage())
+                .messageId(e.getMessageId())
                 .requestUri(request.getRequestURI())
+                .messageArguments(e.getMessageArguments())
+                .build();
+    }
+
+    @ExceptionHandler(UsernameNotAvailableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorInfo handleUsernameNotAvailableException(HttpServletRequest request, UsernameNotAvailableException e) {
+        log.warn("> handleUsernameNotAvailableException - {}", request.getRequestURI());
+        return ErrorInfo.builder()
+                .message(e.getMessage())
+                .requestUri(request.getRequestURI())
+                .messageId(e.getMessageId())
+                .messageArguments(e.getMessageArguments())
                 .build();
     }
 }

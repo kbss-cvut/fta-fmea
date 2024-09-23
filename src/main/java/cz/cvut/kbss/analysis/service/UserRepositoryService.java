@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -47,7 +48,7 @@ public class UserRepositoryService extends BaseRepositoryService<User> {
     public URI register(User user) {
         if (userDao.existsWithUsername(user.getUsername())) {
             log.warn("User with username {} already exists", user.getUsername());
-            throw new UsernameNotAvailableException("Username '" + user.getUsername() + "' has already been used.");
+            throw new UsernameNotAvailableException( "error.user.usernameNotAvailable","Username '" + user.getUsername() + "' has already been used.", Map.of("username", user.getUsername()));
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
