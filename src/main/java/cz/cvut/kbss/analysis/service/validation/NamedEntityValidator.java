@@ -48,13 +48,13 @@ public abstract class NamedEntityValidator<T extends NamedEntity> implements Ent
         NamedEntity entity = (NamedEntity) target;
 
         if(existsWithName(entity))
-            errors.rejectValue("name", "name.duplicate", "Duplicate entity name");
+            errors.rejectValue("name", "name.duplicate", "uri is not null nor unique.");
 
         if(groups.isCreateGroup() && exists(entity)){
-            errors.rejectValue("uri", "uri.exists", "The uri should be null or unique");
+            errors.rejectValue("uri", "uri.exists", "name already exists.");
         }
         if(groups.isUpdateGroup() && !exists(entity)){
-            errors.rejectValue("uri", "uri.not-exists", "Uri does not refer to an existing entity");
+            errors.rejectValue("uri", "uri.not-exists", "uri does not refer to an existing entity.");
         }
     }
 

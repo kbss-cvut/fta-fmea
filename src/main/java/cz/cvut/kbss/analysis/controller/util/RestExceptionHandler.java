@@ -58,7 +58,7 @@ public class RestExceptionHandler {
 
         String errorMessage = e.getErrors()
                 .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .map(err -> "%s %s".formatted(err.getObjectName(),  err.getDefaultMessage()))
                 .collect(Collectors.joining(",", "[", "]"));
 
         return ErrorInfo.builder()
