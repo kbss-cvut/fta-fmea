@@ -171,7 +171,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                     uri -> systemRepositoryService.findAllSummary(uri)
             );
             faultTreeSummary.setSystem(system);
-            setInferStatus(faultTreeSummary);
         }
         return summaries;
     }

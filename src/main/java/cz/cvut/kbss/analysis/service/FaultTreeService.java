@@ -55,8 +55,6 @@ public class FaultTreeService{
                 .map(u -> systemRepositoryService.findAllSummary(u)).orElse( null)
         );
         ft.setSubsystem(summary.getSubsystem());
-        if(ft.getSystem() != null)
-            faultTreeRepositoryService.setInferStatus(ft);
 
         return ft;
     }

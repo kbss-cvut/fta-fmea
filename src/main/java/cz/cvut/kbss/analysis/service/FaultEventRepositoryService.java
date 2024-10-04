@@ -62,6 +62,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     @Transactional
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
+        inputEvent.setProbabilityUpdated(true);
         validateNew(inputEvent);
         FaultEvent currentEvent = findRequired(eventUri);
 
@@ -192,6 +193,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         managedInstance.setDescription(instance.getDescription());
         managedInstance.setGateType(instance.getGateType());
         managedInstance.setEventType(instance.getEventType());
+        if(instance.getProbability() != managedInstance.getProbability())
+            managedInstance.setProbabilityUpdated(true);
         managedInstance.setProbability(instance.getProbability());
         managedInstance.setSupertypes(instance.getSupertypes());
         managedInstance.setChildrenSequence(instance.getChildrenSequence());
@@ -230,12 +233,15 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Override
     protected void postRemove(@NonNull FaultEvent instance) {
         super.postRemove(instance);
+        instance.setProbabilityUpdated(true);
         setChange(instance);
     }
 
     protected void setChange(FaultEvent instance){
         URI context = faultEventDao.getContext(instance);
         UserReference userReference = securityUtils.getCurrentUserReference();
+        if(instance.isProbabilityUpdated())
+            faultTreeDao.updateStatus(context, Status.outOfSync);
         faultTreeDao.setChangedByContext(context, new Date(), userReference.getUri());
     }
 
