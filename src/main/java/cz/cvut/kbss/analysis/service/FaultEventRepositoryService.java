@@ -76,11 +76,13 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         currentEvent.addChildSequenceUri(inputEvent.getUri());
         update(currentEvent);
 
-        setExternalReference(eventUri, inputEvent);
+        setExternalReference(inputEvent);
+        if(inputEvent.getReferences() != null)
+            inputEvent.setProbability(inputEvent.getReferences().getProbability());
         return inputEvent;
     }
 
-    protected void setExternalReference(URI eventUri, FaultEvent inputEvent){
+    public void setExternalReference(FaultEvent inputEvent){
         if(inputEvent.getSupertypes() == null || inputEvent.getEventType() != FtaEventType.EXTERNAL)
             return;
 
@@ -93,8 +95,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         inputEvent.setIsReference(true);
 
         if(supertypes.size() > 1)
-            log.warn("new event added to event <{}> has multiple supertypes [{}]",
-                    eventUri,
+            log.warn("event \"{}\"<{}> , has multiple supertypes [{}]",
+                    inputEvent.getName(), inputEvent.getUri(),
                     supertypes.stream().map(e -> String.format("<%s>", e.getUri().toString()))
                             .collect(Collectors.joining(",")));
 
@@ -105,12 +107,20 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             return;
 
         if(referencedRoots.size() > 1)
-            log.warn("new event added to event <{}> with supertype <{}> is used in multiple root fault events [{}]",
-                    eventUri, supertype.getUri(),
+            log.warn("event \"{}\"<{}> with supertype <{}> is used in multiple root fault events [{}]",
+                    inputEvent.getName(), inputEvent.getUri(), supertype.getUri(),
                     referencedRoots.stream().map(u -> String.format("<%s>", u.toString()))
                             .collect(Collectors.joining(",")));
 
         inputEvent.setReferences(referencedRoots.get(0));
+    }
+
+    @Transactional
+    public void updateProbabilityFromReferencedNode(FaultEvent faultEvent, URI faultTreeUri){
+        if(faultEvent.getReferences() == null || faultEvent.getReferences().getProbability() == null)
+            return;
+        faultEventDao.setProbability(faultEvent.getUri(), faultEvent.getReferences().getProbability(), faultTreeUri);
+        faultEvent.setProbability(faultEvent.getReferences().getProbability());
     }
 
     @Transactional(readOnly = true)

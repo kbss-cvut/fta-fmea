@@ -65,15 +65,8 @@ public class FaultTreeService{
         if(faultTree.getManifestingEvent() == null)
             return;
 
-        Stack<Pair<URI, FaultEvent>> stack = new Stack<>();
-        stack.add(Pair.of(null,faultTree.getManifestingEvent()));
-        while(!stack.isEmpty()){
-            Pair<URI,FaultEvent> p = stack.pop();
-            FaultEvent fe = p.getSecond();
-            faultEventRepositoryService.setExternalReference(p.getFirst(), fe);
-            if(fe.getChildren() == null)
-                continue;
-            fe.getChildren().forEach(c -> stack.push(Pair.of(fe.getUri(), c)));
+        for(FaultEvent fe: faultTree.getAllEvents()){
+            faultEventRepositoryService.setExternalReference(fe);
         }
     }
 
