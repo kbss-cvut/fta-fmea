@@ -51,6 +51,9 @@ public class FaultEvent extends Event {
     @OWLDataProperty(iri = Vocabulary.s_p_probability)
     private Double probability;
 
+    @Transient
+    private boolean probabilityUpdated = false;
+
     @OWLObjectProperty(iri = Vocabulary.s_p_has_selected_estimation, fetch = FetchType.EAGER)
     private URI selectedEstimate;
 

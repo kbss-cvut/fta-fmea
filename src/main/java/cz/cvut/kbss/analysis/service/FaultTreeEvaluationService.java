@@ -35,8 +35,7 @@ public class FaultTreeEvaluationService
 
         faultTree = faultTreeRepositoryService.evaluate(faultTree);
 
-        Status status = faultTreeRepositoryService.getInferedStatus(faultTree);
-        faultTreeDao.updateStatus(faultTree.getUri(), status);
+        faultTreeDao.updateStatus(faultTree.getUri(), Status.ok);
 
         return faultTree;
 

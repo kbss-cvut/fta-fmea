@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Optional;
 
 
 @SparqlResultSetMappings(
@@ -22,7 +23,7 @@ import java.util.HashSet;
 public class FaultTreeSummary extends ManagedEntity{
 
     @OWLDataProperty(iri = Vocabulary.s_p_status)
-    protected Status status;
+    protected String status;
 
     @OWLObjectProperty(iri = Vocabulary.s_p_is_derived_from)
     protected URI rootEvent;
@@ -78,7 +79,7 @@ public class FaultTreeSummary extends ManagedEntity{
             faultTree.getSubsystem().setUri(this.getSubsystemUri());
             faultTree.getSubsystem().setName(this.getSubsystemName());
         }
-        faultTree.setStatus(this.getStatus());
+        Optional.ofNullable(this.getStatus()).map(Status::valueOf).ifPresent(faultTree::setStatus);
         faultTree.setRequiredFailureRate(this.getRequiredFailureRate());
         faultTree.setCalculatedFailureRate(this.getCalculatedFailureRate());
         faultTree.setFhaBasedFailureRate(this.getFhaBasedFailureRate());

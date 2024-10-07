@@ -104,15 +104,16 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
              return em.createNativeQuery("""
                             PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
                             SELECT * WHERE {
-                                BIND(?_uri as ?uri) 
-                                ?uri a ?type. 
+                                BIND(?_uri as ?uri)
+                                ?uri a ?type.
                                 ?uri ?pName ?name.
-                                OPTIONAL{?uri ?pDescription ?description.} 
+                                OPTIONAL{?uri ?pDescription ?description.}
+                                OPTIONAL{?uri ?pStatus ?status.}
                                 OPTIONAL{?uri ?pCreated ?created.}
                                 OPTIONAL{?uri ?pModified ?modified.}
                                 OPTIONAL{?uri ?pCreator ?creator.}
                                 OPTIONAL{?uri ?pLastEditor ?lastEditor.}
-                                OPTIONAL{ 
+                                OPTIONAL{
                                     ?uri fta:is-manifested-by ?rootEvent .
                                     ?rootEvent fta:is-derived-from ?rootEventType.
                                     OPTIONAL{
@@ -132,7 +133,7 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                         ?fhaFailureRateQ fta:has-estimate ?fhaFailureRateP.
                                         ?fhaFailureRateP a fta:failure-rate-estimate;
                                                          fta:value ?fhaBasedFailureRate.
-                                    } 
+                                    }
                                     OPTIONAL{
                                         ?rootEventType fta:is-manifestation-of ?behavior .
                                         ?behavior fta:has-component ?_subsystemUri.
@@ -141,7 +142,7 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                           ?systemUri fta:is-part-of ?system2.
                                         }
                                         ?systemUri fta:name ?systemName.
-                                        
+                            
                                         OPTIONAL{
                                             FILTER(?systemUri != ?_subsystemUri)
                                             BIND(?_subsystemUri as ?subsystemUri)
@@ -157,6 +158,7 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                     .setParameter("type", typeUri)
                     .setParameter("pName", P_HAS_NAME)
                     .setParameter("pDescription", P_HAS_DESCRIPTION)
+                    .setParameter("pStatus", STATUS_PROP)
                     .setParameter("pCreated", P_CREATED)
                     .setParameter("pModified", P_MODIFIED)
                     .setParameter("pCreator", P_CREATOR)

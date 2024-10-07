@@ -62,6 +62,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     @Transactional
     public FaultEvent addInputEvent(URI eventUri, FaultEvent inputEvent) {
+        inputEvent.setProbabilityUpdated(true);
         validateNew(inputEvent);
         FaultEvent currentEvent = findRequired(eventUri);
 
@@ -76,11 +77,13 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         currentEvent.addChildSequenceUri(inputEvent.getUri());
         update(currentEvent);
 
-        setExternalReference(eventUri, inputEvent);
+        setExternalReference(inputEvent);
+        if(inputEvent.getReferences() != null)
+            inputEvent.setProbability(inputEvent.getReferences().getProbability());
         return inputEvent;
     }
 
-    protected void setExternalReference(URI eventUri, FaultEvent inputEvent){
+    public void setExternalReference(FaultEvent inputEvent){
         if(inputEvent.getSupertypes() == null || inputEvent.getEventType() != FtaEventType.EXTERNAL)
             return;
 
@@ -93,8 +96,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         inputEvent.setIsReference(true);
 
         if(supertypes.size() > 1)
-            log.warn("new event added to event <{}> has multiple supertypes [{}]",
-                    eventUri,
+            log.warn("event \"{}\"<{}> , has multiple supertypes [{}]",
+                    inputEvent.getName(), inputEvent.getUri(),
                     supertypes.stream().map(e -> String.format("<%s>", e.getUri().toString()))
                             .collect(Collectors.joining(",")));
 
@@ -105,12 +108,20 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             return;
 
         if(referencedRoots.size() > 1)
-            log.warn("new event added to event <{}> with supertype <{}> is used in multiple root fault events [{}]",
-                    eventUri, supertype.getUri(),
+            log.warn("event \"{}\"<{}> with supertype <{}> is used in multiple root fault events [{}]",
+                    inputEvent.getName(), inputEvent.getUri(), supertype.getUri(),
                     referencedRoots.stream().map(u -> String.format("<%s>", u.toString()))
                             .collect(Collectors.joining(",")));
 
         inputEvent.setReferences(referencedRoots.get(0));
+    }
+
+    @Transactional
+    public void updateProbabilityFromReferencedNode(FaultEvent faultEvent, URI faultTreeUri){
+        if(faultEvent.getReferences() == null || faultEvent.getReferences().getProbability() == null)
+            return;
+        faultEventDao.setProbability(faultEvent.getUri(), faultEvent.getReferences().getProbability(), faultTreeUri);
+        faultEvent.setProbability(faultEvent.getReferences().getProbability());
     }
 
     @Transactional(readOnly = true)
@@ -182,6 +193,8 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         managedInstance.setDescription(instance.getDescription());
         managedInstance.setGateType(instance.getGateType());
         managedInstance.setEventType(instance.getEventType());
+        if(instance.getProbability() != managedInstance.getProbability())
+            managedInstance.setProbabilityUpdated(true);
         managedInstance.setProbability(instance.getProbability());
         managedInstance.setSupertypes(instance.getSupertypes());
         managedInstance.setChildrenSequence(instance.getChildrenSequence());
@@ -220,12 +233,15 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     @Override
     protected void postRemove(@NonNull FaultEvent instance) {
         super.postRemove(instance);
+        instance.setProbabilityUpdated(true);
         setChange(instance);
     }
 
     protected void setChange(FaultEvent instance){
         URI context = faultEventDao.getContext(instance);
         UserReference userReference = securityUtils.getCurrentUserReference();
+        if(instance.isProbabilityUpdated())
+            faultTreeDao.updateStatus(context, Status.outOfSync);
         faultTreeDao.setChangedByContext(context, new Date(), userReference.getUri());
     }
 

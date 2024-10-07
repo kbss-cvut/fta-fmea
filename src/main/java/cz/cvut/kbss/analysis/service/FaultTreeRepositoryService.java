@@ -171,7 +171,6 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
                     uri -> systemRepositoryService.findAllSummary(uri)
             );
             faultTreeSummary.setSystem(system);
-            setInferStatus(faultTreeSummary);
         }
         return summaries;
     }
@@ -564,9 +563,15 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     @Transactional
     public void updateFailureRates(FaultTree faultTree, OperationalDataFilter filter){
         updateFHABasedOperationalFailureRates(faultTree, filter);
+        updateReferencedNodeFailureRates(faultTree);
         updateFaultTreeOperationalFailureRates(faultTree, filter);
     }
 
+    /**
+     * Updates the FHA based operational failure rate of the Root node
+     * @param faultTree
+     * @param filter
+     */
     @Transactional
     public void updateFHABasedOperationalFailureRates(FaultTree faultTree, OperationalDataFilter filter) {
         FaultEventType fhaEvent = (FaultEventType)Optional.ofNullable(faultTree.getManifestingEvent())
@@ -593,6 +598,13 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         }
         updateOperationalFailureRate(systemContext, faultTree.getUri(), estimates[0],
                 faultTree.getManifestingEvent(), fr);
+    }
+
+    @Transactional
+    public void updateReferencedNodeFailureRates(FaultTree faultTree){
+        for(FaultEvent faultEvent : faultTree.getAllEvents()){
+            faultEventRepositoryService.updateProbabilityFromReferencedNode(faultEvent, faultTree.getUri());
+        }
     }
 
     /**
