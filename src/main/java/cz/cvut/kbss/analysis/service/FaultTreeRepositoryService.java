@@ -56,7 +56,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     private final FailureRateDao failureRateDao;
 
     @Autowired
-    public FaultTreeRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator,
+    public FaultTreeRepositoryService(@Qualifier("faultTreeValidator") EntityValidator validator,
                                       FaultTreeDao faultTreeDao,
                                       FaultEventScenarioDao faultEventScenarioDao,
                                       FaultEventRepositoryService faultEventRepositoryService,

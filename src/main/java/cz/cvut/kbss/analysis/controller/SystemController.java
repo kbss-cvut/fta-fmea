@@ -67,10 +67,10 @@ public class SystemController {
     public System rename(@RequestBody System system) {
         log.info("> rename - {}", system);
 
-        System updatedTree = repositoryService.rename(system);
+        System updatedSystem = repositoryService.rename(system);
 
-        log.info("< rename - {}", updatedTree);
-        return updatedTree;
+        log.info("< rename - {}", updatedSystem);
+        return updatedSystem;
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
