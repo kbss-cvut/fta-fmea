@@ -17,3 +17,9 @@ For more details see [README.md](ontology-generator/README.md)
 The data are mapped from Java objects to RDF entities via ontological mapping library JOPA and stored in a local GraphDB database.
 
 The database URL needs to be configured in `application.yml`. The repository first needs to be created.  
+
+## API Documentation
+
+You can access the Swagger UI at the following URL: `http://localhost:9999/swagger-ui.html`
+
+The OpenAPI documentation for the API can be accessed at: `http://localhost:9999/v1/api-docs`
