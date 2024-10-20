@@ -31,6 +31,7 @@ annotator:
 
 spring:
   security:
+    rolePrefix: ff-
     oauth2:
       resourceserver:
         jwt:
