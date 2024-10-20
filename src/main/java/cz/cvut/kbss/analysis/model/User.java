@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import cz.cvut.kbss.analysis.security.SecurityConstants;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
@@ -35,7 +36,7 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
 
     @Transient
-    private List<String> roles = Collections.singletonList("ROLE_USER");
+    private List<String> roles = Collections.singletonList(SecurityConstants.ROLE_USER);
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
