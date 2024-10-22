@@ -82,8 +82,6 @@ public class OAuth2SecurityConfig {
                     new OidcGrantedAuthoritiesExtractor(config).convert(source);
             assert extractedRoles != null;
             final Set<SimpleGrantedAuthority> authorities = new HashSet<>(extractedRoles);
-            // Add default role if it is not present
-            authorities.add(new SimpleGrantedAuthority(SecurityConstants.ROLE_USER));
             return new JwtAuthenticationToken(source, authorities);
         };
     }
