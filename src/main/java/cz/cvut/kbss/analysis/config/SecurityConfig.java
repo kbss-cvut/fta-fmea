@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
@@ -38,7 +39,7 @@ import java.net.URL;
 import java.util.*;
 
 
-@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "internal")
+@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = SecurityConstants.SEC_PROVIDER_INTERNAL)
 @Configuration
 @EnableWebSecurity
 @Slf4j
@@ -53,6 +54,7 @@ public class SecurityConfig {
 
     private final LogoutSuccessHandler logoutSuccessHandler;
 
+    private final SecurityConf securityConf;
 
     private static final String[] COOKIES_TO_DESTROY = {
             SecurityConstants.SESSION_COOKIE_NAME,
@@ -60,13 +62,18 @@ public class SecurityConfig {
             SecurityConstants.CSRF_COOKIE_NAME
     };
 
-
     @Autowired
-    public SecurityConfig(AuthenticationProvider ontologyAuthenticationProvider, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler, LogoutSuccessHandler logoutSuccessHandler) {
+    public SecurityConfig(AuthenticationProvider ontologyAuthenticationProvider, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler, LogoutSuccessHandler logoutSuccessHandler, SecurityConf securityConf) {
         this.ontologyAuthenticationProvider = ontologyAuthenticationProvider;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
+        this.securityConf = securityConf;
+    }
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults(securityConf.getRolePrefix());
     }
 
     @Bean
@@ -87,10 +94,10 @@ public class SecurityConfig {
         final AuthenticationManager authManager = buildAuthenticationManager(http);
         http.authorizeHttpRequests(auth ->
                         auth.requestMatchers("/rest/users/impersonate").
-                                hasAuthority(SecurityConstants.ROLE_ADMIN)
+                                hasAuthority(config.getRolePrefix() + SecurityConstants.ROLE_ADMIN)
                             .requestMatchers("/auth/*").permitAll()
                             .requestMatchers("/").permitAll()
-                            .requestMatchers("/**").hasAuthority(SecurityConstants.ROLE_USER)
+                            .requestMatchers("/**").hasAuthority(config.getRolePrefix() + SecurityConstants.ROLE_USER)
                 )
                 .cors(auth -> auth.configurationSource(corsConfigurationSource(config)))
                 .csrf(AbstractHttpConfigurer::disable)

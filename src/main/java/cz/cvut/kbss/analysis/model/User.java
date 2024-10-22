@@ -1,7 +1,6 @@
 package cz.cvut.kbss.analysis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import cz.cvut.kbss.analysis.security.SecurityConstants;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;

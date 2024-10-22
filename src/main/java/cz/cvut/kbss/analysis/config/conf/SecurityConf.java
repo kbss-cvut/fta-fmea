@@ -19,6 +19,8 @@ public class SecurityConf {
 
     private String appContext;
 
+    private String provider;
+
     private String rolePrefix;
 
     private String roleClaim;
