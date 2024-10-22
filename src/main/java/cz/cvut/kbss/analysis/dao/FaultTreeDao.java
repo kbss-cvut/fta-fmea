@@ -128,8 +128,7 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                                         ?failureRateRequirement fta:to ?requiredFailureRate.
                                     }
                                     OPTIONAL{
-                                        ?rootEventType fta:is-derived-from ?supsup.
-                                        ?supsup fta:has-failure-rate ?fhaFailureRateQ.
+                                        ?rootEventType fta:has-failure-rate ?fhaFailureRateQ.
                                         ?fhaFailureRateQ fta:has-estimate ?fhaFailureRateP.
                                         ?fhaFailureRateP a fta:failure-rate-estimate;
                                                          fta:value ?fhaBasedFailureRate.
