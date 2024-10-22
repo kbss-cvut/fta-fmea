@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = SecurityConstants.SEC_PROVIDER_INTERNAL, matchIfMissing = true)
 @RestController
 @RequestMapping("/users")
 public class UserController {

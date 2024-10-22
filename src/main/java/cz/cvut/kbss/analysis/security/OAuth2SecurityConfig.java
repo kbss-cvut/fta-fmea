@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "oidc")
+@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = SecurityConstants.SEC_PROVIDER_OIDC)
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

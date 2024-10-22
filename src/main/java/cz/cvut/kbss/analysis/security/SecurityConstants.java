@@ -30,4 +30,8 @@ public class SecurityConstants {
     public static final String ROLE_USER = "user";
 
     public static final String ROLE_ADMIN = "admin";
+
+    public static final String SEC_PROVIDER_INTERNAL = "internal";
+
+    public static final String SEC_PROVIDER_OIDC = "oidc";
 }
