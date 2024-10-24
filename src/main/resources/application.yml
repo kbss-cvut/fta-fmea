@@ -43,3 +43,9 @@ operational.data.filter:
 
 operationalFailureRateService: http://localhost:9998/stats/failure-rate
 fhaBasedoperationalFailureRateService: http://localhost:9998/stats/fha-failure-rate
+
+springdoc:
+  api-docs:
+    path: /v1/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
