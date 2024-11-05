@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @SparqlResultSetMappings(
         @SparqlResultSetMapping(name="Summary", entities = {
                 @EntityResult(entityClass=NamedEntity.class)
@@ -21,6 +23,8 @@ public class NamedEntity extends AbstractEntity{
     @OWLDataProperty(iri = Vocabulary.s_p_name)
     private String name;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_alt_name)
+    private Set<String> altNames;
 
     @OWLDataProperty(iri = Vocabulary.s_p_description)
     private String description;

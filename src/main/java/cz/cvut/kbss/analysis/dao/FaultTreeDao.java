@@ -104,54 +104,63 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
              return em.createNativeQuery("""
                             PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
                             SELECT * WHERE {
-                                BIND(?_uri as ?uri)
-                                ?uri a ?type.
-                                ?uri ?pName ?name.
-                                OPTIONAL{?uri ?pDescription ?description.}
-                                OPTIONAL{?uri ?pStatus ?status.}
-                                OPTIONAL{?uri ?pCreated ?created.}
-                                OPTIONAL{?uri ?pModified ?modified.}
-                                OPTIONAL{?uri ?pCreator ?creator.}
-                                OPTIONAL{?uri ?pLastEditor ?lastEditor.}
-                                OPTIONAL{
-                                    ?uri fta:is-manifested-by ?rootEvent .
-                                    ?rootEvent fta:is-derived-from ?rootEventType.
+                                {SELECT ?uri ?type ?name ?description ?status ?created ?modified ?creator ?lastEditor 
+                                ?rootEvent ?rootEventType ?calculatedFailureRate ?auxiliary ?failureRate ?failureRateRequirement 
+                                ?requiredFailureRate ?fhaFailureRateQ ?fhaFailureRateP ?fhaBasedFailureRate ?behavior 
+                                ?_subsystemUri ?systemUri ?systemName ?subsystemUri ?subsystemType ?subsystemName ?ataCode (GROUP_CONCAT(DISTINCT ?subsystemAltName; separator='\\n') as ?subsystemAltNames){ 
+                                    BIND(?_uri as ?uri)
+                                    ?uri a ?type.
+                                    ?uri ?pName ?name.
+                                    OPTIONAL{?uri ?pDescription ?description.}
+                                    OPTIONAL{?uri ?pStatus ?status.}
+                                    OPTIONAL{?uri ?pCreated ?created.}
+                                    OPTIONAL{?uri ?pModified ?modified.}
+                                    OPTIONAL{?uri ?pCreator ?creator.}
+                                    OPTIONAL{?uri ?pLastEditor ?lastEditor.}
                                     OPTIONAL{
-                                        ?rootEvent fta:probability ?calculatedFailureRate.
-                                    }
-                                    OPTIONAL{
-                                        ?rootEventType fta:auxiliary ?auxiliary.
-                                    }
-                                    OPTIONAL{
-                                        ?rootEventType fta:has-failure-rate ?failureRate.
-                                        ?failureRate fta:has-requirement ?failureRateRequirement.
-                                        ?failureRateRequirement fta:to ?requiredFailureRate.
-                                    }
-                                    OPTIONAL{
-                                        ?rootEventType fta:has-failure-rate ?fhaFailureRateQ.
-                                        ?fhaFailureRateQ fta:has-estimate ?fhaFailureRateP.
-                                        ?fhaFailureRateP a fta:failure-rate-estimate;
-                                                         fta:value ?fhaBasedFailureRate.
-                                    }
-                                    OPTIONAL{
-                                        ?rootEventType fta:is-manifestation-of ?behavior .
-                                        ?behavior fta:has-component ?_subsystemUri.
-                                        ?_subsystemUri fta:is-part-of* ?systemUri.
-                                        FILTER NOT EXISTS{
-                                          ?systemUri fta:is-part-of ?system2.
-                                        }
-                                        ?systemUri fta:name ?systemName.
-                            
+                                        ?uri fta:is-manifested-by ?rootEvent .
+                                        ?rootEvent fta:is-derived-from ?rootEventType.
                                         OPTIONAL{
-                                            FILTER(?systemUri != ?_subsystemUri)
-                                            BIND(?_subsystemUri as ?subsystemUri)
-                                            ?subsystemUri fta:is-derived-from ?subsystemType.
-                                            ?subsystemType fta:name ?subsystemTypeLabel.
-                                            ?subsystemType fta:ata-code ?subsystemTypeCode.
-                                            BIND(CONCAT(str(?subsystemTypeCode), " - ", str(?subsystemTypeLabel)) as ?subsystemName)
-                                            ?subsystemUri fta:is-part-of+ ?systemUri.
+                                            ?rootEvent fta:probability ?calculatedFailureRate.
+                                        }
+                                        OPTIONAL{
+                                            ?rootEventType fta:auxiliary ?auxiliary.
+                                        }
+                                        OPTIONAL{
+                                            ?rootEventType fta:has-failure-rate ?failureRate.
+                                            ?failureRate fta:has-requirement ?failureRateRequirement.
+                                            ?failureRateRequirement fta:to ?requiredFailureRate.
+                                        }
+                                        OPTIONAL{   
+                                            ?rootEventType fta:has-failure-rate ?fhaFailureRateQ.
+                                            ?fhaFailureRateQ fta:has-estimate ?fhaFailureRateP.
+                                            ?fhaFailureRateP a fta:failure-rate-estimate;
+                                                             fta:value ?fhaBasedFailureRate.
+                                        }
+                                        OPTIONAL{
+                                            ?rootEventType fta:is-manifestation-of ?behavior .
+                                            ?behavior fta:has-component ?_subsystemUri.
+                                            ?_subsystemUri fta:is-part-of* ?systemUri.
+                                            FILTER NOT EXISTS{
+                                              ?systemUri fta:is-part-of ?system2.
+                                            }
+                                            ?systemUri fta:name ?systemName.
+                                
+                                            OPTIONAL{
+                                                FILTER(?systemUri != ?_subsystemUri)
+                                                BIND(?_subsystemUri as ?subsystemUri)
+                                                ?subsystemUri fta:is-part-of+ ?systemUri.
+                                                ?subsystemUri fta:is-derived-from ?subsystemType.
+                                                ?subsystemType fta:name ?subsystemName.
+                                                OPTIONAL{?subsystemType fta:alt-name ?subsystemAltName}
+                                                ?subsystemType fta:ata-code ?ataCode. 
+                                            }
                                         }
                                     }
+                                } GROUP BY ?uri ?type ?name ?description ?status ?created ?modified ?creator ?lastEditor 
+                                ?rootEvent ?rootEventType ?calculatedFailureRate ?auxiliary ?failureRate ?failureRateRequirement 
+                                ?requiredFailureRate ?fhaFailureRateQ ?fhaFailureRateP ?fhaBasedFailureRate ?behavior 
+                                ?_subsystemUri ?systemUri ?systemName ?subsystemUri ?subsystemType ?subsystemName ?ataCode
                                 }
                             }""", "FaultTreeSummary")
                     .setParameter("type", typeUri)

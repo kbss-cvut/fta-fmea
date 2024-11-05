@@ -460,6 +460,10 @@ fta-fmea:name rdf:type owl:DatatypeProperty ;
                  rdfs:range xsd:string ;
                  rdfs:label "name" .
 
+###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/alt-name
+fta-fmea:alt-name rdf:type owl:DatatypeProperty ;
+                 rdfs:range xsd:string ;
+                 rdfs:label "alternative name" .
 
 ###  http://onto.fel.cvut.cz/ontologies/fta-fmea-application/occurrence
 fta-fmea:occurrence rdf:type owl:DatatypeProperty ;
