@@ -1,6 +1,7 @@
 package cz.cvut.kbss.analysis.model;
 
 
+import cz.cvut.kbss.analysis.model.ava.ATASystem;
 import cz.cvut.kbss.analysis.model.ava.FHAEventType;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.annotations.*;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -43,6 +45,12 @@ public class FaultTreeSummary extends ManagedEntity{
     @OWLDataProperty(iri = Vocabulary.s_p_subsystem_name)
     protected String subsystemName;
 
+    @OWLDataProperty(iri = Vocabulary.s_p_ata_code, simpleLiteral = true)
+    private String ataCode;
+
+    @OWLDataProperty(iri = Vocabulary.s_p_alt_name)
+    protected String subsystemAltNames;
+
     @OWLDataProperty(iri = Vocabulary.s_p_required_failure_rate)
     protected Double requiredFailureRate;
 
@@ -69,16 +77,26 @@ public class FaultTreeSummary extends ManagedEntity{
                 rootType.setAuxiliary(auxiliary);
             }
         }
+
         if(this.getSystemUri() != null){
             faultTree.setSystem(new System());
             faultTree.getSystem().setUri(this.getSystemUri());
             faultTree.getSystem().setName(this.getSystemName());
         }
+
         if(this.getSubsystemUri() != null){
-            faultTree.setSubsystem(new Item());
-            faultTree.getSubsystem().setUri(this.getSubsystemUri());
-            faultTree.getSubsystem().setName(this.getSubsystemName());
+            ATASystem subsystem = new ATASystem();
+            subsystem.setUri(this.getSubsystemUri());
+            subsystem.setName(this.getSubsystemName());
+            subsystem.setAtaCode(this.getAtaCode());
+            subsystem.setAltNames(Optional.ofNullable(this.getSubsystemAltNames())
+                    .filter(ns -> !ns.isBlank())
+                    .map(ns -> new HashSet<>(Arrays.asList(ns.split("\\n"))))
+                    .orElse(null)
+            );
+            faultTree.setSubsystem(subsystem);
         }
+
         Optional.ofNullable(this.getStatus()).map(Status::valueOf).ifPresent(faultTree::setStatus);
         faultTree.setRequiredFailureRate(this.getRequiredFailureRate());
         faultTree.setCalculatedFailureRate(this.getCalculatedFailureRate());
