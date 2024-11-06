@@ -6,7 +6,7 @@ public enum ConfigParam {
 
     APP_CONTEXT("appContext"),
 
-    ROLE_PREFIX("spring.security.rolePrefix"),
+    ROLE_PREFIX("security.rolePrefix"),
 
     OIDC_ROLE_CLAIM("oidc.RoleClaim"),
 

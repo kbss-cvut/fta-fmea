@@ -11,6 +11,7 @@ persistence:
 
 security:
   provider: internal
+  rolePrefix: ff-
 
 appContext: http://localhost:5173
 oidc.RoleClaim: realm_access.roles
@@ -31,7 +32,6 @@ annotator:
 
 spring:
   security:
-    rolePrefix: ff-
     oauth2:
       resourceserver:
         jwt:
