@@ -24,7 +24,7 @@ public class AdminRegistrationController {
 
     private final UserRepositoryService userRepositoryService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/register", consumes = {JsonLd.MEDIA_TYPE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> register(@RequestBody User user) {

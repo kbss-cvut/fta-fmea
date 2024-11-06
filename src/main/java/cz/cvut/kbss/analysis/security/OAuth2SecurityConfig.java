@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -30,7 +31,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "oidc")
+@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = SecurityConstants.SEC_PROVIDER_OIDC)
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -40,6 +41,11 @@ public class OAuth2SecurityConfig {
     private final AuthenticationSuccess authenticationSuccess;
 
     private final SecurityConf config;
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults(config.getRolePrefix());
+    }
 
     @Autowired
     public OAuth2SecurityConfig(AuthenticationSuccess authenticationSuccess, SecurityConf config) {
@@ -76,8 +82,6 @@ public class OAuth2SecurityConfig {
                     new OidcGrantedAuthoritiesExtractor(config).convert(source);
             assert extractedRoles != null;
             final Set<SimpleGrantedAuthority> authorities = new HashSet<>(extractedRoles);
-            // Add default role if it is not present
-            authorities.add(new SimpleGrantedAuthority(SecurityConstants.ROLE_USER));
             return new JwtAuthenticationToken(source, authorities);
         };
     }

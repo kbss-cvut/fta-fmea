@@ -13,10 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -35,7 +32,7 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
 
     @Transient
-    private List<String> roles = Collections.singletonList("ROLE_USER");
+    private List<String> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

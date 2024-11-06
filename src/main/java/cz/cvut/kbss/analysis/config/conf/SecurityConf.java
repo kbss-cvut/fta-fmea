@@ -19,12 +19,17 @@ public class SecurityConf {
 
     private String appContext;
 
+    private String provider;
+
+    private String rolePrefix;
+
     private String roleClaim;
 
     @Autowired
     public SecurityConf(Environment env) {
         allowedOrigins = env.getProperty(ConfigParam.CORS_ALLOWED_ORIGINS.toString());
         appContext = env.getProperty(ConfigParam.APP_CONTEXT.toString());
+        rolePrefix = env.getProperty(ConfigParam.ROLE_PREFIX.toString());
         roleClaim = env.getProperty(ConfigParam.OIDC_ROLE_CLAIM.toString());
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Enabled when OIDC security is used.
  */
-@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = "oidc")
+@ConditionalOnProperty(prefix = "security", name = "provider", havingValue = SecurityConstants.SEC_PROVIDER_OIDC)
 @RestController
 @RequestMapping("/users")
 public class OidcUserController {

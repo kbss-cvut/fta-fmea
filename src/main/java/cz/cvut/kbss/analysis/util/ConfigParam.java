@@ -6,6 +6,8 @@ public enum ConfigParam {
 
     APP_CONTEXT("appContext"),
 
+    ROLE_PREFIX("security.rolePrefix"),
+
     OIDC_ROLE_CLAIM("oidc.RoleClaim"),
 
     CORS_ALLOWED_ORIGINS("cors.allowedOrigins");
