@@ -11,10 +11,10 @@ persistence:
 
 security:
   provider: internal
+  cors.allowedOrigins: "http://localhost:5173,http://localhost:4173"
+  oidc.RoleClaim: realm_access.roles
 
 appContext: http://localhost:5173
-oidc.RoleClaim: realm_access.roles
-cors.allowedOrigins: "http://localhost:5173,http://localhost:4173"
 
 logging:
   pattern:
