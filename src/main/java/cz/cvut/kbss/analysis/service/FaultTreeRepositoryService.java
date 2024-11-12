@@ -565,6 +565,7 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
         updateFHABasedOperationalFailureRates(faultTree, filter);
         updateReferencedNodeFailureRates(faultTree);
         updateFaultTreeOperationalFailureRates(faultTree, filter);
+        updatePredictedFailureRates(faultTree);
     }
 
     /**
@@ -694,6 +695,58 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
             ft.setProbability(frEstimate.getValue());
             faultEventDao.setProbability(ft.getUri(), frEstimate.getValue(), faultTreeUri);
         }
+    }
+
+    /**
+     * Updates the probability of basic nodes selected for which the predicted failure rate is selected and the
+     * nodes probability is different from predicted failure rate.
+     * @param faultTree
+     */
+    @Transactional
+    public void updatePredictedFailureRates(FaultTree faultTree){
+        Map<FaultEvent, FailureRateEstimate> predictionMap = new HashMap<>();
+        faultTree.getAllEvents().stream()
+                .filter(e -> e.getSelectedEstimate() != null && e.getEventType() == FtaEventType.BASIC
+                            && e.getSupertypes() != null && !e.getSupertypes().isEmpty())
+
+                .forEach(e -> {
+                    List<FailureRateEstimate> predictions = e.getSupertypes().stream()
+                            .filter(s -> s instanceof FaultEventType)
+                            .map(s -> ((FaultEventType) s).getFailureRate() )
+                            .filter(f -> f != null)
+                            .map(f -> f.getPrediction())
+                            .filter(p -> p != null).collect(Collectors.toList());
+                    if(predictions.isEmpty()){
+                        predictions = e.getSupertypes().stream()
+                                .filter(s -> s.getSupertypes() != null)
+                                .flatMap(s -> s.getSupertypes().stream())
+                                .map(s -> ((FaultEventType) s).getFailureRate() )
+                                .filter(f -> f != null)
+                                .map(f -> f.getPrediction())
+                                .filter(p -> p != null).collect(Collectors.toList());
+                    }
+
+                    if(predictions.isEmpty())
+                        return;
+                    if(predictions.size() > 1)
+                        log.warn("There are multiple failure rate predictions available for node \"{}\" <{}>", e.getName(), e.getUri());
+
+                    predictions.stream()
+                            .filter(p -> e.getSelectedEstimate().equals(p.getUri()))
+                            .filter(p -> !Objects.equals(p.getValue(), e.getProbability()))
+                            .findFirst().ifPresent(
+                                    p -> predictionMap.put(e, p)
+                            );
+                });
+
+        for(Map.Entry<FaultEvent, FailureRateEstimate> e : predictionMap.entrySet()){
+            updatePredictedFailureRate(faultTree.getUri(), e.getKey(), e.getValue());
+        }
+    }
+
+    protected void updatePredictedFailureRate(URI faultTreeUri, FaultEvent ft, FailureRateEstimate prediction){
+        ft.setProbability(prediction.getValue());
+        faultEventDao.setProbability(ft.getUri(), prediction.getValue(), faultTreeUri);
     }
 
     @Transactional
