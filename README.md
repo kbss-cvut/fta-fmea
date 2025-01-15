@@ -20,6 +20,10 @@ The database URL needs to be configured in `application.yml`. The repository fir
 
 ## API Documentation
 
-You can access the Swagger UI at the following URL: `http://localhost:9999/swagger-ui.html`
+Authenticated users of the application can access: 
+- Swagger UI at /swagger-ui.html (e.g. `http://localhost:9999/swagger-ui.html`)
+- OpenAPI documentation for the API at `/v1/api-docs` (e.g `http://localhost:9999/v1/api-docs`)
 
-The OpenAPI documentation for the API can be accessed at: `http://localhost:9999/v1/api-docs`
+## Health check
+
+To check that the backend is running, use path `/actuator/health` (e.g. `http://localhost:9999/actuator/health`).

@@ -90,6 +90,7 @@ public class SecurityConfig {
                                 hasAuthority(SecurityConstants.ROLE_ADMIN)
                             .requestMatchers("/auth/*").permitAll()
                             .requestMatchers("/").permitAll()
+                            .requestMatchers("/actuator/health").permitAll()
                             .requestMatchers("/**").hasAuthority(SecurityConstants.ROLE_USER)
                 )
                 .cors(auth -> auth.configurationSource(corsConfigurationSource(config)))

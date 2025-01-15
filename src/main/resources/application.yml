@@ -24,6 +24,9 @@ logging:
     cz.cvut.kbss: INFO
     org.springframework.web: INFO
 
+management:
+  endpoints.web.exposure.include: health
+
 annotator:
   list-documents-api: ${LIST_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=list-documents}
   convert-document-api: ${CONVERT_DOCUMENT_API:http://localhost:8282/s-pipes/service?_pId=convert-document}
