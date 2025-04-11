@@ -67,6 +67,14 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
+// Propagate gradle project properties to spring boot
+// https://stackoverflow.com/questions/33043866/referencing-gradle-properties-in-application-yml
+processResources {
+    filesMatching("**/application.properties") {
+        expand( project.properties )
+    }
+}
+
 test {
     useJUnitPlatform()
 }
