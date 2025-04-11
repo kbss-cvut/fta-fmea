@@ -72,7 +72,7 @@ public class OpenApiConfig {
         String description = """
         To use the `Try it out` feature - login (for example using FTA FMEA UI or cURL) and make sure that the returned JSESSIONID cookie is set in the browser window where you run swagger.
         #### Login Using cURL
-        Linxu:
+        Linux:
         ```
         curl --location '%sauth/signin' \\
         --form 'username="..."' \\
