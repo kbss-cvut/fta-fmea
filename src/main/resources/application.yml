@@ -52,3 +52,6 @@ springdoc:
     path: /v1/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+api:
+  base-url: http://localhost:9999

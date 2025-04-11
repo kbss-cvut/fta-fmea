@@ -89,6 +89,10 @@ public class SecurityConfig {
                         auth.requestMatchers("/rest/users/impersonate").
                                 hasAuthority(SecurityConstants.ROLE_ADMIN)
                             .requestMatchers("/auth/*").permitAll()
+                            .requestMatchers("/swagger-ui.html").permitAll()
+                            .requestMatchers("/swagger-ui/*").permitAll()
+                            .requestMatchers("/v1/api-docs").permitAll()
+                            .requestMatchers("/v1/api-docs/*").permitAll()
                             .requestMatchers("/").permitAll()
                             .requestMatchers("/actuator/health").permitAll()
                             .requestMatchers("/**").hasAuthority(SecurityConstants.ROLE_USER)
