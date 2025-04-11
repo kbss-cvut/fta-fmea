@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.util.Set;
 
+import static cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes.*;
+
 @SparqlResultSetMappings(
         @SparqlResultSetMapping(name="Summary", entities = {
                 @EntityResult(entityClass=NamedEntity.class)
@@ -18,7 +20,7 @@ import java.util.Set;
 @Setter
 public class NamedEntity extends AbstractEntity{
 
-    @NotEmpty(message = "Name must not be empty")
+    @NotEmpty(message = "Name must not be empty", groups = {Create.class, Update.class})
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_name)
     private String name;

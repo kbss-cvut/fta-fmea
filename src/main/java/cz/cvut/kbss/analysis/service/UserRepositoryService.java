@@ -28,7 +28,7 @@ public class UserRepositoryService extends BaseRepositoryService<User> {
     private final SecurityUtils securityUtils;
 
     @Autowired
-    public UserRepositoryService(@Qualifier("defaultEntityValidator") EntityValidator validator, UserDao userDao, PasswordEncoder passwordEncoder, SecurityUtils securityUtils) {
+    public UserRepositoryService(@Qualifier("userValidator") EntityValidator validator, UserDao userDao, PasswordEncoder passwordEncoder, SecurityUtils securityUtils) {
         super(validator);
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
