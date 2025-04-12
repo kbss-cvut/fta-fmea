@@ -6,7 +6,7 @@ import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jopa.model.annotations.ParticipationConstraints;
 import cz.cvut.kbss.jopa.model.annotations.Transient;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes.Create;
+import static cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes.Update;
 import static java.util.stream.Collectors.toList;
 
 @OWLClass(iri = Vocabulary.s_c_Person)
@@ -25,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @Setter
 public class User extends AbstractEntity implements UserDetails {
 
-    @NotEmpty(message = "Username must not be empty")
+    @Size(min=3, max=15, groups = {Create.class, Update.class}, message = "Username should be at least 3 characters and at most 15")
     @ParticipationConstraints(nonEmpty = true)
     @OWLDataProperty(iri = Vocabulary.s_p_accountName, simpleLiteral = true)
     private String username;
