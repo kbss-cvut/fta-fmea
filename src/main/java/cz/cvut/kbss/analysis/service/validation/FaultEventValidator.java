@@ -28,22 +28,15 @@ public class FaultEventValidator extends NamedEntityValidator<FaultEvent> {
         return faultEventDao;
     }
 
-    protected void customValidation(Object target, Errors errors, Object... validationHints ){
-        ConstraintGroupsAdapter groups = new ConstraintGroupsAdapter(validationHints);
-        FaultEvent instance = (FaultEvent) target;
+    @Override
+    protected void customValidation(FaultEvent target, Errors errors, ConstraintGroupsAdapter groups, Object... validationHints) {
+        validateUri(target, errors, groups, validationHints);
 
-        if(groups.isCreateGroup() && exists(instance)){
-            errors.rejectValue("uri", "uri.exists", "The uri should be null or unique");
-        }
-        if(groups.isUpdateGroup() && !exists(instance)){
-            errors.rejectValue("uri", "uri.not-exists", "Uri does not refer to an existing entity");
-        }
-
-        if (instance.getEventType() == FtaEventType.INTERMEDIATE && (instance.getGateType() == null || instance.getGateType() == GateType.UNUSED)) {
+        if (target.getEventType() == FtaEventType.INTERMEDIATE && (target.getGateType() == null || target.getGateType() == GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
         }
 
-        if (instance.getEventType() != FtaEventType.INTERMEDIATE && (instance.getGateType() != null && instance.getGateType() != GateType.UNUSED)) {
+        if (target.getEventType() != FtaEventType.INTERMEDIATE && (target.getGateType() != null && target.getGateType() != GateType.UNUSED)) {
             errors.rejectValue("gateType", "gateType.invalid");
         }
     }

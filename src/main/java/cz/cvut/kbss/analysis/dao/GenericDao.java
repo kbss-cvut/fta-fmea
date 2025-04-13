@@ -127,4 +127,10 @@ public interface GenericDao<T extends HasIdentifier> {
      * @param context
      */
     void deleteContext(URI context);
+
+    /**
+     *
+     * @return the entity class for this Dao
+     */
+    Class<T> getType();
 }

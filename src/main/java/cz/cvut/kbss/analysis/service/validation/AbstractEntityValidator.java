@@ -46,14 +46,26 @@ public abstract class AbstractEntityValidator<T extends AbstractEntity> implemen
     }
 
     protected void customValidation(T target, Errors errors, ConstraintGroupsAdapter groups, Object... validationHints ){
-        if(groups.isCreateGroup() && exists(target)){
-            errors.rejectValue("uri", "uri.exists", "The uri should be null or unique");
-        }
+        validateUri(target, errors, groups, validationHints);
+}
+
+    protected void validateUri(T target, Errors errors, ConstraintGroupsAdapter groups, Object ... validationHints) {
+        validateUrionCreate(target, errors, groups, validationHints);
+        validateUriOnUpdate(target, errors, groups, validationHints);
+    }
+
+
+    protected void validateUriOnUpdate(T target, Errors errors, ConstraintGroupsAdapter groups, Object... validationHints ) {
         if(groups.isUpdateGroup() && !exists(target)){
             errors.rejectValue("uri", "uri.not-exists", "Uri does not refer to an existing entity");
         }
     }
 
+    protected void validateUrionCreate(T target, Errors errors, ConstraintGroupsAdapter groups, Object... validationHints ) {
+        if(groups.isCreateGroup() && exists(target)){
+            errors.rejectValue("uri", "uri.exists", "The uri should be null or unique");
+        }
+    }
 
 
     protected boolean exists(T entity){

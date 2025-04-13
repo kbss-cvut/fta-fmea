@@ -211,6 +211,11 @@ public abstract class BaseDao<T extends AbstractEntity> implements GenericDao<T>
                 .getSingleResult();
     }
 
+    @Override
+    public Class<T> getType() {
+        return type;
+    }
+
     /**
      * Add triple in the provided context
      * @param subjectURI
