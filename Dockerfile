@@ -1,10 +1,10 @@
-FROM maven:3.9.6-eclipse-temurin-17-alpine as MAVEN
+FROM maven:3.9.9-eclipse-temurin-21-alpine as MAVEN
 
 COPY . /fta-fmea
 WORKDIR /fta-fmea/ontology-generator
 RUN mvn clean install
 
-FROM gradle:8.4-jdk17-alpine as GRADLE
+FROM gradle:8.5-jdk21-alpine as GRADLE
 COPY . /fta-fmea
 WORKDIR /fta-fmea
 
@@ -13,7 +13,7 @@ COPY --from=MAVEN /fta-fmea/src/main/generated/cz/cvut/kbss/analysis/util/Vocabu
 
 RUN ./gradlew clean bootJar
 
-FROM eclipse-temurin:17-jdk-alpine as runtime
+FROM eclipse-temurin:21-jdk-alpine as runtime
 
 COPY --from=GRADLE /fta-fmea/build/libs/fta-fmea-*.jar /fta-fmea.jar
 
