@@ -10,6 +10,7 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.UserReference;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.service.validation.FaultEventValidator;
+import cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +74,7 @@ public class FaultEventRepositoryServiceTest {
 
         repositoryService.update(event);
 
-        Mockito.verify(faultEventValidator).validate(eq(event), any());
+        Mockito.verify(faultEventValidator).validate(eq(event), any(), eq(ValidationScopes.Update.class));
 //        Mockito.verify(repositoryService).preUpdate(event);
     }
 

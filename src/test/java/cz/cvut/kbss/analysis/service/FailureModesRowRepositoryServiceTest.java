@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.FailureModesRowDao;
 import cz.cvut.kbss.analysis.dto.update.FailureModesRowRpnUpdateDTO;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FailureModesRow;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,18 +12,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 class FailureModesRowRepositoryServiceTest {
 
     @Mock
     FailureModesRowDao failureModesRowDao;
     @Mock
-    Validator validator;
+    EntityValidator validator;
     @InjectMocks
     FailureModesRowRepositoryService repositoryService;
 

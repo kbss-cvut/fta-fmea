@@ -3,7 +3,8 @@ package cz.cvut.kbss.analysis.service;
 import cz.cvut.kbss.analysis.dao.FunctionDao;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.Function;
-import cz.cvut.kbss.analysis.service.validation.FunctionValidator;
+import cz.cvut.kbss.analysis.service.validation.NamedEntityValidator;
+import cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ public class FunctionRepositoryServiceTest {
     @Mock
     FunctionDao functionDao;
     @Mock
-    FunctionValidator functionValidator;
+    NamedEntityValidator functionValidator;
     @Captor
     ArgumentCaptor<Function> functionCaptor;
 
@@ -42,7 +43,7 @@ public class FunctionRepositoryServiceTest {
 
         functionRepositoryService.persist(function);
 
-        Mockito.verify(functionValidator, times(1)).validate(eq(function), any());
+        Mockito.verify(functionValidator, times(1)).validate(eq(function), any(), eq(ValidationScopes.Create.class));
     }
 
     @Test

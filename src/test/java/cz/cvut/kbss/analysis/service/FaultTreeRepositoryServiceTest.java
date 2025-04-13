@@ -6,6 +6,8 @@ import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultEventType;
 import cz.cvut.kbss.analysis.model.FaultTree;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
+import cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,7 @@ class FaultTreeRepositoryServiceTest {
     @Mock
     FaultTreeDao faultTreeDao;
     @Mock
-    Validator validator;
+    EntityValidator validator;
     @Mock
     FaultEventRepositoryService faultEventRepositoryService;
 
@@ -74,7 +76,7 @@ class FaultTreeRepositoryServiceTest {
 
         repositoryService.persist(tree);
 
-        Mockito.verify(validator).validate(eq(tree), any());
+        Mockito.verify(validator).validate(eq(tree), any(), eq(ValidationScopes.Create.class));
         Mockito.verify(faultTreeDao).persist(tree);
     }
 
@@ -92,7 +94,7 @@ class FaultTreeRepositoryServiceTest {
 
         repositoryService.persist(tree);
 
-        Mockito.verify(validator).validate(eq(tree), any());
+        Mockito.verify(validator).validate(eq(tree), any(), eq(ValidationScopes.Create.class));
         Mockito.verify(faultEventRepositoryService).findRequired(manifestingEvent.getUri());
         Mockito.verify(faultTreeDao).persist(tree);
     }
