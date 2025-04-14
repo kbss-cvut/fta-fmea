@@ -20,7 +20,7 @@
                 <!-- Generate entity classes from OWL integrity constraints -->
                 <groupId>cz.cvut.kbss.jopa</groupId>
                 <artifactId>jopa-maven-plugin</artifactId>
-                <version>1.1.4</version>
+                <version>2.3.0</version>
                 <configuration>
                     <package>cz.cvut.kbss.analysis.util</package>
                     <!--Generate Vocabulary into Gradle project dirs-->
@@ -44,6 +44,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.0</version>
             </plugin>
         </plugins>
     </build>
