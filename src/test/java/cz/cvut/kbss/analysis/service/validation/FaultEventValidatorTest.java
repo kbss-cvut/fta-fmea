@@ -5,6 +5,7 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.fta.FtaEventType;
 import cz.cvut.kbss.analysis.model.fta.GateType;
+import cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
+import static org.mockito.ArgumentMatchers.eq;
 
 class FaultEventValidatorTest {
 
@@ -39,10 +41,14 @@ class FaultEventValidatorTest {
         Mockito.when(faultEventDao.existsWithPredicate(Vocabulary.s_p_name, event.getName())).thenReturn(true);
 
         BindingResult bindingResult = ValidationTestUtils.createBinding(event, faultEventValidator);
-        faultEventValidator.validate(event, bindingResult);
+        faultEventValidator.validate(event, bindingResult, ValidationScopes.Create.class);
+        Assertions.assertFalse(bindingResult.hasErrors());
 
-        Assertions.assertTrue(bindingResult.hasErrors());
-        Assertions.assertNotNull(bindingResult.getFieldError("name"));
+        event.setUri(Generator.generateUri());
+        Mockito.when(faultEventDao.exists(eq(event.getUri()))).thenReturn(true);
+
+        faultEventValidator.validate(event, bindingResult, ValidationScopes.Update.class);
+        Assertions.assertFalse(bindingResult.hasErrors());
     }
 
     @Test

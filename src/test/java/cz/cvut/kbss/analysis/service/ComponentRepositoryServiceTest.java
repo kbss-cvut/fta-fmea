@@ -6,7 +6,8 @@ import cz.cvut.kbss.analysis.dto.update.ComponentUpdateDTO;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.Function;
-import cz.cvut.kbss.analysis.service.validation.ComponentValidator;
+import cz.cvut.kbss.analysis.service.validation.NamedEntityValidator;
+import cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class ComponentRepositoryServiceTest {
     @Mock
     ComponentDao componentDao;
     @Mock
-    ComponentValidator componentValidator;
+    NamedEntityValidator<Component> componentValidator;
     @Captor
     ArgumentCaptor<Component> componentCaptor;
 
@@ -42,7 +43,7 @@ class ComponentRepositoryServiceTest {
 
         repositoryService.persist(component);
 
-        Mockito.verify(componentValidator, Mockito.times(1)).validate(eq(component), any());
+        Mockito.verify(componentValidator, Mockito.times(1)).validate(eq(component), any(), eq(ValidationScopes.Create.class));
     }
 
     @Test

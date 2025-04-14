@@ -5,6 +5,7 @@ import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.Component;
 import cz.cvut.kbss.analysis.model.System;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
@@ -28,7 +28,7 @@ class SystemRepositoryServiceTest {
     @Mock
     SecurityUtils securityUtils;
     @Mock
-    Validator validator;
+    EntityValidator validator;
     @InjectMocks
     SystemRepositoryService repositoryService;
 

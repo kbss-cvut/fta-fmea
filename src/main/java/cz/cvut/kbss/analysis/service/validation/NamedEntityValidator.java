@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 @Slf4j
-public abstract class NamedEntityValidator<T extends NamedEntity> extends AbstractEntityValidator<T>{
+public abstract class NamedEntityValidator<T extends NamedEntity> extends AbstractEntityValidator<T> {
 
     public NamedEntityValidator(Class<T> supporetedClass, SpringValidatorAdapter validatorAdapter) {
         super(supporetedClass, validatorAdapter);
@@ -15,7 +15,10 @@ public abstract class NamedEntityValidator<T extends NamedEntity> extends Abstra
 
     protected void customValidation(T target, Errors errors, ConstraintGroupsAdapter groups, Object... validationHints ){
         super.customValidation(target, errors, groups, validationHints);
+        validateName(target, errors, groups, validationHints);
+    }
 
+    protected void validateName(T target, Errors errors, ConstraintGroupsAdapter groups, Object... validationHints ){
         if(existsWithName(target))
             errors.rejectValue("name", "name.duplicate", "Duplicate entity name");
     }

@@ -19,12 +19,14 @@ class ComponentValidatorTest {
     ComponentDao componentDao;
     @Mock
     SpringValidatorAdapter validatorAdapter;
-    @InjectMocks
-    ComponentValidator componentValidator;
+
+    EntityValidator componentValidator;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        Mockito.when(componentDao.getType()).thenReturn(Component.class);
+        componentValidator = ValidatorsConfiguration.namedEntityValidator(componentDao, validatorAdapter);
     }
 
     @Test

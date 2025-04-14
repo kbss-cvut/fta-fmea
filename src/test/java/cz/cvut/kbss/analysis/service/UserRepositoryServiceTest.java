@@ -8,6 +8,7 @@ import cz.cvut.kbss.analysis.exception.LogicViolationException;
 import cz.cvut.kbss.analysis.exception.UsernameNotAvailableException;
 import cz.cvut.kbss.analysis.model.User;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
+import cz.cvut.kbss.analysis.service.validation.AbstractEntityValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +27,7 @@ class UserRepositoryServiceTest {
     @Mock
     PasswordEncoder passwordEncoder;
     @Mock
-    Validator validator;
+    AbstractEntityValidator<User> validator;
     @InjectMocks
     UserRepositoryService repositoryService;
     @Mock

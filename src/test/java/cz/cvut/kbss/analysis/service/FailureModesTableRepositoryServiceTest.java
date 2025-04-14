@@ -4,6 +4,7 @@ import cz.cvut.kbss.analysis.dao.FailureModesTableDao;
 import cz.cvut.kbss.analysis.dto.update.FailureModesTableUpdateDTO;
 import cz.cvut.kbss.analysis.environment.Generator;
 import cz.cvut.kbss.analysis.model.FailureModesTable;
+import cz.cvut.kbss.analysis.service.validation.EntityValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class FailureModesTableRepositoryServiceTest {
     @Mock
     FailureModesTableDao failureModesTableDao;
     @Mock
-    Validator validator;
+    EntityValidator validator;
     @InjectMocks
     FailureModesTableRepositoryService repositoryService;
 
