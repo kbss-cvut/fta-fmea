@@ -41,13 +41,9 @@ public class ValidatorsConfiguration {
     }
 
     @Bean
-    public EntityValidator userValidator(FaultTreeDao dao){
+    public EntityValidator userValidator(UserDao dao){
         return abstractEntityValidator(dao);
     }
-
-
-
-
 
     protected <T extends NamedEntity> NamedEntityValidator<T> namedEntityValidator(BaseDao<T> dao){
         return namedEntityValidator(dao, validatorAdapter);
