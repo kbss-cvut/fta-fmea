@@ -1,0 +1,21 @@
+# Replace part numbers
+PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+
+DELETE {
+    GRAPH ?g {?s ?p ?val .}
+}INSERT{
+    GRAPH ?g {?s ?p ?newVal .}
+}WHERE{
+    select ?g ?s ?p ?pn ?newPn ?val ?newVal where { 
+#    	BIND(fta:has-part-number as ?p)
+        GRAPH ?g {
+            ?s ?p ?val.
+        	FILTER(contains(str(?val), str(?pn)))
+#            BIND(concat("pn-",str(?i)) as ?newPn)
+			BIND(REPLACE(?val, str(?pn), ?newPn ) as ?newVal)
+        }
+    }ORDER BY ?pn
+	VALUES (?pn ?newPn) {
+        $$VALUES$$
+    }
+}
