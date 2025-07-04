@@ -165,7 +165,7 @@ public class SecurityConfig {
         } else {
             corsConfig.setAllowedOrigins(null);
         }
-        log.debug(
+        log.info(
                 "Using response header Access-Control-Allow-Origin with value {}.",
                 corsConfig.getAllowedOrigins()
         );
