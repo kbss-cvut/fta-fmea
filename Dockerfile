@@ -17,8 +17,14 @@ FROM eclipse-temurin:21-jdk-alpine AS runtime
 
 COPY --from=gradle /fta-fmea/build/libs/fta-fmea-*.jar /fta-fmea.jar
 
+# create entrypoint script
+COPY --chmod=755 <<'EOF' /entrypoint.sh
+#!/bin/sh
+exec java $JAVA_OPTS -jar /fta-fmea.jar
+EOF
+
 EXPOSE 8080
 
-ENV JAVA_OPTIONS=""
+ENV JAVA_OPTS=""
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTIONS -jar /fta-fmea.jar"]
+ENTRYPOINT ["/entrypoint.sh"]
