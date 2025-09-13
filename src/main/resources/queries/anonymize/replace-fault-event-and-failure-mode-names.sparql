@@ -1,0 +1,38 @@
+# Replace names of failure modes and failures
+PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+DELETE {
+    GRAPH ?g {?s ?p ?val .}
+}INSERT{
+    GRAPH ?g {?s ?p ?newVal .}
+}WHERE{
+    SELECT DISTINCT ?g ?s ?p ?i ?oldName ?newName ?val ?newVal {
+        {select ?g ?p ?i ?oldName ?oldNamePattern ?newName where {
+            BIND(fta:name as ?p)
+            BIND(concat("FC_1.", str(?i), ".") as ?pref)
+            GRAPH ?g {
+                ?s ?p ?_oldName.
+                ?s a ?t.
+                FILTER(strstarts(str(?_oldName), ?pref))
+                FILTER(?t in (fta:failure-mode, fta:fault-event-type, fta:fha-fault-event))
+                BIND(str(?_oldName) as ?oldName)
+                BIND(replace((?oldName), "[()$^!:&#*+]", ".") as ?oldNamePattern)
+                BIND(IF(?t = fta:fha-fault-event, " failure", "") as ?typeStr)
+                BIND(concat(?pref, " Tlak v kabině", ?typeStr) as ?newName)
+            }
+        }#ORDER BY ?oldName
+        VALUES ?i {
+            1
+            2
+            3
+            4
+            5
+            6
+        }}
+        GRAPH ?g {
+            ?s ?p ?val.
+            FILTER(contains(?val, ?oldName))
+        	BIND(replace(?val, ?oldNamePattern, ?newName) as ?newVal)
+        }
+
+    }
+}

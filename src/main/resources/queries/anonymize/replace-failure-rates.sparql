@@ -1,0 +1,26 @@
+# rewrite failure rates of sns components
+PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+
+DELETE {
+    GRAPH ?g {?pred fta:value ?val .}
+}INSERT{
+    GRAPH ?g {?pred fta:value ?newVal .}
+}WHERE{
+    select ?g ?pred ?s ?ata ?val ?newVal ?pred where { 
+        GRAPH ?g {
+            ?s fta:ata-code ?ata. 
+            ?c fta:is-derived-from ?s.
+            ?c fta:is-derived-from ?rc.
+            ?rc a fta:reusable-system.
+            ?rc fta:has-failure-mode/fta:is-manifested-by/fta:has-failure-rate/fta:has-prediction ?pred.
+            ?pred fta:value ?val .
+        }
+    }
+    VALUES (?ata ?newVal) {
+        ("21-10-02"@cs 0.0003)
+        ("21-10-03"@cs 0.002)
+        ("21-30-01"@cs 0.005)
+        ("21-30-02"@cs 0.006)
+        ("21-30-03"@cs 0.005)
+    }
+}
