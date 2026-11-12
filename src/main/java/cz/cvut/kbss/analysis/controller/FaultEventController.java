@@ -69,6 +69,16 @@ public class FaultEventController {
         return repositoryService.addInputEvent(faultEventUri, inputEvent);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{targetNodeFragment}/paste", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<URI> paste(@PathVariable(name = "targetNodeFragment") String targetNodeFragment, @RequestBody List<URI> eventsToPaste){
+        log.info("> paste to - {}, {}", targetNodeFragment, eventsToPaste);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, targetNodeFragment);
+//        return new ArrayList<>();
+        List<FaultEvent> copied = repositoryService.copyEvents(faultEventUri, eventsToPaste);
+        return repositoryService.pasteEvents(faultEventUri, copied);
+    }
+
     @GetMapping(value = "/{faultEventFragment}/failureMode", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
     public FailureMode getFailureMode(@PathVariable(name = "faultEventFragment") String faultEventFragment) {
         log.info("> getFailureMode - {}", faultEventFragment);
