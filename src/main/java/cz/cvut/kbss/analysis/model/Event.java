@@ -8,8 +8,8 @@ import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 @OWLClass(iri = Vocabulary.s_c_event)
 @Getter
@@ -49,5 +49,55 @@ public class Event extends DomainEntity<Event> {
     public void addTriggeredBySituation(Situation situation){
         situation.getTriggersEvents().add(this);
         getTriggeredBySituations().add(situation);
+    }
+
+    /**
+     *
+     * @return all items associated trough behavior to any of the events in the closure of the supertypes property.
+     */
+    public List<Item> getAllRelatedItems(){
+        List<Item> ret = new ArrayList<>();
+        for(Event type : getRelatedEventTypes()){
+            if(type.getBehavior() != null){
+                ret.add(type.getBehavior().getItem());
+            }
+        }
+        return ret;
+    }
+
+
+    /**
+     *
+     * @return the result of {@code Event#_getRelatedEventTypes(this)}
+     * @see _getRelatedEventTypes
+     */
+    public Collection<Event> getRelatedEventTypes(){
+        return _getRelatedEventTypes(this);
+    }
+
+    /**
+     * Returns all the event types in the closure of the supertype field. Also includes the input Event if it is an instance of
+     * FaultEventType.
+     * @param evt
+     * @return
+     */
+    public static Collection<Event> _getRelatedEventTypes(Event evt){
+        Set<Event> eventTypes = new HashSet<>();
+
+        if(evt.getSupertypes() == null || evt.getSupertypes().isEmpty())
+            return eventTypes;
+        Stack<Event> stack = new Stack<>();
+        if(evt instanceof FaultEventType)
+            stack.push(evt);
+        else
+            evt.getSupertypes().forEach(stack::push);
+
+        while (!stack.isEmpty()) {
+            Event e = stack.pop();
+            eventTypes.add(e);
+            if(e.getSupertypes() != null)
+                e.getSupertypes().forEach(stack::push);
+        }
+        return eventTypes;
     }
 }

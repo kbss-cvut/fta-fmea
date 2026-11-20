@@ -7,6 +7,7 @@ import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
+import cz.cvut.kbss.jopa.model.descriptors.Descriptor;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
 import cz.cvut.kbss.jopa.model.query.Query;
@@ -61,21 +62,6 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
             return faultTreeOpt;
         FaultTree faultTree = faultTreeOpt.get();
         return Optional.of(faultTree);
-    }
-
-    public Collection<Event> getRelatedEventTypes(FaultTree faultTree){
-        Set<Event> eventTypes = new HashSet<>();
-
-        for(FaultEvent faultEvent : faultTree.getAllEvents()){
-            if(faultEvent.getSupertypes() == null)
-                continue;
-            faultEvent.getSupertypes().stream()
-                    .flatMap(t -> Stream.concat(
-                            Stream.of(t),
-                            t.getSupertypes() != null ? t.getSupertypes().stream() : Stream.of()))
-                    .forEach(eventTypes::add);
-        }
-        return eventTypes;
     }
 
     @Override

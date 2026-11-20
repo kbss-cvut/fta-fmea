@@ -35,8 +35,11 @@ public class FaultTreeService{
 
     public FaultTree findWithDetails(URI id) {
         FaultTree ft = faultTreeRepositoryService.findWithRelatedEventTypes(id);
-        Collection<Event> events = faultTreeDao.getRelatedEventTypes(ft);
-        setRelatedBehaviors(events);
+        Collection<Event> events = ft.getRelatedEventTypes();
+        // FIX - alternative to load necessary lazy loaded relations
+        // BUG - DOES NOT FETCH THE super types
+//        setRelatedBehaviors(events);
+//        setRelatedBehaviors(events);
 
         events.stream().map(e -> e.getBehavior()).forEach(b -> {
             Item item = b.getItem();
@@ -68,12 +71,12 @@ public class FaultTreeService{
         }
     }
 
-    protected void setRelatedBehaviors(Collection<Event> events){
-        for(Event event : events){
-            if(event.getBehavior() == null)
-                event.setBehavior(failureModeDao.findByEvent(event.getUri()));
-        }
-    }
+//    protected void setRelatedBehaviors(Collection<Event> events){
+//        for(Event event : events){
+//            if(event.getBehavior() == null)
+//                event.setBehavior(failureModeDao.findByEvent(event.getUri()));
+//        }
+//    }
 
     public void updateFilter(URI faultTreeURI, OperationalDataFilter newFilter){
         FaultTree summary = faultTreeRepositoryService.findSummary(faultTreeURI);

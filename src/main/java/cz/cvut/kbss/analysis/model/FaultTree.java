@@ -7,10 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 @OWLClass(iri = Vocabulary.s_c_fault_tree)
 @Getter
@@ -60,6 +58,10 @@ public class FaultTree extends ManagedEntity {
                 .map(e -> e.getAllEventParts()).orElse(new HashSet<>());
     }
 
+    public Collection<Event> getRelatedEventTypes(){
+        return _getRelatedEventTypes(this);
+    }
+
     @Override
     public void setAs(NamedEntity namedEntity) {
         if(namedEntity instanceof FaultTreeSummary)
@@ -84,6 +86,16 @@ public class FaultTree extends ManagedEntity {
     @Override
     public int hashCode() {
         return Objects.hash(getUri());
+    }
+
+    public static Collection<Event> _getRelatedEventTypes(FaultTree faultTree){
+        Set<Event> eventTypes = new HashSet<>();
+
+        for(FaultEvent faultEvent : faultTree.getAllEvents()){
+            Collection<Event> types = faultEvent.getRelatedEventTypes();
+            eventTypes.addAll(types);
+        }
+        return eventTypes;
     }
 
 }

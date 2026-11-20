@@ -36,6 +36,27 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
                 .getSingleResult();
     }
 
+    public URI getSystem(URI faultEventIri){
+       return em.createNativeQuery("""
+                            PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+                            
+                            SELECT ?systemUri {
+                                ?uri a ?type.
+                                ?rootEvent fta:has-child ?uri .
+                                ?fta fta:is-manifested-by ?rootEvent .
+                                ?rootEvent fta:is-derived-from ?rootEventType.
+                                ?rootEventType fta:is-manifestation-of ?behavior .
+                                ?behavior fta:has-component ?_subsystemUri.
+                                ?_subsystemUri fta:is-part-of* ?systemUri.
+                                FILTER NOT EXISTS{
+                                  ?systemUri fta:is-part-of ?system2.
+                                }
+                            }""", URI.class)
+               .setParameter("type", typeUri)
+               .setParameter("uri", faultEventIri)
+               .getSingleResult();
+    }
+
     public Optional<FaultEvent> getParent(URI faultEventIri) {
 
         URI uri = em

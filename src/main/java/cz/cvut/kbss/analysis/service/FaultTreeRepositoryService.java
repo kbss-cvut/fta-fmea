@@ -35,6 +35,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -115,17 +116,9 @@ public class FaultTreeRepositoryService extends ComplexManagedEntityRepositorySe
     public FaultTree findWithRelatedEventTypes(URI id) {
         FaultTree faultTree = findRequired(id);
         for( FaultEvent fe  : faultTree.getAllEvents()) {
-            FaultEventType supertype = faultEventRepositoryService.getFaultEventSupertype(fe.getUri());
-            if(supertype == null)
-                continue;
-            Set<Event> supertypes = fe.getSupertypes();
-            if(supertypes == null) {
-                supertypes = new HashSet<>();
-                fe.setSupertypes(supertypes);
-            }
-            fe.getSupertypes().remove(supertype);
-            fe.getSupertypes().add(supertype);
+            faultEventRepositoryService.loadDetails(fe);
         }
+
         return faultTree;
     }
 

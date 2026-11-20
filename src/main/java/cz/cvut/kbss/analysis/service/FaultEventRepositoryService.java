@@ -86,14 +86,16 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     /**
      * Copies nodesToPast and each of the nodes subtrees to the target node. If the
+     * @param targetNodeUri
      * @param nodesToPaste
      * @return
      */
     @Transactional(readOnly = true)
-    public List<FaultEvent> copyEvents(List<URI> nodesToPaste) {
-        List<URI> actualNodeUrisToPaste = nodesToPaste;
-        List<URI> sequence = nodesToPaste;
+    public List<FaultEvent> copyEvents(URI targetNodeUri, List<URI> nodesToPaste) {
+        if(nodesToPaste == null || nodesToPaste.isEmpty())
+            return Collections.emptyList();
 
+        List<FaultEvent> actualNodeUrisToPaste = null;
 
         // find root node
         URI treeRootNodeUri = nodesToPaste.stream()
@@ -105,26 +107,40 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         if (treeRootNodeUri != null) {
             FaultEvent treeRootNode = find(treeRootNodeUri).orElse(null);
             if (treeRootNode != null && treeRootNode.getChildren() != null) {
-                sequence = partsInSequence(treeRootNode).stream().map(FaultEvent::getUri).toList();
+                List<FaultEvent> sequence = partsInSequence(treeRootNode);
                 actualNodeUrisToPaste = new ArrayList<>(sequence);
-                Set<URI> inSequence = new HashSet<>(sequence);
-                List<URI> notInSequence = treeRootNode.getChildren().stream().map(FaultEvent::getUri)
-                        .filter(u -> !inSequence.contains(u))
-                        .sorted(Comparator.comparing(URI::toString)).toList();
+                Set<FaultEvent> inSequence = new HashSet<>(sequence);
+                List<FaultEvent> notInSequence = treeRootNode.getChildren().stream()
+                        .filter(fe -> !inSequence.contains(fe))
+                        .sorted(Comparator.comparing(Event::getName))
+                        .toList();
                 actualNodeUrisToPaste.addAll(notInSequence);
             }
+        } else{
+            // load nodesToPaste no details and remove any of the nodes that are descendants of a node inside the list
+            actualNodeUrisToPaste = nodesToPaste.stream()
+                    .map(u -> find(u).orElse(null))
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            Set<FaultEvent> descendents = new HashSet<>();
+            actualNodeUrisToPaste.forEach(e -> {
+                Set<FaultEvent> partialDescendents = e.getAllEventParts(true);
+                descendents.addAll(partialDescendents);
+            });
+            actualNodeUrisToPaste = actualNodeUrisToPaste.stream().filter( e -> !descendents.contains(e)).toList();
         }
 
         if (actualNodeUrisToPaste == null || actualNodeUrisToPaste.isEmpty())
             return null;
 
+        URI targetSystem = faultEventDao.getSystem(targetNodeUri);
+        URI sourceSystem = faultEventDao.getSystem(actualNodeUrisToPaste.get(0).getUri());
+        if(Objects.equals(sourceSystem, targetSystem)){
+            actualNodeUrisToPaste.forEach(this::loadDetails);
+        }
 
-        List<FaultEvent> toPaste = actualNodeUrisToPaste.stream()
-                .map(u -> find(u).orElse(null))
-                .filter(Objects::nonNull)
-                .toList();
-
-        return toPaste;
+        return actualNodeUrisToPaste;
     }
 
     @Transactional
@@ -143,7 +159,9 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
                 continue;
 
             fe.setUri(null);
-            fe.setProbability(null);
+            if(fe.getEventType() == FtaEventType.BASIC && fe.getSelectedEstimate() == null)
+                fe.setProbability(null);
+
             fe.getRectangle().setUri(null);
 
             if(fe.getChildren() != null && !fe.getChildren().isEmpty())
@@ -153,9 +171,10 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
                 List<FaultEvent> partSequence = partsInSequence(fe);
                 partSequences.put(fe, partSequence);
             }
+            faultEventTypeService.loadManagedSupertypes(fe);
         }
 
-        // past roots (and their subtrees) into taget nodes
+        // paste roots (and their subtrees) into taget nodes
         if(targetNode.getChildren() == null)
             targetNode.setChildren(new HashSet<>());
         targetNode.getChildren().addAll(toPaste);
@@ -388,5 +407,28 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     public FaultEventType getFaultEventSupertype(URI faultEventUri) {
         return faultEventTypeDao.getFaultEventSupertype(faultEventUri);
+    }
+
+    /**
+     * Loads details of the input event. This includes, supertypes and their association with behavior and Item.
+     * @param event
+     */
+    public void loadDetails(FaultEvent event) {
+        for(FaultEvent fe  : event.getAllEventParts()) {
+            FaultEventType supertype = getFaultEventSupertype(fe.getUri());
+            if(supertype == null)
+                continue;
+
+            if(fe.getSupertypes() == null)
+                fe.setSupertypes(new HashSet<>());
+            fe.getSupertypes().add(supertype);
+            List<Item> items = fe.getAllRelatedItems();
+        }
+    }
+
+
+
+    public Event getFaultEventType(URI faultEventTypeUri){
+        return faultEventTypeService.findWithDetails(faultEventTypeUri);
     }
 }
