@@ -60,16 +60,13 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         if (isRootEvent) throw new LogicViolationException("error.faultTree.rootEvent.deleteViolation","Root event of tree mustn't be deleted!");
     }
 
-
-
     /**
      * Copies nodesToPast and each of the nodes subtrees to the target node. If the
-     * @param targetNodeUri
      * @param nodesToPaste
      * @return
      */
-    @Transactional
-    public List<FaultEvent> copyEvents(URI targetNodeUri, List<URI> nodesToPaste) {
+    @Transactional(readOnly = true)
+    public List<FaultEvent> copyEvents(List<URI> nodesToPaste) {
         List<URI> actualNodeUrisToPaste = nodesToPaste;
         List<URI> sequence = nodesToPaste;
 
@@ -99,7 +96,6 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
 
         List<FaultEvent> toPaste = actualNodeUrisToPaste.stream()
-//                .filter(faultEventDao::isChild) // filter out the fault tree root event if present
                 .map(u -> find(u).orElse(null))
                 .filter(Objects::nonNull)
                 .toList();
@@ -109,7 +105,6 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
 
     @Transactional
     public List<URI> pasteEvents(URI targetNodeUri, List<FaultEvent> toPaste) {
-        List<URI> actualNodeUrisToPaste = toPaste.stream().map(AbstractEntity::getUri).toList();
         FaultEvent targetNode = findRequired(targetNodeUri);
         if(targetNode.getEventType() != FtaEventType.INTERMEDIATE)
             throw new LogicViolationException("error.faultTree.paste", "Paste is allowed only in intermediate node.");
@@ -122,8 +117,9 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
             FaultEvent fe = stack.pop();
             if(!processed.add(fe.getUri()))
                 continue;
-//            faultEventDao.detach(fe);
+
             fe.setUri(null);
+            fe.setProbability(null);
             fe.getRectangle().setUri(null);
 
             if(fe.getChildren() != null && !fe.getChildren().isEmpty())
@@ -139,14 +135,16 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
         if(targetNode.getChildren() == null)
             targetNode.setChildren(new HashSet<>());
         targetNode.getChildren().addAll(toPaste);
+
+        faultEventDao.update(targetNode);
+
+        List<URI> actualNodeUrisToPaste = toPaste.stream().map(AbstractEntity::getUri).toList();
         if(targetNode.getChildrenSequence() == null)
             targetNode.setChildrenSequence(new ArrayList<>());
         targetNode.getChildrenSequence().addAll(actualNodeUrisToPaste);
 
-        faultEventDao.update(targetNode);
-
         // restore sequences in child nodes indirect to targetNode
-        partSequences.entrySet().stream().forEach(e -> e.getKey().setChildrenSequence(e.getValue().stream()
+        partSequences.entrySet().forEach(e -> e.getKey().setChildrenSequence(e.getValue().stream()
                 .map(FaultEvent::getUri).toList()));
         return actualNodeUrisToPaste;
     }
@@ -159,10 +157,7 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
                 .map(partMap::remove)
                 .filter(Objects::nonNull)
                 .forEach( sequence::add);
-//        // add all parts which were not in sequence at the end of the sequence in lexicographical order by their URIs.
-//        partMap.values().stream()
-//                .sorted(Comparator.comparing(f -> f.getUri().toString()))
-//                .forEach(sequence::add);
+
         return sequence;
     }
 

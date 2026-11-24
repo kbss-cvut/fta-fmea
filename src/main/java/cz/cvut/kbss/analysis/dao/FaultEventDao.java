@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
