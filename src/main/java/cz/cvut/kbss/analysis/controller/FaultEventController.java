@@ -1,5 +1,6 @@
 package cz.cvut.kbss.analysis.controller;
 
+import cz.cvut.kbss.analysis.model.Event;
 import cz.cvut.kbss.analysis.model.FailureMode;
 import cz.cvut.kbss.analysis.model.FaultEvent;
 import cz.cvut.kbss.analysis.model.FaultEventType;
@@ -67,6 +68,17 @@ public class FaultEventController {
         URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         return repositoryService.addInputEvent(faultEventUri, inputEvent);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{targetNodeFragment}/paste", consumes = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public List<URI> paste(@PathVariable(name = "targetNodeFragment") String targetNodeFragment, @RequestBody List<URI> eventsToPaste){
+        log.info("> paste to - {}, {}", targetNodeFragment, eventsToPaste);
+        URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, targetNodeFragment);
+
+        List<FaultEvent> copied = repositoryService.copyEvents(eventsToPaste);
+        repositoryService.pasteEvents(faultEventUri, copied);
+        return copied.stream().map(Event::getUri).toList();
     }
 
     @GetMapping(value = "/{faultEventFragment}/failureMode", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})

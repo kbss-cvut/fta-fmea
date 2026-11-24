@@ -58,6 +58,131 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     protected void preRemove(FaultEvent instance) {
         boolean isRootEvent = faultTreeDao.isRootEvent(instance.getUri());
         if (isRootEvent) throw new LogicViolationException("error.faultTree.rootEvent.deleteViolation","Root event of tree mustn't be deleted!");
+
+        Optional<FaultEvent> parentOpt = faultEventDao.getParent(instance.getUri());
+        if(parentOpt.isPresent()) {
+            FaultEvent parent = parentOpt.get();
+            parent.getChildren().remove(instance);
+            int i = 0;
+            for(; i < parent.getChildrenSequence().size(); i ++){
+                if(parent.getChildrenSequence().get(i).equals(instance.getUri())) {
+                    List<URI> updatedSequence = new ArrayList<>(parent.getChildrenSequence());
+                    updatedSequence.remove(i);
+                    parent.setChildrenSequence(updatedSequence);
+                    break;
+                }
+            }
+        }
+
+        List<URI> withParts = instance.getAllEventParts().stream()
+                .filter(i -> i.getChildrenSequence() != null && !i.getChildrenSequence().isEmpty())
+                .map(Event::getUri)
+                .toList();
+
+        if(!withParts.isEmpty()) {
+            faultEventDao.deleteChildSequence(withParts);
+        }
+    }
+
+    /**
+     * Copies nodesToPast and each of the nodes subtrees to the target node. If the
+     * @param nodesToPaste
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<FaultEvent> copyEvents(List<URI> nodesToPaste) {
+        List<URI> actualNodeUrisToPaste = nodesToPaste;
+        List<URI> sequence = nodesToPaste;
+
+
+        // find root node
+        URI treeRootNodeUri = nodesToPaste.stream()
+                .filter(u -> !faultEventDao.isChild(u))
+                .findFirst().orElse(null);
+
+
+        // If tree root is selected to be pasted, copy its child nodes instead.
+        if (treeRootNodeUri != null) {
+            FaultEvent treeRootNode = find(treeRootNodeUri).orElse(null);
+            if (treeRootNode != null && treeRootNode.getChildren() != null) {
+                sequence = partsInSequence(treeRootNode).stream().map(FaultEvent::getUri).toList();
+                actualNodeUrisToPaste = new ArrayList<>(sequence);
+                Set<URI> inSequence = new HashSet<>(sequence);
+                List<URI> notInSequence = treeRootNode.getChildren().stream().map(FaultEvent::getUri)
+                        .filter(u -> !inSequence.contains(u))
+                        .sorted(Comparator.comparing(URI::toString)).toList();
+                actualNodeUrisToPaste.addAll(notInSequence);
+            }
+        }
+
+        if (actualNodeUrisToPaste == null || actualNodeUrisToPaste.isEmpty())
+            return null;
+
+
+        List<FaultEvent> toPaste = actualNodeUrisToPaste.stream()
+                .map(u -> find(u).orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
+        return toPaste;
+    }
+
+    @Transactional
+    public List<URI> pasteEvents(URI targetNodeUri, List<FaultEvent> toPaste) {
+        FaultEvent targetNode = findRequired(targetNodeUri);
+        if(targetNode.getEventType() != FtaEventType.INTERMEDIATE)
+            throw new LogicViolationException("error.faultTree.paste", "Paste is allowed only in intermediate node.");
+        // detach, clear URIs and child sequence
+        Set<URI> processed = new HashSet<>();
+        Stack<FaultEvent> stack = new Stack<>();
+        stack.addAll(toPaste);
+        Map<FaultEvent, List<FaultEvent>> partSequences = new HashMap<>();
+        while(!stack.isEmpty()){
+            FaultEvent fe = stack.pop();
+            if(!processed.add(fe.getUri()))
+                continue;
+
+            fe.setUri(null);
+            fe.setProbability(null);
+            fe.getRectangle().setUri(null);
+
+            if(fe.getChildren() != null && !fe.getChildren().isEmpty())
+                fe.getChildren().forEach(stack::push);
+
+            if(fe.getChildrenSequence() != null && !fe.getChildrenSequence().isEmpty()) {
+                List<FaultEvent> partSequence = partsInSequence(fe);
+                partSequences.put(fe, partSequence);
+            }
+        }
+
+        // past roots (and their subtrees) into taget nodes
+        if(targetNode.getChildren() == null)
+            targetNode.setChildren(new HashSet<>());
+        targetNode.getChildren().addAll(toPaste);
+
+        faultEventDao.update(targetNode);
+
+        List<URI> actualNodeUrisToPaste = toPaste.stream().map(AbstractEntity::getUri).toList();
+        if(targetNode.getChildrenSequence() == null)
+            targetNode.setChildrenSequence(new ArrayList<>());
+        targetNode.getChildrenSequence().addAll(actualNodeUrisToPaste);
+
+        // restore sequences in child nodes indirect to targetNode
+        partSequences.entrySet().forEach(e -> e.getKey().setChildrenSequence(e.getValue().stream()
+                .map(FaultEvent::getUri).toList()));
+        return actualNodeUrisToPaste;
+    }
+
+    protected List<FaultEvent> partsInSequence(FaultEvent fe){
+        Map<URI, FaultEvent> partMap = new HashMap<>();
+        fe.getChildren().forEach(p -> partMap.put(p.getUri(), p));
+        List<FaultEvent> sequence = new ArrayList<>();
+        fe.getChildrenSequence().stream()
+                .map(partMap::remove)
+                .filter(Objects::nonNull)
+                .forEach( sequence::add);
+
+        return sequence;
     }
 
     @Transactional
