@@ -36,6 +36,54 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
                 .getSingleResult();
     }
 
+    public Optional<FaultEvent> getParent(URI faultEventIri) {
+
+        URI uri = em
+                .createNativeQuery("SELECT ?x WHERE { ?x a ?type ; ?hasChildren ?eventUri . }", URI.class)
+                .setParameter("type", typeUri)
+                .setParameter("hasChildren", URI.create(Vocabulary.s_p_has_child))
+                .setParameter("eventUri", faultEventIri)
+                .getSingleResult();
+
+        return find(uri);
+    }
+
+    public void deleteChildSequence(Collection<URI> faultEventUris){
+        String values = """
+                VALUES ?e {
+                    %s
+                }
+                """.formatted(
+                        faultEventUris.stream()
+                                .map(u -> String.format("<%s>", u))
+                                .collect(Collectors.joining("\n"))
+        );
+        em.createNativeQuery("""
+                PREFIX : <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
+                PREFIX seq: <http://krizik.felk.cvut.cz/ontologies/2008/6/sequences.owl#>
+                PREFIX seq1: <http://krizik.felk.cvut.cz/ontologies/2008/sequences.owl#>
+                
+                DELETE{
+                    ?e :has-child-sequence ?s .
+                    ?sub seq1:hasNext ?next .
+                    ?sub seq:hasContents ?cont .
+                }WHERE{
+                    ?e :has-child-sequence ?s .
+                    {
+                        BIND(?s as ?sub)
+                    }UNION{
+                        ?s seq1:hasNext+ ?sub .
+                    }
+                    OPTIONAL{
+                        ?sub seq1:hasNext ?next .
+                    }
+                    ?sub seq:hasContents ?cont .
+                    %s
+                }
+                """.formatted(values))
+                .executeUpdate();
+    }
+
     @Override
     public EntityDescriptor getEntityDescriptor(FaultEvent entity) {
         URI graph = getContext(entity);

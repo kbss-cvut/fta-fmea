@@ -58,6 +58,30 @@ public class FaultEventRepositoryService extends BaseRepositoryService<FaultEven
     protected void preRemove(FaultEvent instance) {
         boolean isRootEvent = faultTreeDao.isRootEvent(instance.getUri());
         if (isRootEvent) throw new LogicViolationException("error.faultTree.rootEvent.deleteViolation","Root event of tree mustn't be deleted!");
+
+        Optional<FaultEvent> parentOpt = faultEventDao.getParent(instance.getUri());
+        if(parentOpt.isPresent()) {
+            FaultEvent parent = parentOpt.get();
+            parent.getChildren().remove(instance);
+            int i = 0;
+            for(; i < parent.getChildrenSequence().size(); i ++){
+                if(parent.getChildrenSequence().get(i).equals(instance.getUri())) {
+                    List<URI> updatedSequence = new ArrayList<>(parent.getChildrenSequence());
+                    updatedSequence.remove(i);
+                    parent.setChildrenSequence(updatedSequence);
+                    break;
+                }
+            }
+        }
+
+        List<URI> withParts = instance.getAllEventParts().stream()
+                .filter(i -> i.getChildrenSequence() != null && !i.getChildrenSequence().isEmpty())
+                .map(Event::getUri)
+                .toList();
+
+        if(!withParts.isEmpty()) {
+            faultEventDao.deleteChildSequence(withParts);
+        }
     }
 
     /**
