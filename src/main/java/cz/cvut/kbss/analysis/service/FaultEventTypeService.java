@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -74,6 +72,16 @@ public class FaultEventTypeService extends BaseRepositoryService<FaultEventType>
             }
             faultEvent.setSupertypes(managedSupertypes);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public FaultEventType findWithDetails(URI faultEventTypeIri) {
+        FaultEventType ret = findRequired(faultEventTypeIri);
+
+        // custom load for lazy-loaded behavior entity
+        List<Item> items = ret.getAllRelatedItems();
+
+        return ret;
     }
 
 

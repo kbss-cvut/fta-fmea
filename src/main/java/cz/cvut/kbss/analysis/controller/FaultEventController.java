@@ -13,6 +13,7 @@ import cz.cvut.kbss.jsonld.JsonLd;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,7 +77,7 @@ public class FaultEventController {
         log.info("> paste to - {}, {}", targetNodeFragment, eventsToPaste);
         URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, targetNodeFragment);
 
-        List<FaultEvent> copied = repositoryService.copyEvents(eventsToPaste);
+        List<FaultEvent> copied = repositoryService.copyEvents(faultEventUri,eventsToPaste);
         repositoryService.pasteEvents(faultEventUri, copied);
         return copied.stream().map(Event::getUri).toList();
     }
@@ -129,6 +130,12 @@ public class FaultEventController {
         URI faultEventUri = identifierService.composeIdentifier(Vocabulary.s_c_fault_event, faultEventFragment);
 
         repositoryService.updateChildrenSequence(faultEventUri, childrenSequence);
+    }
+
+    @GetMapping(value = "/top-fault-events", produces = {MediaType.APPLICATION_JSON_VALUE, JsonLd.MEDIA_TYPE})
+    public Event getTopFaultEventType(@RequestParam URI uri){
+        log.info("> getTopFaultEventType - {}", uri);
+        return repositoryService.getFaultEventType(uri);
     }
 
 }

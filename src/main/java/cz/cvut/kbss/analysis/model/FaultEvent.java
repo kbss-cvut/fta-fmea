@@ -87,10 +87,30 @@ public class FaultEvent extends Event {
 
     public void addChildSequenceUri(URI childUri) {getChildrenSequence().add(childUri);}
 
+    /**
+     *
+     * @return a set containing this fault event and all its descendants.
+     */
     public Set<FaultEvent> getAllEventParts(){
+        return getAllEventParts(false);
+    }
+
+    /**
+     *
+     * @param strict if true the result contains this fault event, if false result does not contain this fault event.
+     * @return if strict is true returns descendants if false returns descendants and this fault event.
+     */
+    public Set<FaultEvent> getAllEventParts(boolean strict){
         Stack<FaultEvent> stack = new Stack<>();
-        stack.push(this);
         Set<FaultEvent> result = new HashSet<>();
+        if(strict && getChildren() == null)
+            return result;
+
+        if(strict)
+            getChildren().forEach(stack::push);
+        else
+            stack.push(this);
+
         while(!stack.isEmpty()){
             FaultEvent f = stack.pop();
             if(!result.add(f))
