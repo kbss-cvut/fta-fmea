@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.net.URI;
 import java.util.Set;
 
 import static cz.cvut.kbss.analysis.service.validation.groups.ValidationScopes.*;
@@ -31,6 +32,14 @@ public class NamedEntity extends AbstractEntity{
     @OWLDataProperty(iri = Vocabulary.s_p_description)
     private String description;
 
+    public NamedEntity() {
+    }
+
+    public NamedEntity(URI uri, String name, String description) {
+        super(uri);
+        this.name = name;
+        this.description = description;
+    }
 
     public <T extends NamedEntity> T asEntity(Class<T> cls){
         T entity = newInstance(cls);

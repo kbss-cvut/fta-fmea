@@ -26,6 +26,13 @@ public abstract class AbstractEntity implements HasIdentifier, Serializable {
     @OWLObjectProperty(iri = Vocabulary.s_p_source, fetch = FetchType.EAGER)
     private URI annotationSource;
 
+    public AbstractEntity() {
+    }
+
+    public AbstractEntity(URI uri) {
+        this.uri = uri;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

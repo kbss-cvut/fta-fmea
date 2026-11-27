@@ -11,6 +11,7 @@ import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import cz.cvut.kbss.jopa.model.metamodel.Attribute;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
 import cz.cvut.kbss.jopa.model.query.Query;
+import cz.cvut.kbss.jopa.query.QueryHints;
 import cz.cvut.kbss.jopa.vocabulary.DC;
 
 import java.net.URI;
@@ -95,7 +96,7 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
     }
 
     public Query getSummariesQuery(){
-        return em.createNativeQuery("""
+        Query query = em.createNativeQuery("""
                             SELECT * WHERE {
                                 BIND(?_uri as ?uri)
                                 ?uri a ?type.
@@ -113,6 +114,8 @@ public class ManagedEntityDao<T extends ManagedEntity> extends NamedEntityDao<T>
                 .setParameter("pModified", P_MODIFIED)
                 .setParameter("pCreator", P_CREATOR)
                 .setParameter("pLastEditor", P_LAST_EDITOR);
+        query.setHint(QueryHints.DISABLE_INFERENCE, true);
+        return query;
     }
 
 }

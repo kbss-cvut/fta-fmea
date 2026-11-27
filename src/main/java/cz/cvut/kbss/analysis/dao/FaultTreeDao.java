@@ -7,16 +7,15 @@ import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.service.security.SecurityUtils;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
-import cz.cvut.kbss.jopa.model.descriptors.Descriptor;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
 import cz.cvut.kbss.jopa.model.query.Query;
+import cz.cvut.kbss.jopa.query.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Repository
 public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
@@ -26,6 +25,7 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
     @Autowired
     protected FaultTreeDao(EntityManager em, PersistenceConf config, IdentifierService identifierService, SecurityUtils securityUtils) {
         super(FaultTree.class, em, config, identifierService, securityUtils);
+
     }
 
     public boolean isRootEvent(URI faultEventIri) {
@@ -87,7 +87,7 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
     }
 
     public Query getSummariesQuery() {
-             return em.createNativeQuery("""
+             Query query = em.createNativeQuery("""
                             PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
                             SELECT * WHERE {
                                 {SELECT ?uri ?type ?name ?description ?status ?created ?modified ?creator ?lastEditor 
@@ -157,6 +157,8 @@ public class FaultTreeDao extends ManagedEntityDao<FaultTree> {
                     .setParameter("pModified", P_MODIFIED)
                     .setParameter("pCreator", P_CREATOR)
                     .setParameter("pLastEditor", P_LAST_EDITOR);
+             query.setHint(QueryHints.DISABLE_INFERENCE, true);
+             return query;
     }
 
     public void updateStatus(URI faultTree, Status status){
