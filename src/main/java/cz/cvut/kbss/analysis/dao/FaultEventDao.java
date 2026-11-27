@@ -9,15 +9,18 @@ import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
 import cz.cvut.kbss.jopa.model.metamodel.EntityType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class FaultEventDao extends NamedEntityDao<FaultEvent> {
 
     public static final URI PROBABILITY_PROP = URI.create(Vocabulary.s_p_probability);
@@ -37,13 +40,14 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
     }
 
     public URI getSystem(URI faultEventIri){
-       return em.createNativeQuery("""
+       List<URI> result = em.createNativeQuery("""
                             PREFIX fta: <http://onto.fel.cvut.cz/ontologies/fta-fmea-application/>
                             
                             SELECT ?systemUri {
                                 ?uri a ?type.
-                                ?rootEvent fta:has-child ?uri .
+                                ?rootEvent fta:has-child* ?uri .
                                 ?fta fta:is-manifested-by ?rootEvent .
+                                ?fta a fta:fault-tree .
                                 ?rootEvent fta:is-derived-from ?rootEventType.
                                 ?rootEventType fta:is-manifestation-of ?behavior .
                                 ?behavior fta:has-component ?_subsystemUri.
@@ -54,7 +58,16 @@ public class FaultEventDao extends NamedEntityDao<FaultEvent> {
                             }""", URI.class)
                .setParameter("type", typeUri)
                .setParameter("uri", faultEventIri)
-               .getSingleResult();
+               .getResultList();
+       if(result.size() > 1) {
+           log.warn("Fault tree containing event <{}> is associated with multiple systems.", faultEventIri);
+           return null;
+       }
+        if(result.isEmpty()) {
+            log.warn("Fault tree containing event <{}> is not associated with a system.", faultEventIri);
+            return null;
+        }
+       return result.get(0);
     }
 
     public Optional<FaultEvent> getParent(URI faultEventIri) {
