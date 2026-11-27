@@ -6,6 +6,8 @@ import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.model.EntityManager;
 import cz.cvut.kbss.jopa.model.descriptors.EntityDescriptor;
+import cz.cvut.kbss.jopa.model.query.TypedQuery;
+import cz.cvut.kbss.jopa.query.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.net.URI;
@@ -21,14 +23,15 @@ public class OperationalDataFilterDao extends BaseDao<OperationalDataFilter> {
     }
 
     public OperationalDataFilter findByEntity(URI entity) {
-         Optional<URI> optUri = em.createNativeQuery("""
+        TypedQuery<URI> query = em.createNativeQuery("""
                 SELECT ?uri WHERE {?entity ?hasOperationalDataFilter ?uri } LIMIT 1
                 """, URI.class)
                 .setParameter("hasOperationalDataFilter", HAS_OPERATIONAL_DATA_FILTER_PROP)
-                .setParameter("entity", entity)
-                .getResultList().stream().findAny();
+                .setParameter("entity", entity);
+        query.setHint(QueryHints.DISABLE_INFERENCE, true);
+        Optional<URI> optUri = query.getResultList().stream().findAny();
 
-        return optUri.map( u -> find(u).orElse(null)).orElse(null);
+        return optUri.flatMap(this::find).orElse(null);
     }
 
     /**

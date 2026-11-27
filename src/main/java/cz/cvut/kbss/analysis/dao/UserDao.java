@@ -8,6 +8,8 @@ import cz.cvut.kbss.analysis.service.IdentifierService;
 import cz.cvut.kbss.analysis.util.Vocabulary;
 import cz.cvut.kbss.jopa.exceptions.NoResultException;
 import cz.cvut.kbss.jopa.model.EntityManager;
+import cz.cvut.kbss.jopa.model.query.TypedQuery;
+import cz.cvut.kbss.jopa.query.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -70,13 +72,14 @@ public class UserDao extends BaseDao<User> {
     public String findUsername(URI uri){
         Objects.requireNonNull(uri);
         try {
-            return em
+            TypedQuery<String> query = em
                         .createNativeQuery("SELECT ?username WHERE { ?x a ?type ; ?hasUsername ?username . }",
                                 String.class)
                         .setParameter("type", typeUri)
                         .setParameter("x", uri)
-                        .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName))
-                        .getSingleResult();
+                        .setParameter("hasUsername", URI.create(Vocabulary.s_p_accountName));
+            query.setHint(QueryHints.DISABLE_INFERENCE, true);
+            return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         } catch (RuntimeException e) {

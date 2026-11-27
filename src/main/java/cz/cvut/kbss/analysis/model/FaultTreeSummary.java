@@ -10,15 +10,40 @@ import lombok.Setter;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 
 
-@SparqlResultSetMappings(
-        @SparqlResultSetMapping(name="FaultTreeSummary", entities = {
-                @EntityResult(entityClass=FaultTreeSummary.class)
-        })
-)
+//@SparqlResultSetMappings(
+//        @SparqlResultSetMapping(name="FaultTreeSummary", entities = {
+//                @EntityResult(entityClass=FaultTreeSummary.class)
+//        })
+//)
+@SparqlResultSetMappings(@SparqlResultSetMapping(name="FaultTreeSummary",
+        classes = @ConstructorResult(targetClass = FaultTreeSummary.class,
+                variables = {
+                        @VariableResult(name = "uri", type = URI.class),
+                        @VariableResult(name = "name", type = String.class),
+                        @VariableResult(name = "description", type = String.class),
+                        @VariableResult(name = "created", type = Date.class),
+                        @VariableResult(name = "modified", type = Date.class),
+                        @VariableResult(name = "creator", type = URI.class),
+                        @VariableResult(name = "lastEditor", type = URI.class),
+                        @VariableResult(name = "status", type = String.class),
+                        @VariableResult(name = "rootEvent", type = URI.class),
+                        @VariableResult(name = "rootEventType", type = URI.class),
+                        @VariableResult(name = "systemUri", type = URI.class),
+                        @VariableResult(name = "systemName", type = String.class),
+                        @VariableResult(name = "subsystemUri", type = URI.class),
+                        @VariableResult(name = "subsystemName", type = String.class),
+                        @VariableResult(name = "ataCode", type = String.class),
+                        @VariableResult(name = "subsystemAltNames", type = String.class),
+                        @VariableResult(name = "requiredFailureRate", type = Double.class),
+                        @VariableResult(name = "calculatedFailureRate", type = Double.class),
+                        @VariableResult(name = "fhaBasedFailureRate", type = Double.class),
+                        @VariableResult(name = "auxiliary", type = Boolean.class)
+                })))
 @OWLClass(iri = Vocabulary.s_c_fault_tree_summary)
 @Getter
 @Setter
@@ -62,6 +87,26 @@ public class FaultTreeSummary extends ManagedEntity{
 
     @OWLDataProperty(iri = Vocabulary.s_p_auxiliary)
     protected Boolean auxiliary;
+
+    public FaultTreeSummary() {
+    }
+
+    public FaultTreeSummary(URI uri, String name, String description, Date created, Date modified, URI creator, URI lastEditor, String status, URI rootEvent, URI rootEventType, URI systemUri, String systemName, URI subsystemUri, String subsystemName, String ataCode, String subsystemAltNames, Double requiredFailureRate, Double calculatedFailureRate, Double fhaBasedFailureRate, Boolean auxiliary) {
+        super(uri, name, description, created, modified, creator, lastEditor);
+        this.status = status;
+        this.rootEvent = rootEvent;
+        this.rootEventType = rootEventType;
+        this.systemUri = systemUri;
+        this.systemName = systemName;
+        this.subsystemUri = subsystemUri;
+        this.subsystemName = subsystemName;
+        this.ataCode = ataCode;
+        this.subsystemAltNames = subsystemAltNames;
+        this.requiredFailureRate = requiredFailureRate;
+        this.calculatedFailureRate = calculatedFailureRate;
+        this.fhaBasedFailureRate = fhaBasedFailureRate;
+        this.auxiliary = auxiliary;
+    }
 
     public void copyTo(FaultTree faultTree){
         super.copyTo(faultTree);

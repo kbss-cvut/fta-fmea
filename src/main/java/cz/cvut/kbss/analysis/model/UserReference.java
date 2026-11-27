@@ -8,10 +8,20 @@ import cz.cvut.kbss.jopa.model.annotations.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.net.URI;
+
 @OWLClass(iri = Vocabulary.s_c_Person)
 @Getter
 @Setter
 public class UserReference extends AbstractEntity{
+
+    public static UserReference create(URI uri){
+        if(uri == null)
+            return null;
+        UserReference reference = new UserReference();
+        reference.setUri(uri);
+        return reference;
+    }
 
     public UserReference() {
     }
